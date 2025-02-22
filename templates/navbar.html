@@ -5,7 +5,9 @@
         <a href="{{url_for('index')}}" class="logo d-flex align-items-center me-auto">
             <!-- Uncomment the line below if you also wish to use an image logo -->
             <!-- <img src="assets/img/logo.png" alt=""> -->
-            <h1 class="sitename">ei-software</h1>
+            <h1 class="sitename"><span
+                class="font-weight-bold border px-3 mr-1"
+                >EI</span> Solutions</h1>
         </a>
 
         <nav id="navmenu" class="navmenu">
@@ -18,7 +20,7 @@
                         <i class="bi bi-chevron-down toggle-dropdown"></i
                     ></a>
                     <ul>
-                        <li><a href="#">Requisition portal</a></li>
+                        <li><a href="{{url_for('register')}}">Requisition portal</a></li>
                         <li class="dropdown">
                             <a href="#"
                                 ><span>Finance</span>

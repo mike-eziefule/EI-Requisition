@@ -26,12 +26,19 @@ async def admin_dash(
     db:Session=Depends(script.get_db)
     ):
     
+    msg = []
+    
     user_data = utility.get_user_from_token(request, db)
     
-    if not user_data or user_data["role"] != "administrator":
+    if not user_data:
+        msg.append("Session expired, LOGIN required")
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
         
-        
-        
+    if user_data["role"] != "administrator":
         return templates.TemplateResponse(
         "dash.html",{
         "request": request,
@@ -44,6 +51,50 @@ async def admin_dash(
         "request": request,
         "user": user_data.get("user"),
         "role": user_data.get("role")
+        })
+    
+#dashboard page route
+@router.get("/admin_view_all", response_class=HTMLResponse)
+async def admin_view_all(
+    request: Request,
+    db:Session=Depends(script.get_db)
+    ):
+    
+    msg = []
+    
+    user_data = utility.get_user_from_token(request, db)
+    
+    if not user_data:
+        msg.append("Session expired, LOGIN required")
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
+        
+    if user_data["role"] != "administrator":
+        
+        msg.append("Contact your administrator")
+        return templates.TemplateResponse(
+        "dash.html",{
+        "request": request,
+        "msg": msg,
+        "user": user_data["user"],
+        "role": user_data["role"]
+        })
+        
+    all_users = db.query(model.User).filter(model.User.organization_id == user_data["user"].id ).all()
+    staff_number = len(all_users)
+    
+    
+    return templates.TemplateResponse(
+        "viewstaff.html",{
+        "request": request,
+        "msg":msg,
+        "user": user_data.get("user"),
+        "role": user_data.get("role"),
+        "all_users": all_users,
+        "staff_number": staff_number
         })
 
 #shop page

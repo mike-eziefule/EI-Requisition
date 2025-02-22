@@ -67,14 +67,14 @@ endblock%}
                         <li class="nav-item">
                             <a
                                 class="nav-link"
-                                href="pages/ui-features/buttons.html"
+                                href="{{url_for('admin_view_all')}}"
                                 >View Staff</a
                             >
                         </li>
                         <li class="nav-item">
                             <a
                                 class="nav-link"
-                                href="pages/ui-features/dropdowns.html"
+                                href="{{url_for('addmember')}}"
                                 >Add Staff</a
                             >
                         </li>
@@ -156,7 +156,7 @@ endblock%}
                         <div class="text-center border-1 mb-5 mt-2">
                             <h3 class="display-3 text-capitalize">
                                 <span class="text-primary fw-bold"
-                                    >Company Name</span
+                                    >{{user.organization_name}}</span
                                 >
                             </h3>
                         </div>
@@ -168,11 +168,11 @@ endblock%}
                                     <h3 class="welcome-text">
                                         Welcome,
                                         <span class="text-black fw-bold"
-                                            >John Doe</span
+                                            >{{user.admin_name or staff_name}}</span
                                         >
                                     </h3>
                                     <h5 class="welcome-sub-text">
-                                        AdministratorX
+                                        {{role}}
                                     </h5>
                                 </li>
                             </ul>
@@ -256,22 +256,14 @@ endblock%}
                                 <div class="card card-rounded">
                                     <div class="align-items-center">
                                         <div class="card-body mt-1">
-                                            {% for errors in msg%} {% if errors
-                                            == 'Registration successful'%}
+                                            {% for errors in msg%}
                                             <div
-                                                class="alert alert-success"
+                                                class="alert alert-info"
                                                 role="alert"
                                             >
                                                 {{errors}}
                                             </div>
-                                            {%else%}
-                                            <div
-                                                class="alert alert-danger"
-                                                role="alert"
-                                            >
-                                                {{errors}}
-                                            </div>
-                                            {% endif%} {% endfor %}
+                                            {% endfor %}
 
                                             <form
                                                 method="POST"

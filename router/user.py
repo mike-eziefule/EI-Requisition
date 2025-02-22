@@ -14,7 +14,7 @@ from datetime import datetime
 
 
 
-router = APIRouter(prefix="/user", tags=["auth"])
+router = APIRouter(prefix="/user", tags=["user"])
 
 templates = Jinja2Templates(directory="templates")
 
@@ -121,8 +121,27 @@ async def register(
 
 #add member page route
 @router.get("/addmember", response_class=HTMLResponse)
-async def addmember(request: Request):
-    return templates.TemplateResponse("add_member.html", {"request": request})
+async def addmember(request: Request, db:Session=Depends(script.get_db)):
+    
+    msg = []
+
+    user = utility.get_user_from_token(request, db)
+    
+    
+    if user['role'] != 'administrator':
+        msg.append("Contact your administrator, Try again!")
+        return templates.TemplateResponse("dash.html", {
+            "request": request, 
+            "msg": msg,
+            "user": user['user']
+        })
+    
+    return templates.TemplateResponse(
+        "add_member.html", {
+            "request": request, 
+            "msg": msg,
+            "user": user['user']
+        })
 
 
 #NEW USER REGISTRATION
@@ -140,6 +159,14 @@ async def addmember(
     msg = []
 
     user = utility.get_user_from_token(request, db)
+    print (user['role'])
+    
+    if not user['role'] != 'administrator':
+        msg.append("Contact your administrator, Try again!")
+        return templates.TemplateResponse("dash.html", {
+            "request": request, 
+            "msg": msg,
+        })
 
     admin_auth = db.query(model.Organization).filter(model.Organization.email == user['user'].email).first()
 
