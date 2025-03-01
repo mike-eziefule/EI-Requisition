@@ -1,653 +1,107 @@
-{% include 'layout2.html' %} {% block title%}<title>admin_view_all</title>{%
-endblock%}
+{% extends "dblayout.html" %} {% block title %} View Team {% endblock %} 
+{% block child_content_1 %}
 
-<div class="container-fluid page-body-wrapper">
-    <!-- partial:partials/_sidebar.html start-->
-    <nav class="sidebar sidebar-offcanvas" id="sidebar">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('admin_dash')}}">
-                    <i class="mdi mdi-grid-large menu-icon"></i>
-                    <span class="menu-title">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item nav-category">category</li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#auth"
-                    aria-expanded="false"
-                    aria-controls="auth"
+<div class="row flex-grow">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card card-rounded">
+            <div class="card-body">
+                <div
+                    class="d-sm-flex justify-content-between align-items-start"
                 >
-                    <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                    <span class="menu-title">Profile</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/samples/error-500.html"
-                            >
-                                View profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/samples/login.html">
-                                Edit Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/samples/register.html"
-                            >
-                                Reset Password
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#ui-basic"
-                    aria-expanded="false"
-                    aria-controls="ui-basic"
-                >
-                    <i class="menu-icon mdi mdi-floor-plan"></i>
-                    <span class="menu-title">My Team</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="ui-basic">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="{{url_for('admin_view_all')}}"
-                                >View Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url_for('addmember')}}"
-                                >Add Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/ui-features/typography.html"
-                                >Delete Staff</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#form-elements"
-                    aria-expanded="false"
-                    aria-controls="form-elements"
-                >
-                    <i class="menu-icon mdi mdi-card-text-outline"></i>
-                    <span class="menu-title">Requests</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="form-elements">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/forms/basic_elements.html"
-                                >New Request</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/forms/basic_elements.html"
-                                >Pending Request</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/forms/basic_elements.html"
-                                >Request History</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#tables"
-                    aria-expanded="false"
-                    aria-controls="tables"
-                >
-                    <i class="menu-icon mdi mdi-table"></i>
-                    <span class="menu-title">Inventory</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('logout')}}">
-                    <i class="menu-icon mdi mdi-file-document"></i>
-                    <span class="menu-title">Logout</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- partial:partials/_sidebar.html end-->
-    <div class="main-panel">
-        <div class="content-wrapper">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="home-tab">
-                        <div class="text-center border-1 mb-5 mt-2">
-                            <h3 class="display-3 text-capitalize">
-                                <span class="text-primary fw-bold"
-                                    >{{user.organization_name}}</span
-                                >
-                            </h3>
-                        </div>
-                        <div
-                            class="d-sm-flex align-items-center justify-content-between border-bottom mb-5 mt-2"
-                        >
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <h3 class="welcome-text">
-                                        Welcome,
-                                        <span class="text-black fw-bold"
-                                            >{{user.admin_name or
-                                            user.staff_name}}</span
-                                        >
-                                    </h3>
-                                    <h5 class="welcome-sub-text">
-                                        {{role}}:
-                                        <span
-                                            class="text-black fw-bold float-end"
-                                            >{{user.designation or
-                                            user.id}}</span
-                                        >
-                                    </h5>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {% for errors in msg%}
-                        <div class="alert alert-info" role="alert">
-                            {{errors}}
-                        </div>
-                        {% endfor %}
-                        <div
-                            class="d-sm-flex align-items-center justify-content-between border-bottom"
-                        >
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link active ps-0"
-                                        id="home-tab"
-                                        data-bs-toggle="tab"
-                                        href="#overview"
-                                        role="tab"
-                                        aria-controls="overview"
-                                        aria-selected="true"
-                                        >Overview</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link"
-                                        id="profile-tab"
-                                        data-bs-toggle="tab"
-                                        href="#audiences"
-                                        role="tab"
-                                        aria-selected="false"
-                                        >Request</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link"
-                                        id="contact-tab"
-                                        data-bs-toggle="tab"
-                                        href="#demographics"
-                                        role="tab"
-                                        aria-selected="false"
-                                        >Status</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link border-0"
-                                        id="more-tab"
-                                        data-bs-toggle="tab"
-                                        href="#more"
-                                        role="tab"
-                                        aria-selected="false"
-                                        >Team</a
-                                    >
-                                </li>
-                            </ul>
-                            <div>
-                                <div class="btn-wrapper">
-                                    <a
-                                        href="#"
-                                        class="btn btn-otline-dark align-items-center"
-                                        ><i class="icon-share"></i> Share</a
-                                    >
-                                    <a href="#" class="btn btn-otline-dark"
-                                        ><i class="icon-printer"></i> Print</a
-                                    >
-                                    <a
-                                        href="#"
-                                        class="btn btn-primary text-white me-0"
-                                        ><i class="icon-download"></i> Export</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab-content tab-content-basic">
-                            <div
-                                class="tab-pane fade show active"
-                                id="overview"
-                                role="tabpanel"
-                                aria-labelledby="overview"
-                            >
-                                <div class="row">
-                                    <div class="col-lg-8 d-flex flex-column">
-                                        <div class="row flex-grow">
-                                            <div
-                                                class="col-12 grid-margin stretch-card"
-                                            >
-                                                <div class="card card-rounded">
-                                                    <div class="card-body">
-                                                        <div
-                                                            class="d-sm-flex justify-content-between align-items-start"
-                                                        >
-                                                            <div>
-                                                                <h4
-                                                                    class="card-title card-title-dash"
-                                                                >
-                                                                    Team Members
-                                                                </h4>
-                                                                <p
-                                                                    class="card-subtitle card-subtitle-dash"
-                                                                >
-                                                                    You have
-                                                                    {{staff_number}}
-                                                                    staff
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <button
-                                                                    class="btn btn-primary btn-lg text-white mb-0 me-0"
-                                                                    type="button"
-                                                                    onclick="window.location.href='/user/addmember'"
-                                                                >
-                                                                    <i
-                                                                        class="mdi mdi-account-plus"
-                                                                    ></i
-                                                                    >Add new
-                                                                    member
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div
-                                                            class="table-responsive mt-1"
-                                                        >
-                                                            <table
-                                                                class="table select-table"
-                                                            >
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>
-                                                                            <div
-                                                                                class="form-check form-check-flat mt-0"
-                                                                            >
-                                                                                <label
-                                                                                    class="form-check-label"
-                                                                                >
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        class="form-check-input"
-                                                                                        aria-checked="false"
-                                                                                        id="check-all" /><i
-                                                                                        class="input-helper"
-                                                                                    ></i
-                                                                                ></label>
-                                                                            </div>
-                                                                        </th>
-                                                                        <th>
-                                                                            Name
-                                                                        </th>
-                                                                        <th>
-                                                                            Company
-                                                                        </th>
-                                                                        <th>
-                                                                            Designation
-                                                                        </th>
-                                                                        <th>
-                                                                            date
-                                                                            registered
-                                                                        </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                {% for member in
-                                                                all_users%}
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <div
-                                                                                class="form-check form-check-flat mt-0"
-                                                                            >
-                                                                                <label
-                                                                                    class="form-check-label"
-                                                                                >
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        class="form-check-input"
-                                                                                        aria-checked="false" /><i
-                                                                                        class="input-helper"
-                                                                                    ></i
-                                                                                ></label>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div
-                                                                                class="d-flex"
-                                                                            >
-                                                                                <img
-                                                                                    src="assets/images/faces/face1.jpg"
-                                                                                    alt=""
-                                                                                />
-                                                                                <div>
-                                                                                    <h6>
-                                                                                        {{member.staff_name}}
-                                                                                    </h6>
-                                                                                    <p>
-                                                                                        {{member.email}}
-                                                                                    </p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <h6>
-                                                                                {{member.organization_name}}
-                                                                            </h6>
-                                                                            <p>
-                                                                                {{member.organization_id}}
-                                                                            </p>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div
-                                                                                class="badge badge-opacity-warning"
-                                                                            >
-                                                                                {{member.designation}}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div
-                                                                                class="badge badge-opacity-warning"
-                                                                            >
-                                                                                {{member.date}}
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                                {%endfor%}
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 d-flex flex-column">
-                                        <div class="row flex-grow">
-                                            <div
-                                                class="col-12 grid-margin stretch-card"
-                                            >
-                                                <div class="card card-rounded">
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <div
-                                                                class="col-lg-12"
-                                                            >
-                                                                <div
-                                                                    class="d-flex justify-content-between align-items-center"
-                                                                >
-                                                                    <h4
-                                                                        class="card-title card-title-dash"
-                                                                    >
-                                                                        Todo
-                                                                        list
-                                                                    </h4>
-                                                                    <div
-                                                                        class="add-items d-flex mb-0"
-                                                                    >
-                                                                        <!-- <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?"> -->
-                                                                        <button
-                                                                            class="add btn btn-icons btn-rounded btn-primary todo-list-add-btn text-white me-0 pl-12p"
-                                                                        >
-                                                                            <i
-                                                                                class="mdi mdi-plus"
-                                                                            ></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div
-                                                                    class="list-wrapper"
-                                                                >
-                                                                    <ul
-                                                                        class="todo-list todo-list-rounded"
-                                                                    >
-                                                                        <li
-                                                                            class="d-block"
-                                                                        >
-                                                                            <div
-                                                                                class="form-check w-100"
-                                                                            >
-                                                                                <label
-                                                                                    class="form-check-label"
-                                                                                >
-                                                                                    <input
-                                                                                        class="checkbox"
-                                                                                        type="checkbox"
-                                                                                    />
-                                                                                    Lorem
-                                                                                    Ipsum
-                                                                                    is
-                                                                                    simply
-                                                                                    dummy
-                                                                                    text
-                                                                                    of
-                                                                                    the
-                                                                                    printing
-                                                                                    <i
-                                                                                        class="input-helper rounded"
-                                                                                    ></i>
-                                                                                </label>
-                                                                                <div
-                                                                                    class="d-flex mt-2"
-                                                                                >
-                                                                                    <div
-                                                                                        class="ps-4 text-small me-3"
-                                                                                    >
-                                                                                        24
-                                                                                        June
-                                                                                        2020
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="badge badge-opacity-warning me-3"
-                                                                                    >
-                                                                                        Due
-                                                                                        tomorrow
-                                                                                    </div>
-                                                                                    <i
-                                                                                        class="mdi mdi-flag ms-2 flag-color"
-                                                                                    ></i>
-                                                                                </div>
-                                                                            </div>
-                                                                        </li>
-                                                                        <li
-                                                                            class="d-block"
-                                                                        >
-                                                                            <div
-                                                                                class="form-check w-100"
-                                                                            >
-                                                                                <label
-                                                                                    class="form-check-label"
-                                                                                >
-                                                                                    <input
-                                                                                        class="checkbox"
-                                                                                        type="checkbox"
-                                                                                    />
-                                                                                    Lorem
-                                                                                    Ipsum
-                                                                                    is
-                                                                                    simply
-                                                                                    dummy
-                                                                                    text
-                                                                                    of
-                                                                                    the
-                                                                                    printing
-                                                                                    <i
-                                                                                        class="input-helper rounded"
-                                                                                    ></i>
-                                                                                </label>
-                                                                                <div
-                                                                                    class="d-flex mt-2"
-                                                                                >
-                                                                                    <div
-                                                                                        class="ps-4 text-small me-3"
-                                                                                    >
-                                                                                        23
-                                                                                        June
-                                                                                        2020
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="badge badge-opacity-success me-3"
-                                                                                    >
-                                                                                        Done
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </li>
-                                                                        <li>
-                                                                            <div
-                                                                                class="form-check w-100"
-                                                                            >
-                                                                                <label
-                                                                                    class="form-check-label"
-                                                                                >
-                                                                                    <input
-                                                                                        class="checkbox"
-                                                                                        type="checkbox"
-                                                                                    />
-                                                                                    Lorem
-                                                                                    Ipsum
-                                                                                    is
-                                                                                    simply
-                                                                                    dummy
-                                                                                    text
-                                                                                    of
-                                                                                    the
-                                                                                    printing
-                                                                                    <i
-                                                                                        class="input-helper rounded"
-                                                                                    ></i>
-                                                                                </label>
-                                                                                <div
-                                                                                    class="d-flex mt-2"
-                                                                                >
-                                                                                    <div
-                                                                                        class="ps-4 text-small me-3"
-                                                                                    >
-                                                                                        24
-                                                                                        June
-                                                                                        2020
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="badge badge-opacity-success me-3"
-                                                                                    >
-                                                                                        Done
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </li>
-                                                                        <li
-                                                                            class="border-bottom-0"
-                                                                        >
-                                                                            <div
-                                                                                class="form-check w-100"
-                                                                            >
-                                                                                <label
-                                                                                    class="form-check-label"
-                                                                                >
-                                                                                    <input
-                                                                                        class="checkbox"
-                                                                                        type="checkbox"
-                                                                                    />
-                                                                                    Lorem
-                                                                                    Ipsum
-                                                                                    is
-                                                                                    simply
-                                                                                    dummy
-                                                                                    text
-                                                                                    of
-                                                                                    the
-                                                                                    printing
-                                                                                    <i
-                                                                                        class="input-helper rounded"
-                                                                                    ></i>
-                                                                                </label>
-                                                                                <div
-                                                                                    class="d-flex mt-2"
-                                                                                >
-                                                                                    <div
-                                                                                        class="ps-4 text-small me-3"
-                                                                                    >
-                                                                                        24
-                                                                                        June
-                                                                                        2020
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="badge badge-opacity-danger me-3"
-                                                                                    >
-                                                                                        Expired
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        <h4 class="card-title card-title-dash">Team Members</h4>
+                        <p class="card-subtitle card-subtitle-dash">
+                            You have {{staff_number}} staff
+                        </p>
                     </div>
+                    <div>
+                        <button
+                            class="btn btn-primary btn-lg text-white mb-0 me-0"
+                            type="button"
+                            onclick="window.location.href='/user/addmember'"
+                        >
+                            <i class="mdi mdi-account-plus"></i>Add new member
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive mt-1">
+                    <table class="table select-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div
+                                        class="form-check form-check-flat mt-0"
+                                    >
+                                        <label class="form-check-label">
+                                            <input
+                                                type="checkbox"
+                                                class="form-check-input"
+                                                aria-checked="false"
+                                                id="check-all" /><i
+                                                class="input-helper"
+                                            ></i
+                                        ></label>
+                                    </div>
+                                </th>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Designation</th>
+                                <th>date registered</th>
+                            </tr>
+                        </thead>
+                        {% for member in all_users%}
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div
+                                        class="form-check form-check-flat mt-0"
+                                    >
+                                        <label class="form-check-label">
+                                            <input
+                                                type="checkbox"
+                                                class="form-check-input"
+                                                aria-checked="false" /><i
+                                                class="input-helper"
+                                            ></i
+                                        ></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex">
+                                        <img
+                                            src="assets/images/faces/face1.jpg"
+                                            alt=""
+                                        />
+                                        <div>
+                                            <h6>{{member.staff_name}}</h6>
+                                            <p>{{member.email}}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h6>{{member.organization_name}}</h6>
+                                    <p>{{member.organization_id}}</p>
+                                </td>
+                                <td>
+                                    <div class="badge badge-opacity-warning">
+                                        {{member.designation}}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-opacity-warning">
+                                        {{member.date}}
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        {%endfor%}
+                    </table>
                 </div>
             </div>
         </div>
-        <!-- content-wrapper ends -->
     </div>
 </div>
 
-{% include "footer.html" %}
-<!-- ======= Footer ======= -->
+<!--  page body end  -->
+
+{% endblock %}

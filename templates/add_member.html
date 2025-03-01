@@ -1,411 +1,130 @@
-{% include 'layout2.html' %} {% block title%}<title>Add Member</title>{%
-endblock%}
+{% extends "dblayout.html" %} {% block title %} Add New Member {% endblock %}
+<!--  page header end -->
 
-<div class="container-fluid page-body-wrapper">
-    <!-- partial:partials/_sidebar.html start-->
-    <nav class="sidebar sidebar-offcanvas" id="sidebar">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('admin_dash')}}">
-                    <i class="mdi mdi-grid-large menu-icon"></i>
-                    <span class="menu-title">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item nav-category">category</li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#auth"
-                    aria-expanded="false"
-                    aria-controls="auth"
-                >
-                    <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                    <span class="menu-title">Profile</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="auth">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/samples/error-500.html"
-                            >
-                                View profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/samples/login.html">
-                                Edit Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/samples/register.html"
-                            >
-                                Reset Password
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#ui-basic"
-                    aria-expanded="false"
-                    aria-controls="ui-basic"
-                >
-                    <i class="menu-icon mdi mdi-floor-plan"></i>
-                    <span class="menu-title">My Team</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="ui-basic">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="{{url_for('admin_view_all')}}"
-                                >View Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="{{url_for('addmember')}}"
-                                >Add Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/ui-features/typography.html"
-                                >Delete Staff</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#form-elements"
-                    aria-expanded="false"
-                    aria-controls="form-elements"
-                >
-                    <i class="menu-icon mdi mdi-card-text-outline"></i>
-                    <span class="menu-title">Requests</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="form-elements">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/forms/basic_elements.html"
-                                >New Request</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/forms/basic_elements.html"
-                                >Pending Request</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/forms/basic_elements.html"
-                                >Request History</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#tables"
-                    aria-expanded="false"
-                    aria-controls="tables"
-                >
-                    <i class="menu-icon mdi mdi-table"></i>
-                    <span class="menu-title">Inventory</span>
-                </a>
-            </li>
+{% block child_content_1 %}
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('logout')}}">
-                    <i class="menu-icon mdi mdi-file-document"></i>
-                    <span class="menu-title">Logout</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- partial:partials/_sidebar.html end-->
-    <div class="main-panel">
-        <div class="content-wrapper">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="home-tab">
-                        <div class="text-center border-1 mb-5 mt-2">
-                            <h3 class="display-3 text-capitalize">
-                                <span class="text-primary fw-bold"
-                                    >{{user.organization_name}}</span
-                                >
-                            </h3>
-                        </div>
-                        <div
-                            class="d-sm-flex align-items-center justify-content-between border-bottom mb-5 mt-2"
+<!--  page body start  -->
+
+<div class="row flex-grow">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card card-rounded">
+            <div class="card-body">
+                <div
+                    div
+                    class="d-sm-flex justify-content-between align-items-start"
+                >
+                    <div>
+                        <h4 class="card-title card-title-dash">Team Members</h4>
+                        <p class="card-subtitle card-subtitle-dash">
+                            You have {{staff_number}} members
+                        </p>
+                    </div>
+                    <div>
+                        <button
+                            class="btn btn-primary btn-lg text-white mb-0 me-0"
+                            type="button"
+                            onclick="window.location.href='/user/addmember'"
                         >
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <h3 class="welcome-text">
-                                        Welcome,
-                                        <span class="text-black fw-bold"
-                                            >{{user.admin_name or staff_name}}</span
+                            <i class="mdi mdi-account-plus"></i>Add new member
+                        </button>
+                    </div>
+                </div>
+                <div class="align-items-center">
+                    <div class="card-body mt-1">
+                        {% for errors in msg%}
+                        <div class="alert alert-info" role="alert">
+                            {{errors}}
+                        </div>
+                        {% endfor %}
+
+                        <form method="POST" , action="{{url_for('addmember')}}">
+                            <div class="form-row">
+                                <div class="border rounded mt-5 p-3">
+                                    <div class="form-group m-3">
+                                        <label>Staff Name </label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="staff_name"
+                                            placeholder="Administrator Name or Title"
+                                            value="{{staff_name}}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group m-3">
+                                        <label>Designation</label>
+                                        <select
+                                            class="form-select"
+                                            name="designation"
+                                            value="{{designation}}"
+                                            aria-label="Default select example"
                                         >
-                                    </h3>
-                                    <h5 class="welcome-sub-text">
-                                        {{role}}
-                                    </h5>
-                                </li>
-                            </ul>
-                        </div>
-                        <div
-                            class="d-sm-flex align-items-center justify-content-between border-bottom"
-                        >
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link active ps-0"
-                                        id="home-tab"
-                                        data-bs-toggle="tab"
-                                        href="#overview"
-                                        role="tab"
-                                        aria-controls="overview"
-                                        aria-selected="true"
-                                        >Overview</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link"
-                                        id="profile-tab"
-                                        data-bs-toggle="tab"
-                                        href="#audiences"
-                                        role="tab"
-                                        aria-selected="false"
-                                        >Request</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link"
-                                        id="contact-tab"
-                                        data-bs-toggle="tab"
-                                        href="#demographics"
-                                        role="tab"
-                                        aria-selected="false"
-                                        >Status</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a
-                                        class="nav-link border-0"
-                                        id="more-tab"
-                                        data-bs-toggle="tab"
-                                        href="#more"
-                                        role="tab"
-                                        aria-selected="false"
-                                        >Team</a
-                                    >
-                                </li>
-                            </ul>
-                            <div>
-                                <div class="btn-wrapper">
-                                    <a
-                                        href="#"
-                                        class="btn btn-otline-dark align-items-center"
-                                        ><i class="icon-share"></i> Share</a
-                                    >
-                                    <a href="#" class="btn btn-otline-dark"
-                                        ><i class="icon-printer"></i> Print</a
-                                    >
-                                    <a
-                                        href="#"
-                                        class="btn btn-primary text-white me-0"
-                                        ><i class="icon-download"></i> Export</a
-                                    >
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab-content tab-content-basic">
-                            <div
-                                class="tab-pane fade show active"
-                                id="overview"
-                                role="tabpanel"
-                                aria-labelledby="overview"
-                            >
-                                <div class="card card-rounded">
-                                    <div class="align-items-center">
-                                        <div class="card-body mt-1">
-                                            {% for errors in msg%}
-                                            <div
-                                                class="alert alert-info"
-                                                role="alert"
-                                            >
-                                                {{errors}}
-                                            </div>
-                                            {% endfor %}
-
-                                            <form
-                                                method="POST"
-                                                ,
-                                                action="{{url_for('addmember')}}"
-                                            >
-                                                <div class="form-row">
-                                                    <div
-                                                        class="border rounded mt-5 p-3"
-                                                    >
-                                                        <div
-                                                            class="form-group m-3"
-                                                        >
-                                                            <label
-                                                                >Staff Name
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                class="form-control"
-                                                                name="staff_name"
-                                                                placeholder="Administrator Name or Title"
-                                                                value="{{designation}}"
-                                                                required
-                                                            />
-                                                        </div>
-                                                        <div
-                                                            class="form-group m-3"
-                                                        >
-                                                            <label
-                                                                >Designation</label
-                                                            >
-                                                            <select
-                                                                class="form-select"
-                                                                name="designation"
-                                                                value="{{designation}}"
-                                                                aria-label="Default select example"
-                                                            >
-                                                                
-                                                                <option
-                                                                    selected
-                                                                    value="Officer"
-                                                                >
-                                                                    Staff Member
-                                                                </option>
-                                                                <option
-                                                                    value="Supervisor"
-                                                                >
-                                                                    Supervisors/Team
-                                                                    Lead
-                                                                </option>
-                                                                <option
-                                                                    value="Storekeeper"
-                                                                >
-                                                                    Storekeeper
-                                                                </option>
-                                                                <option
-                                                                    value="Procurement"
-                                                                >
-                                                                    Procurement
-                                                                </option>
-                                                                <option
-                                                                    value="Finance"
-                                                                >
-                                                                    Finance
-                                                                </option>
-                                                                <option
-                                                                    value="MD/CEO"
-                                                                >
-                                                                    MD/CEO
-                                                                </option>
-                                                                <option
-                                                                    value="Board"
-                                                                >
-                                                                    Board
-                                                                    Executives
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                        <div
-                                                            class="form-group m-3"
-                                                        >
-                                                            <label>Email</label>
-                                                            <input
-                                                                type="email"
-                                                                class="form-control"
-                                                                name="email"
-                                                                placeholder="Email Address"
-                                                                value="{{email}}"
-                                                                required
-                                                            />
-                                                        </div>
-                                                        <div
-                                                            class="form-group m-3"
-                                                        >
-                                                            <label
-                                                                >Password</label
-                                                            >
-                                                            <input
-                                                                type="password"
-                                                                class="form-control"
-                                                                name="password"
-                                                                value="{{password}}"
-                                                                required
-                                                            />
-                                                        </div>
-                                                        <div
-                                                            class="form-group m-3"
-                                                        >
-                                                            <label
-                                                                >Verify
-                                                                Password</label
-                                                            >
-                                                            <input
-                                                                type="password"
-                                                                class="form-control"
-                                                                name="password2"
-                                                                value="{{password2}}"
-                                                                required
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <button
-                                                    type="submit"
-                                                    class="btn btn-primary m-3"
-                                                >
-                                                    Register
-                                                </button>
-                                            </form>
-                                        </div>
+                                            <option selected value="Officer">
+                                                Staff Member
+                                            </option>
+                                            <option value="Supervisor">
+                                                Supervisors/Team Lead
+                                            </option>
+                                            <option value="Storekeeper">
+                                                Storekeeper
+                                            </option>
+                                            <option value="Procurement">
+                                                Procurement
+                                            </option>
+                                            <option value="Finance">
+                                                Finance
+                                            </option>
+                                            <option value="MD/CEO">
+                                                MD/CEO
+                                            </option>
+                                            <option value="Board">
+                                                Board Executives
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group m-3">
+                                        <label>Email</label>
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            name="email"
+                                            placeholder="Email Address"
+                                            value="{{email}}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group m-3">
+                                        <label>Password</label>
+                                        <input
+                                            type="password"
+                                            class="form-control"
+                                            name="password"
+                                            value="{{password}}"
+                                            required
+                                        />
+                                    </div>
+                                    <div class="form-group m-3">
+                                        <label>Verify Password</label>
+                                        <input
+                                            type="password"
+                                            class="form-control"
+                                            name="password2"
+                                            value="{{password2}}"
+                                            required
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary m-3">
+                                Register
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- content-wrapper ends -->
     </div>
 </div>
+<!--  page body end  -->
 
-{% include "footer.html" %}
-<!-- ======= Footer ======= -->
+{% endblock %}

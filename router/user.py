@@ -127,20 +127,33 @@ async def addmember(request: Request, db:Session=Depends(script.get_db)):
 
     user = utility.get_user_from_token(request, db)
     
-    
-    if user['role'] != 'administrator':
-        msg.append("Contact your administrator, Try again!")
-        return templates.TemplateResponse("dash.html", {
+
+    if not user:
+        msg.append("Session Expired, Login again!")
+        return templates.TemplateResponse("login.html", {
             "request": request, 
             "msg": msg,
-            "user": user['user']
+            
         })
+    if user['role'] != 'administrator':
+        msg.append("Contact your administrator, Try again!")
+        return templates.TemplateResponse("dashboard.html", {
+            "request": request, 
+            "msg": msg,
+            
+        })
+        
+    all_users = db.query(model.User).filter(model.User.organization_id == user["user"].id ).all()
+    staff_number = len(all_users)
     
     return templates.TemplateResponse(
         "add_member.html", {
             "request": request, 
             "msg": msg,
-            "user": user['user']
+            "user": user['user'],
+            "role": user['role'],
+            "staff_number": staff_number
+        
         })
 
 
@@ -159,24 +172,38 @@ async def addmember(
     msg = []
 
     user = utility.get_user_from_token(request, db)
-    print (user['role'])
-    
-    if not user['role'] != 'administrator':
-        msg.append("Contact your administrator, Try again!")
-        return templates.TemplateResponse("dash.html", {
-            "request": request, 
-            "msg": msg,
-        })
-
-    admin_auth = db.query(model.Organization).filter(model.Organization.email == user['user'].email).first()
-
-    if not admin_auth:
-        msg.append("Contact your administrator, Try again!")
+    if not user:
+        msg.append("Session Expired, login again")
         return templates.TemplateResponse("login.html", {
             "request": request, 
             "msg": msg,
         })
-    
+        
+    admin_auth = db.query(model.Organization).filter(model.Organization.email == user['user'].email).first()
+    if not admin_auth:
+        msg.append("Not allowed, Contact your administrator")
+        return templates.TemplateResponse("login.html", {
+            "request": request, 
+            "msg": msg,
+            "user": user['user'],
+            "role": user['role']
+        })
+        
+    role_check = db.query(model.User).filter(model.User.designation == designation, model.User.organization_id == admin_auth.id).first()
+    if role_check:
+        msg.append("Role already occupied")
+        return templates.TemplateResponse("add_member.html", {
+            "request": request, 
+            "msg": msg,
+            "staff_name": staff_name,
+            "designation": designation,
+            'email': email,
+            'password': password,
+            'password2': password2,
+            "user": user['user'],
+            "role": user['role']
+        })
+        
     if password != password2:
         msg.append("Passwords do not match")
         return templates.TemplateResponse("add_member.html", {
@@ -187,20 +214,24 @@ async def addmember(
             'email': email,
             'password': password,
             'password2': password2,
+            "user": user['user'],
+            "role": user['role']
         })
     
     if len(password) < 8:
-        msg.append("Password should be > 6 character")
+        msg.append("Password should be at least 8 characters long")
         return templates.TemplateResponse("add_member.html", {
             "request": request, 
             "msg": msg,
             "staff_name": staff_name,
             "designation": designation,
-            'email': email,
-            'password': password,
-            'password2': password2,
+            "email": email,
+            "password": password,
+            "password2": password2,
+            "user": user['user'],
+            "role": user['role']
         })
-
+    
     new_staff = model.User(
         organization_name = admin_auth.organization_name, 
         staff_name = staff_name,
@@ -215,60 +246,48 @@ async def addmember(
         db.add(new_staff)
         db.commit()
         db.refresh(new_staff)
-        msg.append("Registration successful")        
+        msg.append("Registration successful")
+                
         return templates.TemplateResponse("add_member.html", {
             "request": request, 
             "msg": msg,
+            "user": user['user'],
+            "role": user['role']
         })
         
     except IntegrityError:
+        db.rollback()  # Rollback the session if there's an error
         msg.append("Email already taken")
         return templates.TemplateResponse("add_member.html", {
             "request": request, 
             "msg": msg,
             "staff_name": staff_name,
             "designation": designation,
-            'email': email,
-            'password': password,
-            'password2': password2,
+            "email": email,
+            "user": user['user'],
+            "role": user['role']
         })
 
-
-
-
-#add review ROUTE
-@router.post("/post_review", response_class=HTMLResponse)
-async def post_review(
-    request: Request,
-    # rating: str = Form(...),
-    content: str = Form(...),
-    name: str = Form(...),
-    email: str = Form(...),
-    db:Session=Depends(script.get_db)
-):
-    
+#new request page route
+@router.get("/newrequest", response_class=HTMLResponse)
+async def newrequest(request: Request, db:Session=Depends(script.get_db)):
     
     msg = []
-    
-    rating = "5"
-    
-    # authentication
+
     user = utility.get_user_from_token(request, db)
     
-    # if not user:
-    #     msg.append("Session Expired, Login again!")
-    #     return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+    if not user:
+        msg.append("Session Expired, Login again!")
+        return templates.TemplateResponse("login.html", {
+            "request": request, 
+            "msg": msg,
+            
+        })
     
-    #database dump
-    save_review = model.Review(
-        name=name,
-        email=email,
-        rating = rating,
-        content = content,
-        date = datetime.now().date()
-    )
-    db.add(save_review)
-    db.commit()
-    db.refresh(save_review)
-    return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
-
+    return templates.TemplateResponse(
+        "new_request.html", {
+            "request": request, 
+            "msg": msg,
+            "user": user['user'],
+            "role": user['role']
+        })

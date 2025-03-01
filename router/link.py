@@ -40,14 +40,14 @@ async def admin_dash(
         
     if user_data["role"] != "administrator":
         return templates.TemplateResponse(
-        "dash.html",{
+        "dashboard.html",{
         "request": request,
         "user": user_data["user"],
         "role": user_data["role"]
         })
     
     return templates.TemplateResponse(
-        "dash.html",{
+        "dashboard.html",{
         "request": request,
         "user": user_data.get("user"),
         "role": user_data.get("role")
@@ -76,7 +76,7 @@ async def admin_view_all(
         
         msg.append("Contact your administrator")
         return templates.TemplateResponse(
-        "dash.html",{
+        "dashboard.html",{
         "request": request,
         "msg": msg,
         "user": user_data["user"],
