@@ -1,14 +1,11 @@
-{% extends "layout2.html" %} 
-
-{% block title %} Dashboard layout {% endblock %}
-
+{% extends "layout2.html" %} {% block title %} Dashboard layout {% endblock %}
 {% block content %}
 <div class="container-fluid page-body-wrapper">
     <!-- partial:partials/_sidebar.html start-->
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{url_for('admin_dash')}}">
+                <a class="nav-link" href="{{url_for('dashboard')}}">
                     <i class="mdi mdi-grid-large menu-icon"></i>
                     <span class="menu-title">Dashboard</span>
                 </a>
@@ -105,7 +102,7 @@
                         <li class="nav-item">
                             <a
                                 class="nav-link"
-                                href="{{url_for('newrequest')}}"
+                                href="{{url_for('create_requisition')}}"
                                 >New Request</a
                             >
                         </li>
@@ -161,7 +158,9 @@
                                 >
                             </h3>
                         </div>
-                        <div class="d-sm-flex align-items-center justify-content-between border-bottom mb-5 mt-2">
+                        <div
+                            class="d-sm-flex align-items-center justify-content-between border-bottom mb-5 mt-2"
+                        >
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <h3 class="welcome-text">
@@ -181,13 +180,16 @@
                                 </li>
                             </ul>
                         </div>
+                        
                         {% for errors in msg%}
                         <div class="alert alert-info" role="alert">
                             {{errors}}
                         </div>
                         {% endfor %}
 
-                        <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                        <div
+                            class="d-sm-flex align-items-center justify-content-between border-bottom"
+                        >
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <a
@@ -206,7 +208,7 @@
                                         class="nav-link"
                                         id="profile-tab"
                                         data-bs-toggle="tab"
-                                        href="{{url_for('newrequest')}}"
+                                        href="{{url_for('create_requisition')}}"
                                         role="tab"
                                         aria-selected="false"
                                         >Request</a
@@ -254,77 +256,33 @@
                             </div>
                         </div>
 
-
-
-
-
-
-
                         <!--  page body start  -->
-<div class="tab-content tab-content-basic">
-    <div
-        class="tab-pane fade show active"
-        id="overview"
-        role="tabpanel"
-        aria-labelledby="overview"
-    >
-        <div class="row">
-            <!--  Left row start  -->
-            <div class="col-lg-8 d-flex flex-column">
+                        <div class="tab-content tab-content-basic">
+                            <div
+                                class="tab-pane fade show active"
+                                id="overview"
+                                role="tabpanel"
+                                aria-labelledby="overview"
+                            >
+                                <div class="row">
 
-                {%block child_content_1%}
-                    <!--  page body start  -->
-                    
-                    <!--  page body end  -->
-                {% endblock %}
-            </div>
+                                    {%block child_content_1%}
+                                        <!--  page body start  -->
 
-            <!--  right row start  -->
-            <div class="col-lg-4 d-flex flex-column">
-                {%block child_content_2 %}
-                    <!--  page body start  -->
-                    {% include "todo.html" %}
-                    <!--  page body end  -->
-                {% endblock %}
-            </div>
-            
-        </div>
-    </div>
-</div>
-<!--  page body end  -->
-
-
-
-
-
-
-
-
-
-
-
-                    
-
-
-
-
-
-
-
-                        
-
+                                        <!--  page body end  -->
+                                    {% endblock %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--  page body end  -->
                     </div>
                 </div>
             </div>
         </div>
         <!-- content-wrapper ends -->
-
-
     </div>
 </div>
 
-
-{% include "footer.html" %}
-
-{% endblock %}
+{% include "footer.html" %} {% endblock %}
 <!-- ======= Footer ======= -->

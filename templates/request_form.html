@@ -1,0 +1,136 @@
+<!--  page header start -->
+{% extends "dblayout.html" %} 
+{% block title %} Create Request {% endblock %} 
+<!--  page header end -->
+
+
+<!--  page body start  -->
+
+{% block child_content_1 %}
+<div class="row flex-grow">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card card-rounded">
+            <div class="align-items-center">
+                <div class="card-body mt-1">
+                    {% for errors in msg%}
+                    <div class="alert alert-info" role="alert">{{errors}}</div>
+                    {% endfor %}
+
+                    <form id="requisition-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="request_number">Request Number</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{reid}}"
+                                id="request_number"
+                                name="request_number"
+                                required
+                            />
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="description">Reason for Requisition</label>
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                rows="3"
+                                required
+                            ></textarea>
+                        </div>
+        
+                        <h4>Line Items</h4>
+                        <div id="line-items">
+                            <div class="line-item row mb-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="item_name">Item Name</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="line_items[0][item_name]"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            name="line_items[0][quantity]"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="category">Category</label>
+                                        <select
+                                            class="form-control"
+                                            name="line_items[0][category]"
+                                            required
+                                        >
+                                            <option value="">Select Category</option>
+                                            <option value="office_supplies">
+                                                Office Supplies
+                                            </option>
+                                            <option value="electronics">
+                                                Electronics
+                                            </option>
+                                            <option value="furniture">Furniture</option>
+                                            <option value="software">Software</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="item_reason">Item Reason</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="line_items[0][item_reason]"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger remove-item"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <button type="button" id="add-item" class="btn btn-success">
+                            Add Item
+                        </button>
+                        <br /><br />
+        
+                        <div class="form-group">
+                            <label for="attachment">Attach File (Optional)</label>
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="attachment"
+                                name="attachment"
+                            />
+                        </div>
+                        <button type="button" id="submit-form" class="btn btn-primary">
+                            Submit Requisition
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--  page body end  -->

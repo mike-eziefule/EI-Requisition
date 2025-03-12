@@ -20,17 +20,18 @@ async def index(
     return templates.TemplateResponse("index.html", {"request": request})
 
 #dashboard page route
-@router.get("/admin_dash", response_class=HTMLResponse)
-async def admin_dash(
+@router.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(
     request: Request,
     db:Session=Depends(script.get_db)
     ):
     
     msg = []
     
-    user_data = utility.get_user_from_token(request, db)
+    user_data = utility.get_user_from_token(request, db)    #return a dictionary
+    owner = utility.get_staff_from_token(request, db)       #return user object
     
-    if not user_data:
+    if not user_data or not owner:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
         "login.html",{
@@ -38,19 +39,18 @@ async def admin_dash(
         "msg": msg,
         })
         
-    if user_data["role"] != "administrator":
-        return templates.TemplateResponse(
-        "dashboard.html",{
-        "request": request,
-        "user": user_data["user"],
-        "role": user_data["role"]
-        })
+    all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == owner.id).all()
+    length_hint = len(all_requests)
+    
     
     return templates.TemplateResponse(
         "dashboard.html",{
         "request": request,
         "user": user_data.get("user"),
-        "role": user_data.get("role")
+        "role": user_data.get("role"),
+        "all_requests": all_requests,
+        "length_hint": length_hint,
+        "owner": owner
         })
     
 #dashboard page route

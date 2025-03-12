@@ -1,4 +1,7 @@
-{% extends "dblayout.html" %} {% block title %} View Team {% endblock %} 
+{% extends "dblayout.html" %} {% block title %} View Team {% endblock %}
+
+<!--  page body start  -->
+
 {% block child_content_1 %}
 
 <div class="row flex-grow">
@@ -80,7 +83,7 @@
                                 </td>
                                 <td>
                                     <h6>{{member.organization_name}}</h6>
-                                    <p>{{member.organization_id}}</p>
+                                    <p>Line Manager: {{member.line_manager}}</p>
                                 </td>
                                 <td>
                                     <div class="badge badge-opacity-warning">
@@ -101,7 +104,5 @@
         </div>
     </div>
 </div>
-
-<!--  page body end  -->
-
 {% endblock %}
+<!--  page body end  -->

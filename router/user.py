@@ -1,11 +1,11 @@
 """Routes related to User Account creation."""
 
-from fastapi import APIRouter, Depends, Request, Form, status, HTTPException
+from fastapi import APIRouter, Depends, Request, Form
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from database import model, script
 from services.utility import bcrpyt_context, get_user_from_token
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from config import get_settings
 from services import utility
@@ -163,6 +163,7 @@ async def addmember(
     request: Request, 
     staff_name: str = Form(...), 
     designation: str = Form(...), 
+    line_manager: str = Form(...), 
     email: str = Form(...),
     password: str = Form(...), 
     password2: str = Form(...),
@@ -197,6 +198,7 @@ async def addmember(
             "msg": msg,
             "staff_name": staff_name,
             "designation": designation,
+            "line_manager": line_manager,
             'email': email,
             'password': password,
             'password2': password2,
@@ -237,6 +239,7 @@ async def addmember(
         staff_name = staff_name,
         designation = designation,
         email = email,
+        line_manager = line_manager,
         password = bcrpyt_context.hash(password),
         date = datetime.now().date(),
         organization_id = admin_auth.id,
@@ -263,31 +266,9 @@ async def addmember(
             "msg": msg,
             "staff_name": staff_name,
             "designation": designation,
+            "line_manager": line_manager,
             "email": email,
             "user": user['user'],
             "role": user['role']
         })
 
-#new request page route
-@router.get("/newrequest", response_class=HTMLResponse)
-async def newrequest(request: Request, db:Session=Depends(script.get_db)):
-    
-    msg = []
-
-    user = utility.get_user_from_token(request, db)
-    
-    if not user:
-        msg.append("Session Expired, Login again!")
-        return templates.TemplateResponse("login.html", {
-            "request": request, 
-            "msg": msg,
-            
-        })
-    
-    return templates.TemplateResponse(
-        "new_request.html", {
-            "request": request, 
-            "msg": msg,
-            "user": user['user'],
-            "role": user['role']
-        })

@@ -13,6 +13,34 @@ from sqlalchemy.orm import Session
 bcrpyt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 
+def get_staff_from_token(request: Request, db: Session):
+    """
+    Decode the JWT token, extract username/email, 
+    then authenticate if the user exists in the database.
+    Returns the user if authenticated, else None.
+    """
+    try:
+        token = request.cookies.get("access_token")
+        if not token:
+            return None
+
+        # Decode the token
+        payload = jwt.decode(token, get_settings().SECRET_KEY, algorithms=[get_settings().ALGORITHM])
+        username: str = payload.get("sub")
+        
+        if not username:
+            return None
+
+        # Query both User and Organization tables in a single query
+        user = db.query(model.User).filter(model.User.email == username).first()
+        if user:
+            return user     # Return user 
+        return None         # Return user 
+
+    except JWTError:  # Catches token-related errors
+        return None
+    except Exception as e:  # General exception handling
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 
 def get_user_from_token(request: Request, db: Session):

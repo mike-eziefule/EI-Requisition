@@ -147,16 +147,15 @@
     /**
      * Frequently Asked Questions Toggle
      */
-    document.addEventListener('DOMContentLoaded', function() {
-      document
-          .querySelectorAll(".faq-item h3, .faq-item .faq-toggle")
-          .forEach((faqItem) => {
-              faqItem.addEventListener("click", () => {
-                  faqItem.parentNode.classList.toggle("faq-active");
-              });
-          });
-  });
-  
+    document.addEventListener("DOMContentLoaded", function () {
+        document
+            .querySelectorAll(".faq-item h3, .faq-item .faq-toggle")
+            .forEach((faqItem) => {
+                faqItem.addEventListener("click", () => {
+                    faqItem.parentNode.classList.toggle("faq-active");
+                });
+            });
+    });
 
     /**
      * Animate the skills items on reveal
