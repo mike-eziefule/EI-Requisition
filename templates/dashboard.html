@@ -63,10 +63,27 @@ block child_content_1 %}
                                     </td>
                                     <td>
                                         <h6>{{ item.description }}</h6>
-                                        <p>view detail</p>
+                                        <!-- Anchor tag to trigger the modal -->
+                                        <a
+                                            href="#"
+                                            class="btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#tableModal"
+                                            data-ReID="{{item.request_number }}"
+                                            data-ItemName="{{ item.item_name }}"
+                                            data-Quantity="{{ item.quantity }}"
+                                            data-Category="{{ item.category }}"
+                                            data-Reason="{{ item.reason }}"
+
+                                        >
+                                            View Details
+                                        </a>
+
+                                        <!-- The Pop-up Modal -->
                                     </td>
                                     <td>
-                                        {% if item.status == "pending with Supervisor"%}
+                                        {% if item.status == "pending with
+                                        Supervisor"%}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -85,7 +102,8 @@ block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "pending with Manager"%}
+                                        {% elif item.status == "pending with
+                                        Manager"%}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -104,7 +122,8 @@ block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "pending with MD"%}
+                                        {% elif item.status == "pending with
+                                        MD"%}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -175,6 +194,12 @@ block child_content_1 %}
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Modal -->
+                    {% block modal %}
+                        {% include "preview.html" %}
+                    {% endblock %}
+                    
                 </div>
             </div>
         </div>
@@ -186,4 +211,5 @@ block child_content_1 %}
     {% include "todo.html" %}
     <!--  page body end  -->
 </div>
+
 {% endblock %}

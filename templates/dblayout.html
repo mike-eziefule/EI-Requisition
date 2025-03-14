@@ -180,7 +180,7 @@
                                 </li>
                             </ul>
                         </div>
-                        
+
                         {% for errors in msg%}
                         <div class="alert alert-info" role="alert">
                             {{errors}}
@@ -265,23 +265,21 @@
                                 aria-labelledby="overview"
                             >
                                 <div class="row">
-
                                     {%block child_content_1%}
-                                        <!--  page body start  -->
+                                    <!--  page body start  -->
 
-                                        <!--  page body end  -->
+                                    <!--  page body end  -->
                                     {% endblock %}
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--  page body end  -->
                     </div>
+                    <!--  page body end  -->
                 </div>
             </div>
         </div>
-        <!-- content-wrapper ends -->
     </div>
+    <!-- content-wrapper ends -->
 </div>
 
 {% include "footer.html" %} {% endblock %}

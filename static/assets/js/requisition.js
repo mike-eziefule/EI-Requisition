@@ -98,17 +98,17 @@ document
                 method: "POST",
                 body: requestFormData,
             });
-        
+
             if (response.ok) {
                 // Check if the response is JSON
                 const contentType = response.headers.get("Content-Type");
                 if (contentType && contentType.includes("application/json")) {
                     const data = await response.json();
                     console.log(data); // Logs the response data from the server
-        
+
                     // Handle success
-                    alert('Requisition created successfully');
-                    window.location.href = '/dashboard'; // Redirect to another page (dashboard or relevant page)
+                    alert("Requisition created successfully");
+                    window.location.href = "/dashboard"; // Redirect to another page (dashboard or relevant page)
                 } else {
                     alert("Unexpected response format.");
                 }
@@ -123,10 +123,19 @@ document
                     alert("An unexpected error occurred.");
                 }
             }
-        
         } catch (error) {
             alert("An error occurred while submitting the form.");
             console.error(error);
         }
-        
     });
+
+// JavaScript to control the modal
+// Get the anchor tag and modal
+const openPopupBtn = document.getElementById("openPopupBtn");
+const tableModal = new bootstrap.Modal(document.getElementById("tableModal"));
+
+// Open the modal when the anchor tag is clicked
+openPopupBtn.addEventListener("click", (e) => {
+    e.preventDefault(); // Prevent default anchor behavior
+    tableModal.show();
+});
