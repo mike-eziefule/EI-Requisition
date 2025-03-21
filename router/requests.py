@@ -116,3 +116,21 @@ async def create_requisition(
     except Exception as e:
         # Log the error to help with debugging
         return JSONResponse(content={"message": f"Error creating requisition: {e}"}, status_code=500)
+
+
+# Route to fetch data
+@router.get("/lineitems/{item_id}", response_class = JSONResponse)
+def get_item(
+    request: Request,
+    item_id: int,
+    db:Session=Depends(script.get_db),
+    ):
+    
+    try:
+        item = db.query(model.LineItem).filter(model.LineItem.requisition_id == item_id).all()
+        if item is None:
+            # raise HTTPException(status_code=404, detail="Item not found")
+            return JSONResponse(content={"message": "Item not found"}, status_code=404)
+        return {"id": item.id, "name": item.name, "description": item.description}
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail="Database error")

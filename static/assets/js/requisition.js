@@ -129,13 +129,43 @@ document
         }
     });
 
-// JavaScript to control the modal
-// Get the anchor tag and modal
-const openPopupBtn = document.getElementById("openPopupBtn");
-const tableModal = new bootstrap.Modal(document.getElementById("tableModal"));
+// Function to open the modal and load items based on the selected category
+function openModal(requisition_id) {
+    fetch(`/category/${requisition_id}/items`)
+        .then((response) => response.json())
+        .then((data) => {
+            const tableBody = document.querySelector('#itemTable tbody');
+            tableBody.innerHTML = '';  // Clear existing items in modal
 
-// Open the modal when the anchor tag is clicked
-openPopupBtn.addEventListener("click", (e) => {
-    e.preventDefault(); // Prevent default anchor behavior
-    tableModal.show();
-});
+            // Loop through the items and add them to the modal
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.item_name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.category}</td>
+                    <td>${item.item_reason}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Show the modal using Bootstrap's modal method
+            const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            myModal.show();  // Open the modal
+        })
+        .catch((err) => alert("Error fetching items: " + err));
+}
+
+// Function to close the modal
+function closeModal() {
+    const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+    myModal.hide();  // Close the modal using Bootstrap's modal method
+}
+
+// Close modal if clicked outside of modal content
+window.onclick = function (event) {
+    if (event.target == document.getElementById("myModal")) {
+        closeModal();
+    }
+};

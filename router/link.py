@@ -39,9 +39,8 @@ async def dashboard(
         "msg": msg,
         })
         
-    all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == owner.id).all()
-    length_hint = len(all_requests)
-    
+    all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == owner.id).all() # Fetch all requisition unique to user
+    length_hint = len(all_requests)    
     
     return templates.TemplateResponse(
         "dashboard.html",{
@@ -50,9 +49,26 @@ async def dashboard(
         "role": user_data.get("role"),
         "all_requests": all_requests,
         "length_hint": length_hint,
-        "owner": owner
+        "owner": owner,
         })
     
+    
+# Route to fetch items that share the same category_id
+@router.get("/category/{requisition_id}/items", response_model=list)
+def get_items_by_category(
+    requisition_id: int, 
+    db:Session=Depends(script.get_db)
+):
+    # Fetch all items that have same Requisition_id
+    items = db.query(model.LineItem).filter(model.LineItem.requisition_id == requisition_id).all()
+    return [{
+        "id": item.id, 
+        "item_name": item.item_name, 
+        "quantity": item.quantity, 
+        "category": item.category, 
+        "item_reason": item.item_reason
+        } for item in items]
+
 #dashboard page route
 @router.get("/admin_view_all", response_class=HTMLResponse)
 async def admin_view_all(
