@@ -30,11 +30,6 @@
                 </div>
                 <div class="align-items-center">
                     <div class="card-body mt-1">
-                        {% for errors in msg%}
-                        <div class="alert alert-info" role="alert">
-                            {{errors}}
-                        </div>
-                        {% endfor %}
 
                         <form method="POST" , action="{{url_for('addmember')}}">
                             <div class="form-row">

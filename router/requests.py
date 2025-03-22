@@ -117,20 +117,83 @@ async def create_requisition(
         # Log the error to help with debugging
         return JSONResponse(content={"message": f"Error creating requisition: {e}"}, status_code=500)
 
-
-# Route to fetch data
-@router.get("/lineitems/{item_id}", response_class = JSONResponse)
-def get_item(
+# Route to fetch all pending requisitions
+@router.get("/pending_request", response_class=HTMLResponse)
+async def pending_request(
     request: Request,
-    item_id: int,
-    db:Session=Depends(script.get_db),
+    db:Session=Depends(script.get_db)
     ):
     
-    try:
-        item = db.query(model.LineItem).filter(model.LineItem.requisition_id == item_id).all()
-        if item is None:
-            # raise HTTPException(status_code=404, detail="Item not found")
-            return JSONResponse(content={"message": "Item not found"}, status_code=404)
-        return {"id": item.id, "name": item.name, "description": item.description}
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail="Database error")
+    msg = []
+    
+    user = utility.get_staff_from_token(request, db)
+
+    if not user:
+        msg.append("Session expired, LOGIN required")
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
+        
+    pending_requests = db.query(model.Requisition).filter(model.Requisition.status == f"pending with {user.designation}").all()
+    print(f"pending with {user.designation}")
+    length_hint = len(pending_requests)
+    
+    return templates.TemplateResponse(
+        "pending_request.html",{
+        "request": request,
+        "msg": msg,
+        "user": user,
+        "role": user.designation,
+        "pending_requests": pending_requests,
+        "length_hint": length_hint
+        })
+
+
+# FastAPI route for approving requisition
+@router.post("/approve_requisition")
+async def approve_requisition(
+    request: Request,
+    id: int = Form(...),
+    db:Session=Depends(script.get_db)
+):
+    msg = []
+    
+    user = utility.get_staff_from_token(request, db)
+
+    if not user:
+        msg.append("Session expired, LOGIN required")
+        return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
+    
+    requisitions = db.query(model.Requisition).filter(model.Requisition.id == id).first()
+
+    if requisitions:
+        requisitions.status = f"pending with {user.line_manager}"
+        db.commit()
+        return JSONResponse(content={"status": "success", "message": "Requisition approved!"})
+    return JSONResponse(content={"status": "error", "message": "Requisition not found!"})
+
+
+# FastAPI route for rejecting requisition
+@router.post("/reject_requisition")
+async def reject_requisition(
+    request: Request,
+    id: int = Form(...),
+    db:Session=Depends(script.get_db)
+):
+    msg = []
+    
+    user = utility.get_staff_from_token(request, db)
+
+    if not user:
+        msg.append("Session expired, LOGIN required")
+        return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
+    
+    requisitions = db.query(model.Requisition).filter(model.Requisition.id == id).first()
+
+    if requisitions:
+        requisitions.status = "Rejected"
+        db.commit()
+        return JSONResponse(content={"status": "success", "message": "Requisition rejected!"})
+    return JSONResponse(content={"status": "error", "message": "Requisition not found!"})

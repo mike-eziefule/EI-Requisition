@@ -140,6 +140,8 @@ async def addmember(request: Request, db:Session=Depends(script.get_db)):
         return templates.TemplateResponse("dashboard.html", {
             "request": request, 
             "msg": msg,
+            "user": user['user'],
+            "role": user['role'],
             
         })
         
@@ -153,7 +155,6 @@ async def addmember(request: Request, db:Session=Depends(script.get_db)):
             "user": user['user'],
             "role": user['role'],
             "staff_number": staff_number
-        
         })
 
 

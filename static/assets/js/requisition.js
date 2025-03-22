@@ -169,3 +169,44 @@ window.onclick = function (event) {
         closeModal();
     }
 };
+
+
+// Function to approve a requisition
+function approveRequisition(id) {
+    $.post("/requisition/approve_requisition", { id: id })
+        .done(function(response) {
+            if (response.status === "success") {
+                alert(response.message);
+                $('#status-' + id).text("Approved");
+                window.location.href = "/requisition/pending_request"; // Refresh page
+
+            } else {
+                alert(response.message);
+            }
+        })
+        .fail(function() {
+            alert("An error occurred while approving the requisition.");
+        });
+}
+
+// Function to reject a requisition
+function rejectRequisition(id) {
+    if (confirm('Are you sure you want to reject this requisition?')) {
+        $.post("/requisition/reject_requisition", { id: id })
+            .done(function(response) {
+                if (response.status === "success") {
+                    alert(response.message);
+                    $('#status-' + id).text("Rejected");
+                    window.location.href = "/requisition/pending_request"; // Refresh page
+
+                } else {
+                    alert(response.message);
+                }
+            })
+            .fail(function() {
+                alert("An error occurred while rejecting the requisition.");
+                window.location.href = "/auth/login"; // Redirect to another page (dashboard or relevant page)
+
+            });
+    }
+}
