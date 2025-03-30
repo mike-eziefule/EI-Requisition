@@ -29,27 +29,42 @@ async def dashboard(
     msg = []
     
     user_data = utility.get_user_from_token(request, db)    #return a dictionary
-    owner = utility.get_staff_from_token(request, db)       #return user object
+    owner =  utility.get_staff_from_token(request, db)       #return user object
     
-    if not user_data or not owner:
+        
+    if not user_data and not owner:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
         "login.html",{
         "request": request,
         "msg": msg,
         })
-        
-    all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == owner.id).all() # Fetch all requisition unique to user
-    length_hint = len(all_requests)    
     
-    return templates.TemplateResponse(
-        "dashboard.html",{
-        "request": request,
-        "user": user_data.get("user"),
-        "role": user_data.get("role"),
-        "all_requests": all_requests,
-        "length_hint": length_hint,
-        })
+    if user_data:
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data['user'].id).all() # Fetch all requisition unique to user
+        length_hint = len(all_requests)
+        
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "request": request,
+            "user": user_data.get("user"),
+            "role": user_data.get("role"),
+            "all_requests": all_requests,
+            "length_hint": length_hint,
+            })
+    
+    if owner:
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data['user']).all() # Fetch all requisition unique to user
+        length_hint = len(all_requests)    
+    
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "request": request,
+            "user": user_data.get("user"),
+            "role": user_data.get("role"),
+            "all_requests": all_requests,
+            "length_hint": length_hint,
+            })
     
     
 # Route to fetch items that share the same category_id
