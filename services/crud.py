@@ -13,6 +13,9 @@ def create_requisition(
     line_items_data: list
     ):
     
+    if status == "pending with Procurement":
+        status = "Approved"
+        
     try:
         # Create the Requisition record
         requisition = Requisition(

@@ -31,7 +31,6 @@ async def dashboard(
     user_data = utility.get_user_from_token(request, db)    #return a dictionary
     owner =  utility.get_staff_from_token(request, db)       #return user object
     
-        
     if not user_data and not owner:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(

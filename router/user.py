@@ -251,12 +251,16 @@ async def addmember(
         db.commit()
         db.refresh(new_staff)
         msg.append("Registration successful")
-                
+        
+        all_users = db.query(model.User).filter(model.User.organization_id == user["user"].id ).all()
+        staff_number = len(all_users)
+        
         return templates.TemplateResponse("add_member.html", {
             "request": request, 
             "msg": msg,
             "user": user['user'],
-            "role": user['role']
+            "role": user['role'],
+            "staff_number": staff_number
         })
         
     except IntegrityError:

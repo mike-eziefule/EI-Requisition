@@ -97,7 +97,7 @@ async def create_requisition(
         line_items_data = [item.dict() for item in requisition_input.line_items]
 
         requestor = utility.get_staff_from_token(request, db)
-
+        
         # Create requisition and line items
         requisition = crud.create_requisition(
             db=db,
@@ -106,10 +106,9 @@ async def create_requisition(
             attachment_path = attachment_path,
             requestor_id = requestor.id,
             status = f"pending with {requestor.line_manager}",
-            line_items_data = line_items_data,
+            line_items_data = line_items_data
         )
         
-        # return {"message": "requisition created successfully!"}
         return JSONResponse(content={"message": "Requisition created successfully!"}, status_code=200)
     
         
@@ -137,7 +136,6 @@ async def pending_request(
         })
         
     pending_requests = db.query(model.Requisition).filter(model.Requisition.status == f"pending with {user.designation}").all()
-    print(f"pending with {user.designation}")
     length_hint = len(pending_requests)
     
     return templates.TemplateResponse(
@@ -169,9 +167,14 @@ async def approve_requisition(
     requisitions = db.query(model.Requisition).filter(model.Requisition.id == id).first()
 
     if requisitions:
-        requisitions.status = f"pending with {user.line_manager}"
-        db.commit()
-        return JSONResponse(content={"status": "success", "message": "Requisition approved!"})
+        if user.designation == "Storekeeper":
+            requisitions.status = "Approved"
+            db.commit()
+            return JSONResponse(content={"status": "success", "message": "Requisition approved!"})
+        else: 
+            requisitions.status = f"pending with {user.line_manager}"
+            db.commit()
+            return JSONResponse(content={"status": "success", "message": "Requisition approved!"})
     return JSONResponse(content={"status": "error", "message": "Requisition not found!"})
 
 

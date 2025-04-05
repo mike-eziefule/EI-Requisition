@@ -76,7 +76,7 @@ block child_content_1 %}
                                         <!-- The Pop-up Modal -->
                                     </td>
                                     <td>
-                                        {% if item.status == "pending with Supervisor" %}
+                                        {% if item.status == "pending with Officer" %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -95,8 +95,7 @@ block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "pending with
-                                        Manager" %}
+                                        {% elif item.status == "pending with Supervisor" %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -135,7 +134,7 @@ block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "Storekeeper" %}
+                                        {% elif item.status == "pending with Storekeeper" %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -154,7 +153,7 @@ block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "approved" %}
+                                        {% elif item.status == "Approved" %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
