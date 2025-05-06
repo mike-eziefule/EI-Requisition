@@ -41,6 +41,7 @@ block child_content_1 %}
                                     <th>view Items</th>
                                     <th>Progress</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,6 +201,22 @@ block child_content_1 %}
                                         >
                                             {{ item.status }}
                                         </div>
+                                    </td>
+                                    <td>
+                                        {% if item.status == "Rejected" %}
+                                        <button
+                                            class="btn btn-warning btn-sm"
+                                            onclick="window.location.href='{{url_for('edit_requisition', id=item.id) }}'"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            class="btn btn-danger btn-sm"
+                                            onclick="deleteRequisition({{ item.id }})"
+                                        >
+                                            Delete
+                                        </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

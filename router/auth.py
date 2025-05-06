@@ -32,7 +32,7 @@ async def login_for_access_token(
     if token == False:
         return False
         
-    response.set_cookie(key="access_token", value = token, httponly=True)
+    response.set_cookie(key="access_token", value = token, httponly=True, secure=True)
     
     return True
 

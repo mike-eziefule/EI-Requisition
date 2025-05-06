@@ -8,7 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 from database.script import Base, engine
-
+from services.middleware import setup_middleware
+from services.logging_config import setup_logging
 
 app = FastAPI(
     title="Requisition api",
@@ -16,6 +17,11 @@ app = FastAPI(
     version="0.1.0",
     openapi_tags= get_settings().tags
 )
+
+# Setup logging and middleware
+setup_logging()
+setup_middleware(app)
+
 
 #read metadata, and instructing it to create tables using base schema.
 Base.metadata.create_all(bind=engine)
@@ -25,18 +31,6 @@ templates = Jinja2Templates(directory="templates")
 
 #CSS/JS Dependencies
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
-# #CORS middleware restrictions
-origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins = origins,
-    allow_credentials = True,
-    allow_methods = ["*"],
-    allow_headers = ["*"]
-)
 
 
 # Include the router

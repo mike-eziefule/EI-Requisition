@@ -95,7 +95,7 @@ async def register(
         
         get_uuid = db.query(model.Organization).filter(model.Organization.email == email).first()
         
-        msg.append("This is your Admin code, Please save it!: " + get_uuid.id)
+        # msg.append("This is your Admin code, Please save it!: " + get_uuid.id)
         
         return templates.TemplateResponse("login.html", {
             "request": request, 
