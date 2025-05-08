@@ -1,0 +1,10 @@
+
+<h4>Comments</h4>
+<div id="comments-section">
+    {% for comment in requisition.comments %}
+    <div class="comment">
+        <p><strong>{{ comment.created_by }}</strong> ({{ comment.created_at }}):</p>
+        <p>{{ comment.comment }}</p>
+    </div>
+    {% endfor %}
+</div>

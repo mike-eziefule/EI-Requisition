@@ -55,8 +55,10 @@ async def postlogin(
     
     try:
         form = user.LoginForm(request)
+        
         await form.create_auth_form()
-        response = RedirectResponse("/dashboard", status_code=status.HTTP_302_FOUND)
+        
+        response = RedirectResponse("/dashboard/user", status_code=status.HTTP_302_FOUND)
         
         validate_user_cookie = await login_for_access_token(response=response, form_data=form, db=db)
         

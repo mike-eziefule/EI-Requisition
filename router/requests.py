@@ -1,11 +1,11 @@
-"""Routes related to User Account creation."""
+"""Routes related to requisitions."""
 
 from fastapi import APIRouter, Depends, Request, Form, status, HTTPException, File, UploadFile
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from database import model, script
-from services.utility import bcrpyt_context, get_user_from_token
+from services.utility import get_staff_from_token
 from fastapi.responses import HTMLResponse, JSONResponse
 from config import get_settings
 from services import keygen, utility, crud
@@ -34,42 +34,40 @@ async def save_attachment(attachment: UploadFile) -> str:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error saving attachment: {e}")
 
-# New request get route
+# Route to create a new requisition (GET)
 @router.get("/create-requisition", response_class=HTMLResponse)
-async def create_requisition(
-    request: Request,
-    db: Session = Depends(script.get_db)
-):
+async def create_requisition(request: Request, db: Session = Depends(script.get_db)):
+    
     msg = []
-
+    
     requestor = utility.get_staff_from_token(request, db)
 
     if not requestor:
         msg.append("Sign in as a Staff to create a requisition")
-        return templates.TemplateResponse("login.html", {
-            "request": request,
-            "msg": msg,
-        })
+        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
 
     reid = str('ReID' + keygen.create_unique_random_key(db))
 
     return templates.TemplateResponse(
-        "request_form.html", {
+        "request_form.html",
+        {
             "request": request,
             "msg": msg,
             "reid": reid,
             "user": requestor,
             "role": requestor.designation,
-        })
+        },
+    )
 
-# Refactored POST route
+# Route to create a new requisition (POST)
 @router.post("/create-requisition", response_class=JSONResponse)
 async def create_requisition(
     request: Request,
     requisition_input: str = Form(...),
     attachment: UploadFile = File(None),
     db: Session = Depends(script.get_db)
-):
+):  
+    
     try:
         requisition_data = json.loads(requisition_input)
         requisition_input = schematic.RequisitionInput(**requisition_data)
@@ -99,42 +97,34 @@ async def create_requisition(
 
 # Route to fetch all pending requisitions
 @router.get("/pending_request", response_class=HTMLResponse)
-async def pending_request(
-    request: Request,
-    db: Session = Depends(script.get_db)
-):
+async def pending_request(request: Request, db: Session = Depends(script.get_db)):
     msg = []
-
     user = utility.get_staff_from_token(request, db)
 
     if not user:
         msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse(
-            "login.html", {
-                "request": request,
-                "msg": msg,
-            })
+        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
 
-    pending_requests = db.query(model.Requisition).filter(model.Requisition.status == f"pending with {user.designation}").all()
+    pending_requests = db.query(model.Requisition).filter(
+        model.Requisition.status == f"pending with {user.designation}"
+    ).all()
     length_hint = len(pending_requests)
 
     return templates.TemplateResponse(
-        "pending_request.html", {
+        "pending_request.html",
+        {
             "request": request,
             "msg": msg,
             "user": user,
             "role": user.designation,
             "pending_requests": pending_requests,
-            "length_hint": length_hint
-        })
+            "length_hint": length_hint,
+        },
+    )
 
-# FastAPI route for approving requisition
+# Route to approve a requisition
 @router.post("/approve_requisition")
-async def approve_requisition(
-    request: Request,
-    id: int = Form(...),
-    db: Session = Depends(script.get_db)
-):
+async def approve_requisition(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
     user = utility.get_staff_from_token(request, db)
 
     if not user:
@@ -155,11 +145,12 @@ async def approve_requisition(
     except Exception as e:
         return JSONResponse(content={"status": "error", "message": f"Error approving requisition: {e}"}, status_code=500)
 
-# FastAPI route for rejecting requisition
+# Route to reject a requisition
 @router.post("/reject_requisition")
 async def reject_requisition(
     request: Request,
     id: int = Form(...),
+    comment: str = Form(...),
     db: Session = Depends(script.get_db)
 ):
     user = utility.get_staff_from_token(request, db)
@@ -174,10 +165,18 @@ async def reject_requisition(
 
     try:
         requisition.status = "Rejected"
+        new_comment = model.RequisitionComment(
+            requisition_id=requisition.id,
+            comment=comment,
+            created_by=user.email
+        )
+        db.add(new_comment)
         db.commit()
-        return JSONResponse(content={"status": "success", "message": "Requisition rejected!"})
+        return JSONResponse(content={"status": "success", "message": "Requisition rejected with comment!"})
     except Exception as e:
         return JSONResponse(content={"status": "error", "message": f"Error rejecting requisition: {e}"}, status_code=500)
+
+
 
 # FastAPI route for rendering edit requisition form
 @router.get("/edit_requisition/{id}", response_class=HTMLResponse)
@@ -205,7 +204,7 @@ async def edit_requisition(
         },
     )
 
-# FastAPI route for editing denied requisition
+# Route to edit a rejected requisition
 @router.post("/edit-requisition", response_class=JSONResponse)
 async def edit_requisition(
     request: Request,
@@ -214,11 +213,9 @@ async def edit_requisition(
     db: Session = Depends(script.get_db)
 ):
     try:
-        print("Received Payload:", requisition_input)  # Debugging log
         requisition_data = json.loads(requisition_input)
         updated_requisition = schematic.RequisitionInput(**requisition_data)
     except (json.JSONDecodeError, ValidationError) as e:
-        print("Validation Error:", str(e))  # Debugging log
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
     user = utility.get_staff_from_token(request, db)
@@ -235,16 +232,12 @@ async def edit_requisition(
         return JSONResponse(content={"status": "error", "message": "Requisition not found or not editable!"}, status_code=404)
 
     try:
-        # Update requisition fields
         requisition.description = updated_requisition.description
 
-        # Update or add line items
         for updated_item in updated_requisition.line_items:
-            line_item_id = updated_item.id  # Access the `id` attribute directly
-            if line_item_id:
-                # Update existing line item
+            if updated_item.id:
                 line_item = db.query(model.LineItem).filter(
-                    model.LineItem.id == line_item_id,
+                    model.LineItem.id == updated_item.id,
                     model.LineItem.requisition_id == requisition.id
                 ).first()
                 if line_item:
@@ -253,7 +246,6 @@ async def edit_requisition(
                     line_item.category = updated_item.category
                     line_item.item_reason = updated_item.item_reason
             else:
-                # Add new line item if no ID is provided
                 new_line_item = model.LineItem(
                     requisition_id=requisition.id,
                     item_name=updated_item.item_name,
@@ -263,33 +255,28 @@ async def edit_requisition(
                 )
                 db.add(new_line_item)
 
-        # Save new attachment if provided
         if attachment:
             attachment_path = await save_attachment(attachment)
             requisition.attachment_path = attachment_path
 
-        # Reset status to pending
         requisition.status = f"pending with {user.line_manager}"
         db.commit()
-
         return JSONResponse(content={"status": "success", "message": "Requisition updated successfully!"})
     except Exception as e:
-        print("Error Updating Requisition:", str(e))  # Debugging log
         return JSONResponse(content={"status": "error", "message": f"Error updating requisition: {e}"}, status_code=500)
 
-# FastAPI route for deleting denied requisition
+# Route to delete a rejected requisition
 @router.post("/delete_requisition")
-async def delete_requisition(
-    request: Request,
-    id: int = Form(...),
-    db: Session = Depends(script.get_db)
-):
+async def delete_requisition(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
     user = utility.get_staff_from_token(request, db)
 
     if not user:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
-    requisition = db.query(model.Requisition).filter(model.Requisition.id == id, model.Requisition.status == "Rejected").first()
+    requisition = db.query(model.Requisition).filter(
+        model.Requisition.id == id,
+        model.Requisition.status == "Rejected"
+    ).first()
 
     if not requisition:
         return JSONResponse(content={"status": "error", "message": "Requisition not found or not deletable!"}, status_code=404)
@@ -301,3 +288,23 @@ async def delete_requisition(
     except Exception as e:
         return JSONResponse(content={"status": "error", "message": f"Error deleting requisition: {e}"}, status_code=500)
 
+# Route to fetch requisition details with comments
+@router.get("/requisition_details/{id}", response_class=JSONResponse)
+async def requisition_details(id: int, db: Session = Depends(script.get_db)):
+    requisition = db.query(model.Requisition).filter(model.Requisition.id == id).first()
+
+    if not requisition:
+        return JSONResponse(content={"status": "error", "message": "Requisition not found!"}, status_code=404)
+
+    comments = db.query(model.RequisitionComment).filter(model.RequisitionComment.requisition_id == id).all()
+
+    return JSONResponse(content={
+        "status": "success",
+        "requisition": {
+            "id": requisition.id,
+            "request_number": requisition.request_number,
+            "description": requisition.description,
+            "status": requisition.status,
+            "comments": [{"comment": c.comment, "created_by": c.created_by, "created_at": c.created_at} for c in comments]
+        }
+    })

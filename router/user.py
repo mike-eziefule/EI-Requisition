@@ -12,8 +12,6 @@ from services import utility
 from datetime import datetime
 
 
-
-
 router = APIRouter(prefix="/user", tags=["user"])
 
 templates = Jinja2Templates(directory="templates")
@@ -213,6 +211,7 @@ async def addmember(
             "request": request, 
             "msg": msg,
             "staff_name": staff_name,
+            "line_manager": line_manager,
             "designation": designation,
             'email': email,
             'password': password,

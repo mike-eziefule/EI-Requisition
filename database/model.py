@@ -3,6 +3,7 @@ from database.script import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Date, UUID
 from sqlalchemy.orm import relationship
 import uuid
+from datetime import datetime
 
 class Organization(Base):
     __tablename__ = 'organization'
@@ -41,24 +42,38 @@ class Requisition(Base):
     __tablename__ = "requisitions"
     
     id = Column(Integer, primary_key=True, index=True)
-    request_number = Column(String, unique=True)
-    description = Column(String)
+    request_number = Column(String, unique=True, nullable=False)
+    description = Column(String, nullable=False)
     attachment_path = Column(String, nullable=True)
-    status = Column(String, default="Pending")
+    status = Column(String, nullable=False, default="Pending")
     timestamp = Column(DateTime, nullable=False)  # DateTime column to store date and time
     requestor_id = Column(Integer, ForeignKey("users.id"))
 
     # Relationship to line items
     line_items = relationship("LineItem", back_populates="requisition")
     requestor = relationship("User", back_populates="requests")
+    comments = relationship("RequisitionComment", back_populates="requisition")
+
 
 class LineItem(Base):
     __tablename__ = "line_items"
-    id = Column(Integer, primary_key=True, index=True)
-    item_name = Column(String)
-    quantity = Column(Integer)
-    category = Column(String)
-    item_reason = Column(String)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)  # Auto-incrementing primary key
+    item_name = Column(String, nullable=False)
+    quantity = Column(Integer, nullable=False)
+    category = Column(String, nullable=False)
+    item_reason = Column(String, nullable=False)
     requisition_id = Column(Integer, ForeignKey("requisitions.id"))
 
     requisition = relationship("Requisition", back_populates="line_items")
+
+
+class RequisitionComment(Base):
+    __tablename__ = "requisition_comments"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    requisition_id = Column(Integer, ForeignKey("requisitions.id"), nullable=False)
+    comment = Column(String, nullable=False)
+    created_by = Column(String, nullable=False)  # Line manager's name or email
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    requisition = relationship("Requisition", back_populates="comments")
