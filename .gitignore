@@ -1,3 +1,14 @@
 venv/
 *.sqlite
 .env
+uploads/
+logs/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.log
+*.DS_Store
+*.egg-info/
+.vscode/

@@ -1,10 +1,26 @@
-
-<h4>Comments</h4>
-<div id="comments-section">
-    {% for comment in requisition.comments %}
-    <div class="comment">
-        <p><strong>{{ comment.created_by }}</strong> ({{ comment.created_at }}):</p>
-        <p>{{ comment.comment }}</p>
+<div
+    class="modal fade"
+    id="commentsModal"
+    tabindex="-1"
+    aria-labelledby="commentsModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentsModalLabel">
+                    Rejection Comments
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body" id="commentsModalBody">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
     </div>
-    {% endfor %}
 </div>

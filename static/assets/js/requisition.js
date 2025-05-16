@@ -292,8 +292,33 @@ function rejectRequisition(id) {
             })
             .fail(function () {
                 alert("An error occurred while rejecting the requisition.");
-                window.location.href = "/auth/login"; // Redirect to another page (dashboard or relevant page)
+                window.location.href = "/requisition/pending_request"; // Redirect to another page (dashboard or relevant page)
             });
+    }
+}
+
+// Populate the reject modal with the requisition ID
+function populateRejectModal(requisitionId) {
+    try {
+        console.log("populateRejectModal called with requisitionId:", requisitionId); // Debugging log
+
+        // Ensure the modal exists in the DOM
+        const rejectModal = document.getElementById("rejectModal");
+        if (!rejectModal) {
+            console.error("Error: Reject modal not found in the DOM.");
+            return;
+        }
+
+        // Ensure the input field exists in the modal
+        const requisitionIdInput = document.getElementById("requisition-id");
+        if (requisitionIdInput) {
+            requisitionIdInput.value = requisitionId; // Set the requisition ID
+            console.log("Requisition ID set in the modal:", requisitionId); // Debugging log
+        } else {
+            console.error("Error: Requisition ID input field not found in the reject modal.");
+        }
+    } catch (error) {
+        console.error("An unexpected error occurred while populating the reject modal:", error);
     }
 }
 
@@ -316,4 +341,107 @@ function deleteRequisition(id) {
             })
             .catch((error) => console.error("Error:", error));
     }
+}
+
+// Call this function from the HTML using onclick="rejectButton()"
+function rejectButton() {
+    // Debugging log
+    console.log("Reject button clicked");
+
+    const requisitionIdInput = document.getElementById("requisition-id");
+    const commentInput = document.getElementById("comment");
+
+    if (!requisitionIdInput || !commentInput) {
+        console.error("Error: Modal elements not found in the DOM.");
+        return;
+    }
+
+    const requisitionId = requisitionIdInput.value;
+    const comment = commentInput.value;
+
+    if (!comment.trim()) {
+        alert("Comment is required.");
+        return;
+    }
+
+    fetch("/requisition/reject_requisition", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `id=${requisitionId}&comment=${encodeURIComponent(comment)}`,
+    })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to reject requisition");
+            }
+        })
+        .then((data) => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while rejecting the requisition.");
+        });
+}
+
+// View comments for a rejected requisition
+function viewComments(requisitionId) {
+    fetch(`/requisition/requisition_details/${requisitionId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const modalBody = document.getElementById("commentsModalBody");
+            if (!modalBody) {
+                alert("Comments modal body not found in DOM.");
+                return;
+            }
+            // Log the data for debugging
+            console.log("Comments API response:", data);
+
+            if (
+                data.status === "success" &&
+                data.requisition &&
+                Array.isArray(data.requisition.comments) &&
+                data.requisition.comments.length > 0
+            ) {
+                modalBody.innerHTML = data.requisition.comments.map(comment =>
+                    `<div class="mb-3 border-bottom pb-2">
+                        <strong>${comment.created_by || "Unknown"}</strong>
+                        <span class="text-muted float-end">${comment.created_at ? new Date(comment.created_at).toLocaleString() : ""}</span>
+                        <p class="mb-1">${comment.comment || ""}</p>
+                    </div>`
+                ).join("");
+            } else if (data.status === "success") {
+                modalBody.innerHTML = "<p class='text-muted'>No comments available for this requisition.</p>";
+            } else {
+                modalBody.innerHTML = `<p class='text-danger'>${data.message || "Failed to load comments."}</p>`;
+            }
+            const commentsModalElem = document.getElementById('commentsModal');
+            if (commentsModalElem) {
+                const commentsModal = new bootstrap.Modal(commentsModalElem);
+                commentsModal.show();
+            } else {
+                alert("Comments modal not found in DOM.");
+            }
+        })
+        .catch(err => {
+            console.error("Error loading comments:", err);
+            const modalBody = document.getElementById("commentsModalBody");
+            if (modalBody) {
+                modalBody.innerHTML = "<p class='text-danger'>Failed to load comments.</p>";
+            }
+            const commentsModalElem = document.getElementById('commentsModal');
+            if (commentsModalElem) {
+                const commentsModal = new bootstrap.Modal(commentsModalElem);
+                commentsModal.show();
+            }
+        });
 }

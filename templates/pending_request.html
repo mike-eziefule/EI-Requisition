@@ -1,7 +1,10 @@
 <!--  page header start -->
-{% extends "dblayout.html" %} {% block title %} pending Request {% endblock %}
+{% extends "dblayout.html" %} 
+{% block title %} pending Request {% endblock %}
+
 <!--  page header end -->
 
+{% include "reject_modal.html" %}
 <!--  page body start  -->
 {% block child_content_1 %}
 
@@ -119,7 +122,8 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif item.status == "pending with MD/CEO"%}
+                                    {% elif item.status == "pending with
+                                    MD/CEO"%}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -138,7 +142,8 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif item.status == "pending with Storekeeper" %}
+                                    {% elif item.status == "pending with
+                                    Storekeeper" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -214,8 +219,11 @@
 
                                         <!-- Reject Button -->
                                         <button
+                                            type="button"
                                             class="btn btn-danger btn-sm"
-                                            onclick="rejectRequisition({{ item.id }})"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#rejectModal"
+                                            onclick="populateRejectModal({{ item.id }})"
                                         >
                                             Reject
                                         </button>

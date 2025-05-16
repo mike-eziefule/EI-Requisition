@@ -40,24 +40,41 @@ async def create_requisition(request: Request, db: Session = Depends(script.get_
     
     msg = []
     
-    requestor = utility.get_staff_from_token(request, db)
+    user = utility.get_staff_from_token(request, db)
+    admin = utility.get_user_from_token(request, db)
 
-    if not requestor:
-        msg.append("Sign in as a Staff to create a requisition")
-        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
-
-    reid = str('ReID' + keygen.create_unique_random_key(db))
-
-    return templates.TemplateResponse(
-        "request_form.html",
-        {
+    if not user and not admin:
+        msg.append("Session expired, LOGIN required")
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
+        
+    if user:
+        # Generate a unique request number
+        reid = str('ReID' + keygen.create_unique_random_key(db))
+        
+        return templates.TemplateResponse("request_form.html",{
             "request": request,
             "msg": msg,
             "reid": reid,
-            "user": requestor,
-            "role": requestor.designation,
-        },
-    )
+            "user": user,
+            "role": user.designation}
+        )
+    else:
+        
+        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
+        
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "request": request,
+            "user": admin.get("user"),
+            "role": admin.get("role"),
+            "msg": msg,
+            })
+
+
 
 # Route to create a new requisition (POST)
 @router.post("/create-requisition", response_class=JSONResponse)
@@ -98,29 +115,43 @@ async def create_requisition(
 # Route to fetch all pending requisitions
 @router.get("/pending_request", response_class=HTMLResponse)
 async def pending_request(request: Request, db: Session = Depends(script.get_db)):
+    
     msg = []
+    
     user = utility.get_staff_from_token(request, db)
+    admin = utility.get_user_from_token(request, db)
 
-    if not user:
+
+    if not user and not admin:
         msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
-
-    pending_requests = db.query(model.Requisition).filter(
-        model.Requisition.status == f"pending with {user.designation}"
-    ).all()
-    length_hint = len(pending_requests)
-
-    return templates.TemplateResponse(
-        "pending_request.html",
-        {
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
+        
+    if user:
+    
+        pending_requests = db.query(model.Requisition).filter(model.Requisition.status == f"pending with {user.designation}").all()
+        length_hint = len(pending_requests)
+        return templates.TemplateResponse("pending_request.html",{
             "request": request,
             "msg": msg,
             "user": user,
             "role": user.designation,
             "pending_requests": pending_requests,
             "length_hint": length_hint,
-        },
-    )
+        })
+    else:
+        
+        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "request": request,
+            "user": admin.get("user"),
+            "role": admin.get("role"),
+            "msg": msg,
+            })
 
 # Route to approve a requisition
 @router.post("/approve_requisition")
@@ -298,6 +329,11 @@ async def requisition_details(id: int, db: Session = Depends(script.get_db)):
 
     comments = db.query(model.RequisitionComment).filter(model.RequisitionComment.requisition_id == id).all()
 
+    def serialize_datetime(dt):
+        if isinstance(dt, datetime):
+            return dt.isoformat()
+        return dt
+
     return JSONResponse(content={
         "status": "success",
         "requisition": {
@@ -305,6 +341,12 @@ async def requisition_details(id: int, db: Session = Depends(script.get_db)):
             "request_number": requisition.request_number,
             "description": requisition.description,
             "status": requisition.status,
-            "comments": [{"comment": c.comment, "created_by": c.created_by, "created_at": c.created_at} for c in comments]
+            "comments": [
+                {
+                    "comment": c.comment,
+                    "created_by": c.created_by,
+                    "created_at": serialize_datetime(c.created_at)
+                } for c in comments
+            ]
         }
     })

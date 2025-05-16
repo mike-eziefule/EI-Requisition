@@ -57,8 +57,7 @@ def get_staff_from_token(request: Request, db: Session):
             return None
         
         # Query the user
-        user = db.query(model.Organization).filter(model.Organization.email == username).first() or \
-            db.query(model.User).filter(model.User.email == username).first()
+        user = db.query(model.User).filter(model.User.email == username).first()
         if user:
             return user
         return None

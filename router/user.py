@@ -172,6 +172,7 @@ async def addmember(
     msg = []
 
     user = utility.get_user_from_token(request, db)
+    
     if not user:
         msg.append("Session Expired, login again")
         return templates.TemplateResponse("login.html", {
@@ -179,17 +180,18 @@ async def addmember(
             "msg": msg,
         })
         
-    admin_auth = db.query(model.Organization).filter(model.Organization.email == user['user'].email).first()
-    if not admin_auth:
-        msg.append("Not allowed, Contact your administrator")
-        return templates.TemplateResponse("login.html", {
-            "request": request, 
-            "msg": msg,
-            "user": user['user'],
-            "role": user['role']
+    if user["role"] != "administrator":
+        
+        msg.append("Contact your administrator")
+        return templates.TemplateResponse(
+        "dashboard.html",{
+        "request": request,
+        "msg": msg,
+        "user": user["user"],
+        "role": user["role"]
         })
         
-    role_check = db.query(model.User).filter(model.User.designation == designation, model.User.organization_id == admin_auth.id).first()
+    role_check = db.query(model.User).filter(model.User.designation == designation, model.User.organization_id == user['user'].id).first()
     if role_check:
         msg.append("Role already occupied")
         return templates.TemplateResponse("add_member.html", {
@@ -235,14 +237,14 @@ async def addmember(
         })
     
     new_staff = model.User(
-        organization_name = admin_auth.organization_name, 
+        organization_name = user['user'].organization_name, 
         staff_name = staff_name,
         designation = designation,
         email = email,
         line_manager = line_manager,
         password = bcrpyt_context.hash(password),
         date = datetime.now().date(),
-        organization_id = admin_auth.id,
+        organization_id = user['user'].id,
     )
     
     try:
@@ -254,11 +256,12 @@ async def addmember(
         all_users = db.query(model.User).filter(model.User.organization_id == user["user"].id ).all()
         staff_number = len(all_users)
         
-        return templates.TemplateResponse("add_member.html", {
+        return templates.TemplateResponse("viewstaff.html", {
             "request": request, 
             "msg": msg,
             "user": user['user'],
             "role": user['role'],
+            "all_users": all_users,
             "staff_number": staff_number
         })
         

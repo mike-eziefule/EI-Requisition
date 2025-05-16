@@ -73,8 +73,6 @@ block child_content_1 %}
                                         >
                                             View Items
                                         </button>
-
-                                        <!-- The Pop-up Modal -->
                                     </td>
                                     <td>
                                         {% if item.status == "pending with Officer" %}
@@ -192,7 +190,6 @@ block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-
                                         {% endif %}
                                     </td>
                                     <td>
@@ -216,6 +213,14 @@ block child_content_1 %}
                                         >
                                             Delete
                                         </button>
+                                        <!-- View Comments Button -->
+                                        <button
+                                            class="btn btn-info btn-sm"
+                                            onclick="viewComments({{item.id}})"
+                                            type="button"
+                                        >
+                                            View Comments
+                                        </button>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -223,6 +228,9 @@ block child_content_1 %}
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Comments Modal moved to requisition_details.html and included below -->
+                    {% include "requisition_details.html" %}
 
                     <!-- Modal -->
                     {% block modal %} {% include "preview.html" %} {% endblock
@@ -238,5 +246,9 @@ block child_content_1 %}
     {% include "todo.html" %}
     <!--  page body end  -->
 </div>
+
+<script>
+// ...existing code...
+</script>
 
 {% endblock %}
