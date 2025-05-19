@@ -1,7 +1,5 @@
-{% extends "layout2.html" %} 
-{% block title %} Dashboard layout {% endblock %}
+{% extends "layout2.html" %} {% block title %} Dashboard layout {% endblock %}
 {% block content %}
-
 
 <div class="container-fluid page-body-wrapper">
     <!-- partial:partials/_sidebar.html start-->
@@ -14,6 +12,7 @@
                 </a>
             </li>
             <li class="nav-item nav-category">category</li>
+
             <li class="nav-item">
                 <a
                     class="nav-link"
@@ -56,48 +55,12 @@
                 <a
                     class="nav-link"
                     data-bs-toggle="collapse"
-                    href="#ui-basic"
-                    aria-expanded="false"
-                    aria-controls="ui-basic"
-                >
-                    <i class="menu-icon mdi mdi-floor-plan"></i>
-                    <span class="menu-title">My Team</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="ui-basic">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="{{url_for('admin_view_all')}}"
-                                >View Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url_for('addmember')}}"
-                                >Add Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/ui-features/typography.html"
-                                >Delete Staff</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
                     href="#form-elements"
                     aria-expanded="false"
                     aria-controls="form-elements"
                 >
                     <i class="menu-icon mdi mdi-card-text-outline"></i>
-                    <span class="menu-title">Requests</span>
+                    <span class="menu-title">Requisition</span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="form-elements">
@@ -121,6 +84,90 @@
                                 class="nav-link"
                                 href="pages/forms/basic_elements.html"
                                 >Request History</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    href="#expenses-elements"
+                    aria-expanded="false"
+                    aria-controls="expenses-elements"
+                >
+                    <i
+                        class="menu-icon mdi mdi-account-credit-card-outline"
+                    ></i>
+                    <span class="menu-title">Expenses</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="expenses-elements">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('expense_dash') }}"
+                                >My Expenses</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('create_expense') }}"
+                                >New Expense</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{url_for('pending_expense')}}"
+                                >Pending Expense</a
+                            >
+                        </li>
+
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{ url_for('expense_dash') }}"
+                                >History</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    href="#ui-basic"
+                    aria-expanded="false"
+                    aria-controls="ui-basic"
+                >
+                    <i class="menu-icon mdi mdi-human-greeting-proximity"></i>
+                    <span class="menu-title">My Team</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-basic">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{url_for('admin_view_all')}}"
+                                >View Staff</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('addmember')}}"
+                                >Add Staff</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="pages/ui-features/typography.html"
+                                >Delete Staff</a
                             >
                         </li>
                     </ul>

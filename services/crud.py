@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from database.model import Requisition, LineItem
+from database.model import Requisition, LineItem, Expense, ExpenseLineItem
 from datetime import datetime
 
 
@@ -73,3 +73,48 @@ def to_dict(self):
         "description": self.description,
         "status": self.status
     }
+
+
+def create_expense(
+    db: Session,
+    expense_number: str,
+    description: str,
+    status: str,
+    requestor_id: int,
+    attachment_path: str,
+    line_items_data: list,
+    total: float
+):
+    try:
+        expense = Expense(
+            expense_number=expense_number,
+            description=description,
+            status=status,
+            timestamp=datetime.now(),
+            requestor_id=requestor_id,
+            attachment_path=attachment_path,
+            total=total
+        )
+        db.add(expense)
+        db.commit()
+        db.refresh(expense)
+
+        for line_item in line_items_data:
+            item = ExpenseLineItem(
+                item_name=line_item["item_name"],
+                quantity=line_item["quantity"],
+                category=line_item["category"],
+                item_reason=line_item["item_reason"],
+                price=line_item["price"],
+                amount=line_item["amount"],
+                expense_id=expense.id
+            )
+            db.add(item)
+
+        db.commit()
+        db.refresh(expense)
+        return True
+
+    except Exception as e:
+        db.rollback()
+        raise Exception(f"Error in create_expense: {str(e)}")

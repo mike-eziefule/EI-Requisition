@@ -1,0 +1,158 @@
+<!-- filepath: c:\Users\SGA PROJECTS\Desktop\Requisition_app\templates\expense_form.html -->
+{% extends "dblayout.html" %} {% block title %} Create Expense {% endblock %} {%
+block child_content_1 %}
+<div class="row flex-grow">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card card-rounded">
+            <div class="align-items-center">
+                <div class="card-body mt-1">
+                    {% for errors in msg %}
+                    <div class="alert alert-info" role="alert">
+                        {{ errors }}
+                    </div>
+                    {% endfor %}
+
+                    <form id="expense-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="expense_number">Expense Number</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{exid}}"
+                                id="expense_number"
+                                name="expense_number"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Reason for Expense</label>
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                rows="3"
+                                required
+                            ></textarea>
+                        </div>
+
+                        <h4>Line Items</h4>
+                        <div id="expense-line-items">
+                            <div class="line-item row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Item Name</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="line_items[0][item_name]"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Category</label>
+                                        <select
+                                            class="form-control"
+                                            name="line_items[0][category]"
+                                            required
+                                        >
+                                            <option value="">
+                                                Select Category
+                                            </option>
+                                            <option value="office_supplies">
+                                                Office Supplies
+                                            </option>
+                                            <option value="electronics">
+                                                Electronics
+                                            </option>
+                                            <option value="furniture">
+                                                Furniture
+                                            </option>
+                                            <option value="software">
+                                                Software
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Quantity</label>
+                                        <input
+                                            type="number"
+                                            class="form-control amount-input"
+                                            name="line_items[0][quantity]"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Price</label>
+                                        <input
+                                            type="number"
+                                            class="form-control price-input"
+                                            name="line_items[0][price]"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Amount</label>
+                                        <input
+                                            type="number"
+                                            class="form-control total-input"
+                                            name="line_items[0][amount]"
+                                            readonly
+                                        />
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger remove-item"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="add-expense-item"
+                            class="btn btn-success"
+                        >
+                            Add Item
+                        </button>
+                        <br /><br />
+
+                        <div class="form-group">
+                            <label for="attachment"
+                                >Attach File (Optional)</label
+                            >
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="attachment"
+                                name="attachment"
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            id="submit-expense-form"
+                            class="btn btn-primary"
+                        >
+                            Submit Expense
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

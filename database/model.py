@@ -1,6 +1,6 @@
 from httpx import request
 from database.script import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Date, UUID
+from sqlalchemy import Column, Float, Integer, String, ForeignKey, DateTime, Date, UUID
 from sqlalchemy.orm import relationship
 import uuid
 from datetime import datetime
@@ -77,3 +77,33 @@ class RequisitionComment(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     requisition = relationship("Requisition", back_populates="comments")
+
+
+class Expense(Base):
+    __tablename__ = "expenses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    expense_number = Column(String, unique=True, nullable=False)
+    description = Column(String, nullable=False)
+    attachment_path = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="Pending")
+    total= Column(Float, nullable=False)
+    timestamp = Column(DateTime, nullable=False, default=datetime.utcnow)
+    requestor_id = Column(Integer, ForeignKey("users.id"))
+
+    # Relationship to line items
+    line_items = relationship("ExpenseLineItem", back_populates="expense")
+    requestor = relationship("User")
+
+
+class ExpenseLineItem(Base):
+    __tablename__ = "expense_line_items"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    item_name = Column(String, nullable=False)
+    quantity = Column(Integer, nullable=False)
+    category = Column(String, nullable=False)
+    price = Column(Integer, nullable=False)
+    amount = Column(Integer, nullable=False)
+    expense_id = Column(Integer, ForeignKey("expenses.id"))
+
+    expense = relationship("Expense", back_populates="line_items")

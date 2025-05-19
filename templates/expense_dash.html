@@ -1,0 +1,75 @@
+<!-- filepath: c:\Users\SGA PROJECTS\Desktop\Requisition_app\templates\expense_dash.html -->
+{% extends "dblayout.html" %} {% block title %} Expense Dashboard {% endblock %}
+{% block child_content_1 %}
+<div class="row flex-grow">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card card-rounded">
+            <div class="card-body">
+                <div
+                    class="d-sm-flex justify-content-between align-items-start"
+                >
+                    <div>
+                        <h4 class="card-title card-title-dash">
+                            Expense Summary
+                        </h4>
+                        <p class="card-subtitle card-subtitle-dash">
+                            You have {{ expenses|length }} expense requests
+                        </p>
+                    </div>
+                    <div>
+                        <button
+                            class="btn btn-primary btn-lg text-white mb-0 me-0"
+                            type="button"
+                            onclick="window.location.href='{{ url_for('create_expense') }}'"
+                        >
+                            <i class="mdi mdi-account-plus"></i>
+                            New Expense
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive mt-1">
+                    <table class="table select-table">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Expense ID</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Preview</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in expenses %}
+                            <tr>
+                                <td><h6>{{ loop.index }}</h6></td>
+                                <td><h6>{{ expense.expense_number }}</h6></td>
+                                <td>
+                                    <h6>{{ expense.timestamp.date() }}</h6>
+                                    <p>{{ expense.timestamp.time() }}</p>
+                                </td>
+                                <td><h6>{{ expense.description }}</h6></td>
+                                <td>
+                                    <div class="badge badge-opacity-warning">
+                                        {{ expense.status }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <button
+                                        onclick="openExpenseModal({{ expense.id }})"
+                                        class="btn btn-info btn-sm"
+                                    >
+                                        Preview
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="expensePreviewModalContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

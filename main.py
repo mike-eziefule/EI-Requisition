@@ -2,7 +2,7 @@
 
 from os import link
 from fastapi import FastAPI
-from router import auth, dashboard, user, link, requests
+from router import auth, dashboard, user, link, requests, expenses
 from config import get_settings
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
@@ -38,4 +38,5 @@ app.include_router(link.router)
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(requests.router)
+app.include_router(expenses.router)
 app.include_router(dashboard.router)
