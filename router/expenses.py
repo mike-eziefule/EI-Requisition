@@ -164,10 +164,23 @@ async def expense_dash_post(request: Request, db: Session = Depends(script.get_d
 
 @router.get("/{expense_id}/preview", response_class=HTMLResponse)
 async def preview_expense_modal(expense_id: int, request: Request, db: Session = Depends(script.get_db)):
-    expense = db.query(model.Expense).filter(model.Expense.id == expense_id).first()
-    if not expense:
-        return HTMLResponse("<div class='alert alert-danger'>Expense not found.</div>", status_code=404)
-    return templates.TemplateResponse("preview_expense.html", {
-        "request": request,
-        "expense": expense,
+    # ...existing code...
+    expenseItems = db.query(model.ExpenseLineItem).filter(model.ExpenseLineItem.expense_id == expense_id).all()
+    
+    if not expenseItems:
+        return JSONResponse(content={"status": "error", "message": "expenseItems not found!"}, status_code=404)
+    
+    # Confirm the structure being returned
+    return JSONResponse(content={
+        "status": "success",
+        "expense": [
+            {
+                "id": items.id,
+                "item_name": items.item_name,
+                "quantity": items.quantity,
+                "category": items.category,
+                "price": items.price,
+                "amount": items.amount,
+            } for items in expenseItems
+        ]
     })

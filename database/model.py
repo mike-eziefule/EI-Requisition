@@ -44,7 +44,6 @@ class Requisition(Base):
     id = Column(Integer, primary_key=True, index=True)
     request_number = Column(String, unique=True, nullable=False)
     description = Column(String, nullable=False)
-    attachment_path = Column(String, nullable=True)
     status = Column(String, nullable=False, default="Pending")
     timestamp = Column(DateTime, nullable=False)  # DateTime column to store date and time
     requestor_id = Column(Integer, ForeignKey("users.id"))

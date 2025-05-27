@@ -35,6 +35,7 @@
                                 <th>Expense ID</th>
                                 <th>Date</th>
                                 <th>Description</th>
+                                <th>Amount</th>
                                 <th>Status</th>
                                 <th>Preview</th>
                             </tr>
@@ -49,6 +50,7 @@
                                     <p>{{ expense.timestamp.time() }}</p>
                                 </td>
                                 <td><h6>{{ expense.description }}</h6></td>
+                                <td><h6>{{ expense.total }}</h6></td>
                                 <td>
                                     <div class="badge badge-opacity-warning">
                                         {{ expense.status }}
@@ -67,9 +69,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="expensePreviewModalContainer"></div>
+                <div id="expensePreviewModalContainer">
+                    <!-- Comments Modal moved to requisition_details.html and included below -->
+                    {% include "view_expenses.html" %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

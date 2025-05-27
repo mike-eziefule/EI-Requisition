@@ -81,29 +81,31 @@ async def create_requisition(request: Request, db: Session = Depends(script.get_
 async def create_requisition(
     request: Request,
     requisition_input: str = Form(...),
-    attachment: UploadFile = File(None),
     db: Session = Depends(script.get_db)
 ):  
-    
     try:
         requisition_data = json.loads(requisition_input)
-        requisition_input = schematic.RequisitionInput(**requisition_data)
+        # Ensure 'id' is present in every line item, set to None if missing
+        for item in requisition_data.get("line_items", []):
+            if "id" not in item:
+                item["id"] = None
+            elif item["id"] in [None, "", "null"] or not str(item["id"]).isdigit():
+                item["id"] = None
+        requisition_input_obj = schematic.RequisitionInput(**requisition_data)
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
-    attachment_path = await save_attachment(attachment) if attachment else None
     requestor = utility.get_staff_from_token(request, db)
 
     if not requestor:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
-    line_items_data = [item.dict() for item in requisition_input.line_items]
+    line_items_data = [item.dict() for item in requisition_input_obj.line_items]
     try:
         requisition = crud.create_requisition(
             db=db,
-            request_number=requisition_input.request_number,
-            description=requisition_input.description,
-            attachment_path=attachment_path,
+            request_number=requisition_input_obj.request_number,
+            description=requisition_input_obj.description,
             requestor_id=requestor.id,
             status=f"pending with {requestor.line_manager}",
             line_items_data=line_items_data,

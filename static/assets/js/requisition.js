@@ -11,13 +11,13 @@ document.getElementById("add-item").addEventListener("click", function () {
                                 <input type="text" class="form-control" name="line_items[${lineItemIndex}][item_name]" required>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
                                 <input type="number" class="form-control" name="line_items[${lineItemIndex}][quantity]" required>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="category">Category</label>
                                 <select class="form-control" name="line_items[${lineItemIndex}][category]" required>
@@ -29,7 +29,7 @@ document.getElementById("add-item").addEventListener("click", function () {
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label for="item_reason">Item Reason</label>
                                 <input type="text" class="form-control" name="line_items[${lineItemIndex}][item_reason]" required>
@@ -158,22 +158,12 @@ document
             });
         }
 
-        // Add file attachment if present
-        const attachment = document.getElementById("attachment").files[0];
-        if (attachment) {
-            requisitionData.attachment = attachment;
-        }
-
         // Create the request body as FormData and append the JSON part manually
         const requestFormData = new FormData();
         requestFormData.append(
             "requisition_input",
             JSON.stringify(requisitionData)
         );
-
-        if (attachment) {
-            requestFormData.append("attachment", attachment);
-        }
 
         // Submit data to the server
         try {

@@ -9,7 +9,6 @@ def create_requisition(
     description: str,
     status: str,
     requestor_id: int,
-    attachment_path: str, 
     line_items_data: list
     ):
     
@@ -24,7 +23,6 @@ def create_requisition(
             status = status,
             timestamp = datetime.now(),
             requestor_id = requestor_id,
-            attachment_path = attachment_path,
         )
     
         db.add(requisition)
@@ -89,11 +87,11 @@ def create_expense(
         expense = Expense(
             expense_number=expense_number,
             description=description,
-            status=status,
-            timestamp=datetime.now(),
-            requestor_id=requestor_id,
             attachment_path=attachment_path,
-            total=total
+            status=status,
+            total=total,
+            timestamp=datetime.now(),
+            requestor_id=requestor_id
         )
         db.add(expense)
         db.commit()
@@ -104,7 +102,6 @@ def create_expense(
                 item_name=line_item["item_name"],
                 quantity=line_item["quantity"],
                 category=line_item["category"],
-                item_reason=line_item["item_reason"],
                 price=line_item["price"],
                 amount=line_item["amount"],
                 expense_id=expense.id
