@@ -9473,3 +9473,539 @@
 2025-06-01T15:31:17.764881+0100 - INFO - Response: 200
 2025-06-01T15:31:38.499518+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/create
 2025-06-01T15:31:38.508085+0100 - INFO - Response: 401
+2025-06-01T15:42:00.429272+0100 - INFO - Request: GET http://127.0.0.1:8000/user/register
+2025-06-01T15:42:00.524817+0100 - INFO - Response: 200
+2025-06-01T15:42:06.170340+0100 - INFO - Request: GET http://127.0.0.1:8000/auth/login
+2025-06-01T15:42:06.192535+0100 - INFO - Response: 200
+2025-06-01T15:42:17.671147+0100 - INFO - Request: POST http://127.0.0.1:8000/auth/login
+2025-06-01T15:42:18.555321+0100 - INFO - Response: 302
+2025-06-01T15:42:18.571637+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard
+2025-06-01T15:42:18.573095+0100 - INFO - Response: 307
+2025-06-01T15:42:18.580595+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/
+2025-06-01T15:42:18.717603+0100 - INFO - Response: 200
+2025-06-01T15:42:18.769227+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/static/assets/images/logo-mini.svg
+2025-06-01T15:42:18.770497+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face10.jpg
+2025-06-01T15:42:18.771756+0100 - INFO - Response: 404
+2025-06-01T15:42:18.773868+0100 - INFO - Response: 404
+2025-06-01T15:42:18.856331+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face1.jpg
+2025-06-01T15:42:18.858696+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face12.jpg
+2025-06-01T15:42:18.859903+0100 - INFO - Response: 404
+2025-06-01T15:42:18.861034+0100 - INFO - Response: 404
+2025-06-01T15:42:18.864719+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T15:42:18.866089+0100 - INFO - Response: 404
+2025-06-01T15:42:18.877056+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/requisition.js
+2025-06-01T15:42:18.878327+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/expenses.js
+2025-06-01T15:42:19.034195+0100 - INFO - Response: 304
+2025-06-01T15:42:19.036367+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T15:42:19.038387+0100 - INFO - Response: 304
+2025-06-01T15:42:19.039890+0100 - INFO - Response: 404
+2025-06-01T15:42:29.392981+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T15:42:29.485450+0100 - INFO - Response: 200
+2025-06-01T15:42:29.518399+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T15:42:29.519907+0100 - INFO - Response: 404
+2025-06-01T15:42:29.521799+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T15:42:29.523596+0100 - INFO - Response: 404
+2025-06-01T15:42:29.618602+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T15:42:29.621369+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T15:42:29.621969+0100 - INFO - Response: 404
+2025-06-01T15:42:29.624516+0100 - INFO - Response: 404
+2025-06-01T15:42:29.625728+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T15:42:29.627599+0100 - INFO - Response: 404
+2025-06-01T15:47:58.304790+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T15:47:58.557663+0100 - INFO - Response: 200
+2025-06-01T15:47:58.769034+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T15:47:58.770762+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T15:47:58.771644+0100 - INFO - Response: 404
+2025-06-01T15:47:58.773436+0100 - INFO - Response: 404
+2025-06-01T15:47:58.901852+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T15:47:58.905489+0100 - INFO - Response: 404
+2025-06-01T15:47:58.908849+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T15:47:58.910286+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T15:47:58.912211+0100 - INFO - Response: 404
+2025-06-01T15:47:58.915737+0100 - INFO - Response: 404
+2025-06-01T15:47:58.973426+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T15:47:58.975160+0100 - INFO - Response: 404
+2025-06-01T15:48:04.337513+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T15:48:04.356819+0100 - INFO - Response: 200
+2025-06-01T15:48:04.417119+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T15:48:04.418589+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T15:48:04.419323+0100 - INFO - Response: 404
+2025-06-01T15:48:04.422095+0100 - INFO - Response: 404
+2025-06-01T15:48:04.480636+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T15:48:04.481728+0100 - INFO - Response: 404
+2025-06-01T15:48:04.482926+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T15:48:04.484681+0100 - INFO - Response: 404
+2025-06-01T15:48:04.490472+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T15:48:04.493033+0100 - INFO - Response: 404
+2025-06-01T15:48:04.525510+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T15:48:04.527407+0100 - INFO - Response: 404
+2025-06-01T15:48:10.444097+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/pending_request
+2025-06-01T15:48:10.516437+0100 - INFO - Response: 200
+2025-06-01T15:48:10.555926+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T15:48:10.557246+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T15:48:10.557912+0100 - INFO - Response: 404
+2025-06-01T15:48:10.559100+0100 - INFO - Response: 404
+2025-06-01T15:48:10.643010+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T15:48:10.644373+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T15:48:10.645632+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T15:48:10.646269+0100 - INFO - Response: 404
+2025-06-01T15:48:10.647568+0100 - INFO - Response: 404
+2025-06-01T15:48:10.648907+0100 - INFO - Response: 404
+2025-06-01T15:48:10.692639+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T15:48:10.694652+0100 - INFO - Response: 404
+2025-06-01T16:08:06.536495+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/pending_request
+2025-06-01T16:08:06.593000+0100 - INFO - Response: 200
+2025-06-01T16:08:06.787238+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T16:08:06.789866+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T16:08:06.790434+0100 - INFO - Response: 404
+2025-06-01T16:08:06.791610+0100 - INFO - Response: 404
+2025-06-01T16:08:07.195103+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T16:08:07.216041+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T16:08:07.222384+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:08:07.236299+0100 - INFO - Response: 404
+2025-06-01T16:08:07.238609+0100 - INFO - Response: 404
+2025-06-01T16:08:07.242836+0100 - INFO - Response: 404
+2025-06-01T16:08:07.416995+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:08:07.418199+0100 - INFO - Response: 404
+2025-06-01T16:08:13.177872+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T16:08:13.285681+0100 - ERROR - Unhandled exception: No route exists for name "edit_requisition_form" and params "id".
+2025-06-01T16:09:50.351462+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T16:09:50.371103+0100 - INFO - Response: 200
+2025-06-01T16:09:50.419268+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T16:09:50.420416+0100 - INFO - Response: 404
+2025-06-01T16:09:50.422187+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T16:09:50.423475+0100 - INFO - Response: 404
+2025-06-01T16:09:50.556077+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T16:09:50.556622+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T16:09:50.557770+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:09:50.557770+0100 - INFO - Response: 404
+2025-06-01T16:09:50.558889+0100 - INFO - Response: 404
+2025-06-01T16:09:50.559978+0100 - INFO - Response: 404
+2025-06-01T16:09:50.570227+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:09:50.571398+0100 - INFO - Response: 404
+2025-06-01T16:09:55.316729+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/1
+2025-06-01T16:09:55.420340+0100 - INFO - Response: 200
+2025-06-01T16:09:55.474770+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/static/assets/images/logo-mini.svg
+2025-06-01T16:09:55.476690+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face10.jpg
+2025-06-01T16:09:55.477968+0100 - INFO - Response: 404
+2025-06-01T16:09:55.480646+0100 - INFO - Response: 404
+2025-06-01T16:09:55.548790+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face12.jpg
+2025-06-01T16:09:55.550659+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face1.jpg
+2025-06-01T16:09:55.551227+0100 - INFO - Response: 404
+2025-06-01T16:09:55.553699+0100 - INFO - Response: 404
+2025-06-01T16:09:55.555813+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face8.jpg
+2025-06-01T16:09:55.558293+0100 - INFO - Response: 404
+2025-06-01T16:09:55.594800+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face8.jpg
+2025-06-01T16:09:55.595995+0100 - INFO - Response: 404
+2025-06-01T16:09:55.601105+0100 - INFO - Request: GET http://127.0.0.1:8000/static/images/arrow-down.svg
+2025-06-01T16:09:55.606115+0100 - INFO - Response: 404
+2025-06-01T16:10:05.805435+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/requisition_details/1
+2025-06-01T16:10:05.813126+0100 - INFO - Response: 200
+2025-06-01T16:10:34.532777+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/requisition_details/1
+2025-06-01T16:10:34.538199+0100 - INFO - Response: 200
+2025-06-01T16:10:40.849515+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/1
+2025-06-01T16:10:40.869157+0100 - INFO - Response: 200
+2025-06-01T16:10:40.919127+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/static/assets/images/logo-mini.svg
+2025-06-01T16:10:40.920381+0100 - INFO - Response: 404
+2025-06-01T16:10:40.924528+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face10.jpg
+2025-06-01T16:10:40.925972+0100 - INFO - Response: 404
+2025-06-01T16:10:41.069661+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face12.jpg
+2025-06-01T16:10:41.071596+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face1.jpg
+2025-06-01T16:10:41.072940+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/edit_requisition/assets/images/faces/face8.jpg
+2025-06-01T16:10:41.073497+0100 - INFO - Response: 404
+2025-06-01T16:10:41.075371+0100 - INFO - Response: 404
+2025-06-01T16:10:41.076525+0100 - INFO - Response: 404
+2025-06-01T16:10:41.096182+0100 - INFO - Request: GET http://127.0.0.1:8000/static/images/arrow-down.svg
+2025-06-01T16:10:41.099475+0100 - INFO - Response: 404
+2025-06-01T16:10:49.981357+0100 - INFO - Request: GET http://127.0.0.1:8000/category/1/items
+2025-06-01T16:10:50.000429+0100 - INFO - Response: 200
+2025-06-01T16:11:28.497887+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T16:11:28.517889+0100 - INFO - Response: 200
+2025-06-01T16:11:28.553217+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T16:11:28.553852+0100 - INFO - Response: 404
+2025-06-01T16:11:28.557405+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T16:11:28.558168+0100 - INFO - Response: 404
+2025-06-01T16:11:28.677636+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T16:11:28.678824+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T16:11:28.679426+0100 - INFO - Response: 404
+2025-06-01T16:11:28.680017+0100 - INFO - Response: 404
+2025-06-01T16:11:28.681193+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:11:28.682340+0100 - INFO - Response: 404
+2025-06-01T16:11:28.688064+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:11:28.689275+0100 - INFO - Response: 404
+2025-06-01T16:11:49.507089+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/
+2025-06-01T16:11:49.526726+0100 - INFO - Response: 200
+2025-06-01T16:11:49.574198+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/static/assets/images/logo-mini.svg
+2025-06-01T16:11:49.576050+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face10.jpg
+2025-06-01T16:11:49.576738+0100 - INFO - Response: 404
+2025-06-01T16:11:49.578651+0100 - INFO - Response: 404
+2025-06-01T16:11:49.652454+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face12.jpg
+2025-06-01T16:11:49.654144+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face1.jpg
+2025-06-01T16:11:49.654650+0100 - INFO - Response: 404
+2025-06-01T16:11:49.655853+0100 - INFO - Response: 404
+2025-06-01T16:11:49.659687+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T16:11:49.661987+0100 - INFO - Response: 404
+2025-06-01T16:11:49.694363+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T16:11:49.695644+0100 - INFO - Response: 404
+2025-06-01T16:12:38.878470+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T16:12:38.895796+0100 - INFO - Response: 200
+2025-06-01T16:12:38.938305+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/static/assets/images/logo-mini.svg
+2025-06-01T16:12:38.939457+0100 - INFO - Response: 404
+2025-06-01T16:12:38.948047+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face10.jpg
+2025-06-01T16:12:38.949702+0100 - INFO - Response: 404
+2025-06-01T16:12:39.138865+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face12.jpg
+2025-06-01T16:12:39.139818+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face1.jpg
+2025-06-01T16:12:39.140994+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/assets/images/faces/face8.jpg
+2025-06-01T16:12:39.144501+0100 - INFO - Response: 404
+2025-06-01T16:12:39.148712+0100 - INFO - Response: 404
+2025-06-01T16:12:39.152264+0100 - INFO - Response: 404
+2025-06-01T16:44:50.156439+0100 - INFO - Request: GET http://127.0.0.1:8000/requisition/request_dash
+2025-06-01T16:44:50.214335+0100 - INFO - Response: 401
+2025-06-01T16:44:57.983064+0100 - INFO - Request: GET http://127.0.0.1:8000/
+2025-06-01T16:44:58.014992+0100 - INFO - Response: 200
+2025-06-01T16:45:01.628788+0100 - INFO - Request: GET http://127.0.0.1:8000/user/register
+2025-06-01T16:45:01.646951+0100 - INFO - Response: 200
+2025-06-01T16:45:05.007242+0100 - INFO - Request: GET http://127.0.0.1:8000/auth/login
+2025-06-01T16:45:05.052303+0100 - INFO - Response: 200
+2025-06-01T16:45:22.981304+0100 - INFO - Request: POST http://127.0.0.1:8000/auth/login
+2025-06-01T16:45:23.862457+0100 - INFO - Response: 302
+2025-06-01T16:45:23.873611+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard
+2025-06-01T16:45:23.875015+0100 - INFO - Response: 307
+2025-06-01T16:45:23.882331+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/
+2025-06-01T16:45:24.019957+0100 - INFO - Response: 200
+2025-06-01T16:45:24.148784+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/static/assets/images/logo-mini.svg
+2025-06-01T16:45:24.149883+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face10.jpg
+2025-06-01T16:45:24.150983+0100 - INFO - Response: 404
+2025-06-01T16:45:24.151807+0100 - INFO - Response: 404
+2025-06-01T16:45:24.233229+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face12.jpg
+2025-06-01T16:45:24.234507+0100 - INFO - Response: 404
+2025-06-01T16:45:24.235770+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face1.jpg
+2025-06-01T16:45:24.240541+0100 - INFO - Response: 404
+2025-06-01T16:45:24.242823+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T16:45:24.244453+0100 - INFO - Response: 404
+2025-06-01T16:45:24.322048+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T16:45:24.324059+0100 - INFO - Response: 404
+2025-06-01T16:45:32.326949+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T16:45:32.427149+0100 - INFO - Response: 200
+2025-06-01T16:45:32.469320+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T16:45:32.470579+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T16:45:32.472052+0100 - INFO - Response: 404
+2025-06-01T16:45:32.474517+0100 - INFO - Response: 404
+2025-06-01T16:45:32.667394+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T16:45:32.669298+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T16:45:32.670877+0100 - INFO - Response: 404
+2025-06-01T16:45:32.672776+0100 - INFO - Response: 404
+2025-06-01T16:45:32.674565+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T16:45:32.677121+0100 - INFO - Response: 404
+2025-06-01T16:45:38.249029+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:45:38.269898+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:45:41.029392+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:45:41.037175+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:45:43.534782+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:45:43.543486+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:45:43.754381+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:45:43.764666+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:45:48.011517+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/1
+2025-06-01T16:45:48.054841+0100 - INFO - Response: 200
+2025-06-01T16:45:48.094124+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/static/assets/images/logo-mini.svg
+2025-06-01T16:45:48.096440+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face10.jpg
+2025-06-01T16:45:48.096944+0100 - INFO - Response: 404
+2025-06-01T16:45:48.098687+0100 - INFO - Response: 404
+2025-06-01T16:45:48.303239+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face12.jpg
+2025-06-01T16:45:48.305320+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face1.jpg
+2025-06-01T16:45:48.305990+0100 - INFO - Response: 404
+2025-06-01T16:45:48.308868+0100 - INFO - Response: 404
+2025-06-01T16:45:48.310947+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face8.jpg
+2025-06-01T16:45:48.313082+0100 - INFO - Response: 404
+2025-06-01T16:45:48.349409+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face8.jpg
+2025-06-01T16:45:48.350551+0100 - INFO - Response: 404
+2025-06-01T16:45:48.434673+0100 - INFO - Request: GET http://127.0.0.1:8000/static/images/arrow-down.svg
+2025-06-01T16:45:48.439634+0100 - INFO - Response: 404
+2025-06-01T16:46:03.355988+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/1/preview
+2025-06-01T16:46:03.364964+0100 - INFO - Response: 200
+2025-06-01T16:46:06.638681+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:46:06.645029+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:46:07.099837+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:46:07.107180+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:46:07.317666+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:46:07.325256+0100 - ERROR - Unhandled exception: 'Expense' object has no attribute 'request_number'
+2025-06-01T16:47:24.291699+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T16:47:24.327582+0100 - INFO - Response: 200
+2025-06-01T16:47:27.906686+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T16:47:27.907268+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T16:47:27.907927+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T16:47:27.908485+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T16:47:27.909054+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:47:27.909647+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T16:47:27.911557+0100 - INFO - Response: 404
+2025-06-01T16:47:27.912752+0100 - INFO - Response: 404
+2025-06-01T16:47:27.913334+0100 - INFO - Response: 404
+2025-06-01T16:47:27.914583+0100 - INFO - Response: 404
+2025-06-01T16:47:27.917188+0100 - INFO - Response: 404
+2025-06-01T16:47:27.986622+0100 - INFO - Response: 200
+2025-06-01T16:56:43.801114+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T16:56:43.925744+0100 - INFO - Response: 200
+2025-06-01T16:56:44.113564+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T16:56:44.115945+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T16:56:44.116517+0100 - INFO - Response: 404
+2025-06-01T16:56:44.117666+0100 - INFO - Response: 404
+2025-06-01T16:56:44.404044+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T16:56:44.406191+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T16:56:44.406697+0100 - INFO - Response: 404
+2025-06-01T16:56:44.407913+0100 - INFO - Response: 404
+2025-06-01T16:56:44.413256+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T16:56:44.414391+0100 - INFO - Response: 404
+2025-06-01T16:56:44.519518+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T16:56:44.522141+0100 - INFO - Response: 404
+2025-06-01T16:56:47.134877+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T16:56:47.182121+0100 - INFO - Response: 200
+2025-06-01T16:57:04.572541+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T16:57:04.573845+0100 - INFO - Response: 404
+2025-06-01T16:57:05.418770+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T16:57:05.423145+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T16:57:05.432465+0100 - INFO - Response: 404
+2025-06-01T16:57:05.436505+0100 - INFO - Response: 404
+2025-06-01T16:57:05.646764+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T16:57:05.650111+0100 - INFO - Response: 404
+2025-06-01T17:01:45.423961+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T17:01:45.528726+0100 - INFO - Response: 200
+2025-06-01T17:01:45.596072+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/bootstrap/css/bootstrap.min.css
+2025-06-01T17:01:45.598583+0100 - INFO - Request: GET http://127.0.0.1:8000/static/css/main.css
+2025-06-01T17:01:45.599740+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/swiper/swiper-bundle.min.css
+2025-06-01T17:01:45.600372+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/glightbox/css/glightbox.min.css
+2025-06-01T17:01:45.601623+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/bootstrap-icons/bootstrap-icons.css
+2025-06-01T17:01:45.602891+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/aos/aos.css
+2025-06-01T17:01:45.828300+0100 - INFO - Response: 200
+2025-06-01T17:01:45.829555+0100 - INFO - Response: 200
+2025-06-01T17:01:45.831392+0100 - INFO - Response: 200
+2025-06-01T17:01:45.832586+0100 - INFO - Response: 200
+2025-06-01T17:01:45.834891+0100 - INFO - Response: 200
+2025-06-01T17:01:45.836862+0100 - INFO - Response: 200
+2025-06-01T17:01:45.849465+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/bootstrap/js/bootstrap.bundle.min.js
+2025-06-01T17:01:45.851954+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/aos/aos.js
+2025-06-01T17:01:45.853181+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/glightbox/js/glightbox.min.js
+2025-06-01T17:01:45.855011+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/swiper/swiper-bundle.min.js
+2025-06-01T17:01:45.863318+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/waypoints/noframework.waypoints.js
+2025-06-01T17:01:45.864621+0100 - INFO - Response: 200
+2025-06-01T17:01:45.868682+0100 - INFO - Response: 200
+2025-06-01T17:01:45.870642+0100 - INFO - Response: 200
+2025-06-01T17:01:45.875676+0100 - INFO - Response: 200
+2025-06-01T17:01:45.878602+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/imagesloaded/imagesloaded.pkgd.min.js
+2025-06-01T17:01:45.881150+0100 - INFO - Response: 200
+2025-06-01T17:01:45.888370+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/isotope-layout/isotope.pkgd.min.js
+2025-06-01T17:01:45.897172+0100 - INFO - Request: GET http://127.0.0.1:8000/static/js/main.js
+2025-06-01T17:01:45.898355+0100 - INFO - Response: 200
+2025-06-01T17:01:45.900198+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:01:45.907418+0100 - INFO - Response: 404
+2025-06-01T17:01:45.909943+0100 - INFO - Response: 200
+2025-06-01T17:01:45.913715+0100 - INFO - Response: 200
+2025-06-01T17:01:46.120527+0100 - INFO - Request: GET http://127.0.0.1:8000/static/vendor/bootstrap-icons/fonts/bootstrap-icons.woff2?24e3eb84d0bcaf83d77f904c78ac1f47
+2025-06-01T17:01:46.126449+0100 - INFO - Response: 200
+2025-06-01T17:01:46.533388+0100 - INFO - Request: GET http://127.0.0.1:8000/static/img/hero-img.png
+2025-06-01T17:01:46.536708+0100 - INFO - Response: 200
+2025-06-01T17:01:59.168011+0100 - INFO - Request: POST http://127.0.0.1:8000/auth/login
+2025-06-01T17:02:00.253406+0100 - INFO - Response: 302
+2025-06-01T17:02:00.270127+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard
+2025-06-01T17:02:00.273018+0100 - INFO - Response: 307
+2025-06-01T17:02:00.285114+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/
+2025-06-01T17:02:00.465527+0100 - INFO - Response: 200
+2025-06-01T17:02:00.562624+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:02:00.564884+0100 - INFO - Response: 404
+2025-06-01T17:02:00.569864+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/feather/feather.css
+2025-06-01T17:02:00.583387+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/simple-line-icons/css/simple-line-icons.css
+2025-06-01T17:02:00.589787+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/font-awesome/css/font-awesome.min.css
+2025-06-01T17:02:00.591766+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/ti-icons/css/themify-icons.css
+2025-06-01T17:02:00.594367+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/typicons/typicons.css
+2025-06-01T17:02:00.595576+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.min.css
+2025-06-01T17:02:00.604983+0100 - INFO - Response: 200
+2025-06-01T17:02:00.608120+0100 - INFO - Response: 200
+2025-06-01T17:02:00.619279+0100 - INFO - Response: 200
+2025-06-01T17:02:00.621187+0100 - INFO - Response: 200
+2025-06-01T17:02:00.623143+0100 - INFO - Response: 200
+2025-06-01T17:02:00.624348+0100 - INFO - Response: 200
+2025-06-01T17:02:00.635796+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/css/vendor.bundle.base.css
+2025-06-01T17:02:00.639098+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css
+2025-06-01T17:02:00.640913+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css
+2025-06-01T17:02:00.643870+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/css/style.css
+2025-06-01T17:02:00.647612+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/select.dataTables.min.css
+2025-06-01T17:02:00.653343+0100 - INFO - Response: 200
+2025-06-01T17:02:00.658044+0100 - INFO - Response: 200
+2025-06-01T17:02:00.661790+0100 - INFO - Response: 200
+2025-06-01T17:02:00.664516+0100 - INFO - Response: 200
+2025-06-01T17:02:00.667150+0100 - INFO - Response: 200
+2025-06-01T17:02:00.691209+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/static/assets/images/logo-mini.svg
+2025-06-01T17:02:00.695700+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face10.jpg
+2025-06-01T17:02:00.698663+0100 - INFO - Response: 404
+2025-06-01T17:02:00.703240+0100 - INFO - Response: 404
+2025-06-01T17:02:01.004037+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face12.jpg
+2025-06-01T17:02:01.006464+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face1.jpg
+2025-06-01T17:02:01.007049+0100 - INFO - Response: 404
+2025-06-01T17:02:01.010537+0100 - INFO - Response: 404
+2025-06-01T17:02:01.014089+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T17:02:01.018746+0100 - INFO - Response: 404
+2025-06-01T17:02:01.021974+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/vendor.bundle.base.js
+2025-06-01T17:02:01.026749+0100 - INFO - Response: 200
+2025-06-01T17:02:01.032252+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js
+2025-06-01T17:02:01.038210+0100 - INFO - Response: 200
+2025-06-01T17:02:01.133346+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:02:01.139686+0100 - INFO - Response: 404
+2025-06-01T17:02:02.413602+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js
+2025-06-01T17:02:02.415391+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/off-canvas.js
+2025-06-01T17:02:02.417182+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/progressbar.js/progressbar.min.js
+2025-06-01T17:02:02.420892+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/hoverable-collapse.js
+2025-06-01T17:02:02.425773+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/settings.js
+2025-06-01T17:02:02.427760+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/template.js
+2025-06-01T17:02:02.432152+0100 - INFO - Response: 200
+2025-06-01T17:02:02.435569+0100 - INFO - Response: 200
+2025-06-01T17:02:02.437836+0100 - INFO - Response: 200
+2025-06-01T17:02:02.440893+0100 - INFO - Response: 200
+2025-06-01T17:02:02.442233+0100 - INFO - Response: 200
+2025-06-01T17:02:02.444290+0100 - INFO - Response: 200
+2025-06-01T17:02:02.452247+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/todolist.js
+2025-06-01T17:02:02.455653+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/requisition.js
+2025-06-01T17:02:02.457698+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/jquery.cookie.js
+2025-06-01T17:02:02.459725+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/typeahead.js
+2025-06-01T17:02:02.461922+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/expenses.js
+2025-06-01T17:02:02.467597+0100 - INFO - Response: 200
+2025-06-01T17:02:02.474928+0100 - INFO - Response: 200
+2025-06-01T17:02:02.480795+0100 - INFO - Response: 200
+2025-06-01T17:02:02.482831+0100 - INFO - Response: 200
+2025-06-01T17:02:02.484084+0100 - INFO - Response: 200
+2025-06-01T17:02:02.491780+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/dashboard.js
+2025-06-01T17:02:02.497998+0100 - INFO - Request: GET http://127.0.0.1:8000/dashboard/assets/images/faces/face8.jpg
+2025-06-01T17:02:02.500820+0100 - INFO - Response: 404
+2025-06-01T17:02:02.508920+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/css/maps/style.css.map
+2025-06-01T17:02:02.514416+0100 - INFO - Response: 200
+2025-06-01T17:02:02.519722+0100 - INFO - Response: 200
+2025-06-01T17:02:02.565651+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/simple-line-icons/fonts/Simple-Line-Icons.woff2?v=2.4.0
+2025-06-01T17:02:02.567266+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/feather/fonts/feather-webfont.woff
+2025-06-01T17:02:02.569129+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/ti-icons/fonts/themify.woff
+2025-06-01T17:02:02.570377+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/fonts/materialdesignicons-webfont.woff2?v=7.4.47
+2025-06-01T17:02:02.578340+0100 - INFO - Response: 200
+2025-06-01T17:02:02.582971+0100 - INFO - Response: 200
+2025-06-01T17:02:02.586644+0100 - INFO - Response: 200
+2025-06-01T17:02:02.589450+0100 - INFO - Response: 200
+2025-06-01T17:02:03.183054+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T17:02:03.186172+0100 - INFO - Response: 404
+2025-06-01T17:02:03.196169+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T17:02:03.199520+0100 - INFO - Response: 404
+2025-06-01T17:02:03.206042+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/progressbar.js/progressbar.min.js.map
+2025-06-01T17:02:03.210360+0100 - INFO - Response: 200
+2025-06-01T17:02:12.700775+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T17:02:12.726288+0100 - INFO - Response: 200
+2025-06-01T17:02:12.829514+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:02:12.831182+0100 - INFO - Response: 404
+2025-06-01T17:02:12.864307+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T17:02:12.866515+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T17:02:12.868068+0100 - INFO - Response: 404
+2025-06-01T17:02:12.871219+0100 - INFO - Response: 404
+2025-06-01T17:02:13.242614+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T17:02:13.244370+0100 - INFO - Response: 404
+2025-06-01T17:02:13.247344+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T17:02:13.250551+0100 - INFO - Response: 404
+2025-06-01T17:02:13.254163+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T17:02:13.273829+0100 - INFO - Response: 404
+2025-06-01T17:02:13.276942+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/expenses.js
+2025-06-01T17:02:13.279935+0100 - INFO - Response: 304
+2025-06-01T17:02:13.410193+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:02:13.414556+0100 - INFO - Response: 404
+2025-06-01T17:02:13.419402+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T17:02:13.421457+0100 - INFO - Response: 404
+2025-06-01T17:02:13.584834+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T17:02:13.588196+0100 - INFO - Response: 404
+2025-06-01T17:02:13.605927+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T17:02:13.608914+0100 - INFO - Response: 404
+2025-06-01T17:02:16.339125+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T17:02:16.357887+0100 - INFO - Response: 200
+2025-06-01T17:02:52.031204+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T17:02:52.046074+0100 - INFO - Response: 200
+2025-06-01T17:05:30.171993+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T17:05:30.328772+0100 - INFO - Response: 200
+2025-06-01T17:05:34.822658+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:05:34.823318+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T17:05:34.824592+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T17:05:34.825191+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T17:05:34.827155+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T17:05:34.827669+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T17:05:34.829335+0100 - INFO - Response: 404
+2025-06-01T17:05:34.831999+0100 - INFO - Response: 404
+2025-06-01T17:05:34.833300+0100 - INFO - Response: 404
+2025-06-01T17:05:34.835889+0100 - INFO - Response: 404
+2025-06-01T17:05:34.837807+0100 - INFO - Response: 404
+2025-06-01T17:05:34.839985+0100 - INFO - Response: 404
+2025-06-01T17:05:34.845758+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:05:34.846972+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/expenses.js
+2025-06-01T17:05:34.854844+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T17:05:34.856170+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T17:05:34.864644+0100 - INFO - Response: 404
+2025-06-01T17:05:34.865839+0100 - INFO - Response: 404
+2025-06-01T17:05:34.973880+0100 - INFO - Response: 304
+2025-06-01T17:05:34.975120+0100 - INFO - Response: 404
+2025-06-01T17:05:38.571885+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T17:05:38.621449+0100 - INFO - Response: 200
+2025-06-01T17:06:48.598165+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T17:06:48.605154+0100 - INFO - Response: 200
+2025-06-01T17:21:05.082229+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/dash
+2025-06-01T17:21:05.281112+0100 - INFO - Response: 200
+2025-06-01T17:21:09.420549+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face1.jpg
+2025-06-01T17:21:09.422425+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face8.jpg
+2025-06-01T17:21:09.422930+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:21:09.423571+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/static/assets/images/logo-mini.svg
+2025-06-01T17:21:09.424230+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face10.jpg
+2025-06-01T17:21:09.424946+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/assets/images/faces/face12.jpg
+2025-06-01T17:21:09.428750+0100 - INFO - Response: 404
+2025-06-01T17:21:09.429384+0100 - INFO - Response: 404
+2025-06-01T17:21:09.430957+0100 - INFO - Response: 404
+2025-06-01T17:21:09.431464+0100 - INFO - Response: 404
+2025-06-01T17:21:09.433325+0100 - INFO - Response: 404
+2025-06-01T17:21:09.434070+0100 - INFO - Response: 404
+2025-06-01T17:21:09.440696+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/expenses.js
+2025-06-01T17:21:09.442781+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T17:21:09.443594+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:21:09.447737+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T17:21:09.578087+0100 - INFO - Response: 200
+2025-06-01T17:21:09.579462+0100 - INFO - Response: 404
+2025-06-01T17:21:09.580917+0100 - INFO - Response: 404
+2025-06-01T17:21:09.582227+0100 - INFO - Response: 404
+2025-06-01T17:21:14.606371+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T17:21:14.700494+0100 - INFO - Response: 200
+2025-06-01T17:21:35.297046+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/1
+2025-06-01T17:21:35.430775+0100 - INFO - Response: 200
+2025-06-01T17:21:35.552809+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:21:35.554768+0100 - INFO - Response: 404
+2025-06-01T17:21:35.590968+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/static/assets/images/logo-mini.svg
+2025-06-01T17:21:35.592751+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face10.jpg
+2025-06-01T17:21:35.593344+0100 - INFO - Response: 404
+2025-06-01T17:21:35.596283+0100 - INFO - Response: 404
+2025-06-01T17:21:35.884311+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face12.jpg
+2025-06-01T17:21:35.886810+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face1.jpg
+2025-06-01T17:21:35.887424+0100 - INFO - Response: 404
+2025-06-01T17:21:35.892134+0100 - INFO - Response: 404
+2025-06-01T17:21:35.901878+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face8.jpg
+2025-06-01T17:21:35.904324+0100 - INFO - Response: 404
+2025-06-01T17:21:35.906868+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/js/expenses.js
+2025-06-01T17:21:35.912267+0100 - INFO - Response: 304
+2025-06-01T17:21:36.030812+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:21:36.035425+0100 - INFO - Response: 404
+2025-06-01T17:21:36.043811+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/edit-expense/assets/images/faces/face8.jpg
+2025-06-01T17:21:36.051296+0100 - INFO - Response: 404
+2025-06-01T17:21:36.060586+0100 - INFO - Request: GET http://127.0.0.1:8000/static/images/arrow-down.svg
+2025-06-01T17:21:36.067760+0100 - INFO - Response: 404
+2025-06-01T17:21:36.169733+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T17:21:36.171811+0100 - INFO - Response: 404
+2025-06-01T17:21:36.204474+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T17:21:36.208155+0100 - INFO - Response: 404
+2025-06-01T17:21:38.174039+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/js/perfect-scrollbar.min.js.map
+2025-06-01T17:21:38.181294+0100 - INFO - Response: 404
+2025-06-01T17:21:38.191499+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/chart.js/chart.umd.js.map
+2025-06-01T17:21:38.196894+0100 - INFO - Response: 404
+2025-06-01T17:21:38.211029+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:21:38.215410+0100 - INFO - Response: 404
+2025-06-01T17:21:38.232035+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:21:38.233282+0100 - INFO - Response: 404
+2025-06-01T17:21:38.346937+0100 - INFO - Request: GET http://127.0.0.1:8000/.well-known/appspecific/com.chrome.devtools.json
+2025-06-01T17:21:38.348165+0100 - INFO - Response: 404
+2025-06-01T17:21:38.444859+0100 - INFO - Request: GET http://127.0.0.1:8000/static/assets/vendors/mdi/css/materialdesignicons.css.map
+2025-06-01T17:21:38.448001+0100 - INFO - Response: 404
+2025-06-01T17:21:39.861599+0100 - INFO - Request: GET http://127.0.0.1:8000/expense/expense_details/1
+2025-06-01T17:21:39.874289+0100 - INFO - Response: 200

@@ -367,7 +367,7 @@ function rejectExpense(id) {
 // JavaScript function to handle delete requisition
 function deleteExpense(id) {
     if (confirm("Are you sure you want to delete this expense?")) {
-        fetch(`/expense/delete_requisition`, {
+        fetch(`/expense/delete_expense`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -455,7 +455,7 @@ function viewExpenseComments(expenseId) {
                 Array.isArray(data.expense.comments) &&
                 data.expense.comments.length > 0
             ) {
-                modalBody.innerHTML = data.expense.comments.map(comment =>
+                expenseModalBody.innerHTML = data.expense.comments.map(comment =>
                     `<div class="mb-3 border-bottom pb-2">
                         <strong>${comment.created_by || "Unknown"}</strong>
                         <span class="text-muted float-end">${comment.created_at ? new Date(comment.created_at).toLocaleString() : ""}</span>
@@ -463,9 +463,9 @@ function viewExpenseComments(expenseId) {
                     </div>`
                 ).join("");
             } else if (data.status === "success") {
-                modalBody.innerHTML = "<p class='text-muted'>No comments available for this requisition.</p>";
+                expenseModalBody.innerHTML = "<p class='text-muted'>No comments available for this Espense.</p>";
             } else {
-                modalBody.innerHTML = `<p class='text-danger'>${data.message || "Failed to load comments."}</p>`;
+                expenseModalBody.innerHTML = `<p class='text-danger'>${data.message || "Failed to load comments."}</p>`;
             }
             const commentsModalElem = document.getElementById('expenseCommentsModal');
             if (commentsModalElem) {
@@ -477,13 +477,13 @@ function viewExpenseComments(expenseId) {
         })
         .catch(err => {
             console.error("Error loading comments:", err);
-            const modalBody = document.getElementById("expenseCommentsModalBody");
-            if (modalBody) {
-                modalBody.innerHTML = "<p class='text-danger'>Failed to load comments.</p>";
+            const expenseModalBody = document.getElementById("expenseCommentsModalBody");
+            if (expenseModalBody) {
+                expenseModalBody.innerHTML = "<p class='text-danger'>Failed to load comments.</p>";
             }
-            const commentsModalElem = document.getElementById('expenseCommentsModal');
-            if (commentsModalElem) {
-                const expenseCommentsModal = new bootstrap.Modal(commentsModalElem);
+            const expensecommentsModalElem = document.getElementById('expenseCommentsModal');
+            if (expensecommentsModalElem) {
+                const expenseCommentsModal = new bootstrap.Modal(expensecommentsModalElem);
                 expenseCommentsModal.show();
             }
         });

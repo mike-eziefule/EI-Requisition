@@ -31,30 +31,39 @@
                     <table class="table select-table">
                         <thead>
                             <tr>
-                                <th class="text-center px-3" >S/N</th>
-                                <th class="text-center px-3" >Expense ID</th>
-                                <th class="text-center px-3" >Date</th>
-                                <th class="text-center px-3" >Description</th>
-                                <th class="text-center px-3" >Amount</th>
-                                <th class="text-center px-3" >progress</th>
-                                <th class="text-center px-3" >Status</th>
-                                <th class="text-center px-3" >Preview</th>
+                                <th class="text-center px-3">S/N</th>
+                                <th class="text-center px-3">Expense ID</th>
+                                <th class="text-center px-3">Date</th>
+                                <th class="text-center px-3">Description</th>
+                                <th class="text-center px-3">Amount</th>
+                                <th class="text-center px-3">progress</th>
+                                <th class="text-center px-3">Status</th>
+                                <th class="text-center px-3">View items</th>
+                                <th class="text-center px-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for expense in expenses %}
                             <tr>
-                                <td class="text-center px-3" ><h6>{{ loop.index }}</h6></td>
-                                <td class="text-center px-3" ><h6>{{ expense.expense_number }}</h6></td>
-                                <td class="text-center px-3" >
+                                <td class="text-center px-3">
+                                    <h6>{{ loop.index }}</h6>
+                                </td>
+                                <td class="text-center px-3">
+                                    <h6>{{ expense.expense_number }}</h6>
+                                </td>
+                                <td class="text-center px-3">
                                     <h6>{{ expense.timestamp.date() }}</h6>
                                     <p>{{ expense.timestamp.time() }}</p>
                                 </td>
-                                <td class="text-center px-3" ><h6>{{ expense.description }}</h6></td>
-                                <td class="text-center px-3" ><h6>{{ expense.total }}</h6></td>
                                 <td class="text-center px-3">
-                                    {% if expense.status == "pending with Officer"
-                                    %}
+                                    <h6>{{ expense.description }}</h6>
+                                </td>
+                                <td class="text-center px-3">
+                                    <h6>{{ expense.total }}</h6>
+                                </td>
+                                <td class="text-center px-3">
+                                    {% if expense.status == "pending with
+                                    Officer" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -93,8 +102,8 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with MD/CEO"
-                                    %}
+                                    {% elif expense.status == "pending with
+                                    MD/CEO" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -173,19 +182,46 @@
                                     </div>
                                     {% endif %}
                                 </td>
-
-                                <td class="text-center px-3" >
+                                <td class="text-center px-3">
                                     <div class="badge badge-opacity-warning">
                                         {{ expense.status }}
                                     </div>
                                 </td>
-                                <td class="text-center px-3" >
+                                <td class="text-center px-3">
                                     <button
                                         onclick="openExpenseModal({{ expense.id }})"
                                         class="btn btn-info btn-sm"
                                     >
                                         view items
                                     </button>
+                                </td>
+                                <td class="text-center px-3">
+                                    <div class="d-grid">
+                                        {% if expense.status == "Rejected" %}
+                                        <!--view comments-->
+                                        <button
+                                            class="btn btn-info btn-sm mt-1"
+                                            onclick="viewExpenseComments({{ expense.id }})"
+                                        >
+                                            View comments
+                                        </button>
+                                        <!-- Edit Button -->
+                                        <button
+                                            class="btn btn-warning btn-sm mt-1"
+                                            onclick="window.location.href='{{ url_for('edit_expense', id=expense.id) }}'"
+                                        >
+                                            Edit
+                                        </button>
+
+                                        <!-- Delete Button -->
+                                        <button
+                                            class="btn btn-danger btn-sm mt-1"
+                                            onclick="deleteExpense({{ expense.id }})"
+                                        >
+                                            Delete
+                                        </button>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -197,6 +233,9 @@
                     <!-- Comments Modal moved to requisition_details.html and included below -->
                     {% include "view_expenses.html" %}
                 </div>
+
+                <!-- Comments Modal moved to requisition_details.html and included below -->
+                    {% include "Expense_details.html" %}
             </div>
         </div>
     </div>

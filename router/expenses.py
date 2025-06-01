@@ -395,9 +395,9 @@ async def expense_details(id: int, db: Session = Depends(script.get_db)):
 
     return JSONResponse(content={
         "status": "success",
-        "requisition": {
+        "expense": {
             "id": expense.id,
-            "request_number": expense.request_number,
+            "expense_number": expense.expense_number,
             "description": expense.description,
             "status": expense.status,
             "comments": [
