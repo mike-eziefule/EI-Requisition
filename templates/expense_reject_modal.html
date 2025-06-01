@@ -1,0 +1,51 @@
+<div
+    class="modal fade"
+    id="rejectExpenseModal"
+    tabindex="-1"
+    aria-labelledby="expenserejectModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="expenserejectModalLabel">
+                    Reject Expense Request
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <form id="expense-reject-form">
+                    <input type="hidden" id="expense-id" name="id" />
+                    <div class="form-group">
+                        <label for="expense-comment">Comment</label>
+                        <textarea
+                            class="form-control"
+                            id="expense-comment"
+                            name="expense-comment"
+                            rows="5"
+                            required
+                        ></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+                <button type="button" class="btn btn-danger" onclick="rejectExpenseButton()">
+                    Reject
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

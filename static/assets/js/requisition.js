@@ -118,7 +118,7 @@ if (submitChangesButton) {
                 const data = await response.json();
                 console.log("Server Response:", data);
                 alert("Requisition updated successfully");
-                window.location.href = "/dashboard/user";
+                window.location.href = "/requisition/request_dash";
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.message || "An error occurred"}`);
@@ -181,7 +181,7 @@ document
 
                     // Handle success
                     alert("Requisition created successfully");
-                    window.location.href = "/dashboard/user"; // Redirect to another page (dashboard or relevant page)
+                    window.location.href = "/requisition/request_dash"; // Redirect to another page (dashboard or relevant page)
                 } else {
                     alert("Unexpected response format.");
                 }

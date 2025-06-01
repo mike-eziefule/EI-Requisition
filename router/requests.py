@@ -19,20 +19,59 @@ router = APIRouter(prefix="/requisition", tags=["requisition"])
 
 templates = Jinja2Templates(directory="templates")
 
-# Directory to store uploaded files
-UPLOAD_DIR = "uploads/"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+#dashboard page route
+@router.get("/request_dash", response_class=HTMLResponse)
+async def request_dash(
+    request: Request,
+    db:Session=Depends(script.get_db)
+    ):
+    
+    msg = []
+    
+    admin_data = utility.get_user_from_token(request, db)    #return a dictionary
+    user_data =  utility.get_staff_from_token(request, db)       #return user object
+    
+    if not user_data and not admin_data:
+        msg.append("Session expired, LOGIN required")
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
+    
+    if user_data:
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data.id).all() # Fetch all requisition unique to user
+        request_length = len(all_requests)
+        
+        return templates.TemplateResponse(
+            "request_dash.html",{
+            "request": request,
+            "user": user_data,
+            "role": user_data.designation,
+            "all_requests": all_requests,
+            "request_length": request_length,
+            })
+    
+    if admin_data:        
+        
+        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == "not allowed").all() # Fetch all requisition unique to user
+        request_length = len(all_requests)    
+        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == "not allowed").all()
+        expense_length = len(expenses)    
+        
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "msg": msg,
+            "request": request,
+            "user": admin_data.get("user"),
+            "role": admin_data.get("role"),
+            "all_requests": all_requests,
+            "request_length": request_length,
+            "expenses": expenses,
+            "expense_length": expense_length,
+            })
 
-# Helper function to save attachment
-async def save_attachment(attachment: UploadFile) -> str:
-    try:
-        file_location = f"static/uploads/{attachment.filename}"
-        os.makedirs(os.path.dirname(file_location), exist_ok=True)
-        with open(file_location, "wb") as f:
-            f.write(await attachment.read())
-        return file_location
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error saving attachment: {e}")
 
 # Route to create a new requisition (GET)
 @router.get("/create-requisition", response_class=HTMLResponse)
@@ -85,13 +124,11 @@ async def create_requisition(
 ):  
     try:
         requisition_data = json.loads(requisition_input)
-        # Ensure 'id' is present in every line item, set to None if missing
-        for item in requisition_data.get("line_items", []):
-            if "id" not in item:
-                item["id"] = None
-            elif item["id"] in [None, "", "null"] or not str(item["id"]).isdigit():
-                item["id"] = None
-        requisition_input_obj = schematic.RequisitionInput(**requisition_data)
+        # Remove 'id' from line_items if present and None or empty (for new items)
+        # for item in requisition_data.get("line_items", []):
+        #     if "id" in item and (item["id"] is None or item["id"] == "" or str(item["id"]).lower() == "null"):
+        #         item.pop("id")
+        # requisition_input_obj = schematic.RequisitionInput(**requisition_data)
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
@@ -100,15 +137,16 @@ async def create_requisition(
     if not requestor:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
-    line_items_data = [item.dict() for item in requisition_input_obj.line_items]
+    # line_items_data = requisition_data["line_items"]
+    # [item.dict() for item in requisition_input_obj.line_items]
     try:
         requisition = crud.create_requisition(
             db=db,
-            request_number=requisition_input_obj.request_number,
-            description=requisition_input_obj.description,
+            request_number=requisition_data["request_number"],
+            description=requisition_data["description"],
             requestor_id=requestor.id,
             status=f"pending with {requestor.line_manager}",
-            line_items_data=line_items_data,
+            line_items_data=requisition_data["line_items"],
         )
         return JSONResponse(content={"message": "Requisition created successfully!"}, status_code=200)
     except Exception as e:
@@ -288,9 +326,6 @@ async def edit_requisition(
                 )
                 db.add(new_line_item)
 
-        if attachment:
-            attachment_path = await save_attachment(attachment)
-            requisition.attachment_path = attachment_path
 
         requisition.status = f"pending with {user.line_manager}"
         db.commit()

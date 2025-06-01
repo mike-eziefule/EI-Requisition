@@ -1,6 +1,12 @@
-<!-- filepath: c:\Users\SGA PROJECTS\Desktop\Requisition_app\templates\expense_dash.html -->
-{% extends "dblayout.html" %} {% block title %} Expense Dashboard {% endblock %}
+<!--  page header start -->
+{% extends "dblayout.html" %} {% block title %} pending Expenses {% endblock %}
+
+<!--  page header end -->
+
+{% include "expense_reject_modal.html" %}
+<!--  page body start  -->
 {% block child_content_1 %}
+
 <div class="row flex-grow">
     <div class="col-12 grid-margin stretch-card">
         <div class="card card-rounded">
@@ -10,17 +16,17 @@
                 >
                     <div>
                         <h4 class="card-title card-title-dash">
-                            Expense Summary
+                            Pending Expenses
                         </h4>
                         <p class="card-subtitle card-subtitle-dash">
-                            You have {{ expenses_length }} expense requests
+                            You have {{expense_length}} new requests
                         </p>
                     </div>
                     <div>
                         <button
                             class="btn btn-primary btn-lg text-white mb-0 me-0"
                             type="button"
-                            onclick="window.location.href='{{ url_for('create_expense') }}'"
+                            onclick="window.location.href='{{url_for('create_expense')}}'"
                         >
                             <i class="mdi mdi-account-plus"></i>
                             New Expense
@@ -31,30 +37,37 @@
                     <table class="table select-table">
                         <thead>
                             <tr>
-                                <th class="text-center px-3" >S/N</th>
-                                <th class="text-center px-3" >Expense ID</th>
-                                <th class="text-center px-3" >Date</th>
-                                <th class="text-center px-3" >Description</th>
-                                <th class="text-center px-3" >Amount</th>
-                                <th class="text-center px-3" >progress</th>
-                                <th class="text-center px-3" >Status</th>
-                                <th class="text-center px-3" >Preview</th>
+                                <th class="text-center px-3">S/N</th>
+                                <th class="text-center px-3">Expense ID</th>
+                                <th class="text-center px-3">Date</th>
+                                <th class="text-center px-3">Description</th>
+                                <th class="text-center px-3">Amount</th>
+                                <th class="text-center px-3">Preview</th>
+                                <th class="text-center px-3">Progress</th>
+                                <th class="text-center px-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for expense in expenses %}
+                            {% for expense in pending_expenses %}
                             <tr>
-                                <td class="text-center px-3" ><h6>{{ loop.index }}</h6></td>
-                                <td class="text-center px-3" ><h6>{{ expense.expense_number }}</h6></td>
-                                <td class="text-center px-3" >
+                                <td class="text-center px-3"><h6>{{ loop.index }}</h6></td>
+                                <td class="text-center px-3"><h6>{{ expense.expense_number }}</h6></td>
+                                <td class="text-center px-3">
                                     <h6>{{ expense.timestamp.date() }}</h6>
                                     <p>{{ expense.timestamp.time() }}</p>
                                 </td>
-                                <td class="text-center px-3" ><h6>{{ expense.description }}</h6></td>
-                                <td class="text-center px-3" ><h6>{{ expense.total }}</h6></td>
+                                <td class="text-center px-3"><h6>{{ expense.description }}</h6></td>
+                                <td class="text-center px-3"><h6>{{ expense.total }}</h6></td>
                                 <td class="text-center px-3">
-                                    {% if expense.status == "pending with Officer"
-                                    %}
+                                    <button
+                                        onclick="openExpenseModal({{ expense.id }})"
+                                        class="btn btn-info btn-sm"
+                                    >
+                                        view Expenses
+                                    </button>
+                                </td>
+                                <td class="text-center px-3">
+                                    {% if expense.status == "pending with Officer" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -73,8 +86,7 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with
-                                    Supervisor" %}
+                                    {% elif expense.status == "pending with Supervisor" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -93,8 +105,7 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with MD/CEO"
-                                    %}
+                                    {% elif expense.status == "pending with MD/CEO"%}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -113,8 +124,7 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with
-                                    Storekeeper" %}
+                                    {% elif expense.status == "pending with Storekeeper" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -126,7 +136,7 @@
                                             <div
                                                 class="progress-bar bg-success"
                                                 role="progressbar"
-                                                style="width: 80%"
+                                                style="width: 100%"
                                                 aria-valuenow="4"
                                                 aria-valuemin="0"
                                                 aria-valuemax="5"
@@ -139,7 +149,7 @@
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
                                         >
                                             <p class="text-success">100%</p>
-                                            <p>5/5</p>
+                                            <p>4/5</p>
                                         </div>
                                         <div class="progress progress-md">
                                             <div
@@ -173,19 +183,45 @@
                                     </div>
                                     {% endif %}
                                 </td>
+                                <td class="text-center px-3">
+                                    <div class="d-grid">
+                                        <!-- Approve Button -->
+                                        <button
+                                            class="btn btn-primary btn-sm"
+                                            onclick="approveExpense({{ expense.id }})"
+                                        >
+                                            Approve
+                                        </button>
 
-                                <td class="text-center px-3" >
-                                    <div class="badge badge-opacity-warning">
-                                        {{ expense.status }}
+                                        <!-- Reject Button -->
+                                        <button
+                                            type="button"
+                                            class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#rejectExpenseModal"
+                                            onclick="populateExpenseRejectModal({{ expense.id }})"
+                                        >
+                                            Reject
+                                        </button>
+
+                                        {% if expense.status == "Rejected" %}
+                                        <!-- Edit Button -->
+                                        <button
+                                            class="btn btn-warning btn-sm mt-1"
+                                            onclick="window.location.href='{{ url_for('edit_expense', id=expense.id) }}'"
+                                        >
+                                            Edit
+                                        </button>
+
+                                        <!-- Delete Button -->
+                                        <button
+                                            class="btn btn-danger btn-sm mt-1"
+                                            onclick="deleteExpense({{ expense.id }})"
+                                        >
+                                            Delete
+                                        </button>
+                                        {% endif %}
                                     </div>
-                                </td>
-                                <td class="text-center px-3" >
-                                    <button
-                                        onclick="openExpenseModal({{ expense.id }})"
-                                        class="btn btn-info btn-sm"
-                                    >
-                                        view items
-                                    </button>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -193,13 +229,12 @@
                     </table>
                 </div>
 
-                <div id="expensePreviewModalContainer">
-                    <!-- Comments Modal moved to requisition_details.html and included below -->
-                    {% include "view_expenses.html" %}
-                </div>
+                <!-- Modal -->
+                {% block modal %} {% include "view_expenses.html" %} {% endblock %}
             </div>
         </div>
     </div>
 </div>
 
 {% endblock %}
+<!--  page body end  -->

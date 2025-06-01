@@ -45,7 +45,7 @@ class Requisition(Base):
     request_number = Column(String, unique=True, nullable=False)
     description = Column(String, nullable=False)
     status = Column(String, nullable=False, default="Pending")
-    timestamp = Column(DateTime, nullable=False)  # DateTime column to store date and time
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)  # DateTime column to store date and time
     requestor_id = Column(Integer, ForeignKey("users.id"))
 
     # Relationship to line items
@@ -93,6 +93,7 @@ class Expense(Base):
     # Relationship to line items
     line_items = relationship("ExpenseLineItem", back_populates="expense")
     requestor = relationship("User")
+    expense_comments = relationship("ExpenseComment", back_populates="expense")
 
 
 class ExpenseLineItem(Base):
@@ -106,3 +107,16 @@ class ExpenseLineItem(Base):
     expense_id = Column(Integer, ForeignKey("expenses.id"))
 
     expense = relationship("Expense", back_populates="line_items")
+
+
+class ExpenseComment(Base):
+    __tablename__ = "expense_comments"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    expense_id = Column(Integer, ForeignKey("expenses.id"), nullable=False)
+    comment = Column(String, nullable=False)
+    created_by = Column(String, nullable=False)  # Line manager's name or email
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    expense = relationship("Expense", back_populates="expense_comments")
+

@@ -1,0 +1,232 @@
+{% extends "dblayout.html" %} {% block title %} Requisition Dashboard {%
+endblock %} {% block child_content_1 %}
+<!--  Left row start  -->
+
+<div class="col-lg-8 d-flex flex-column">
+    <div class="row flex-grow">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card card-rounded">
+                <div class="card-body">
+                    <div
+                        class="d-sm-flex justify-content-between align-items-start"
+                    >
+                        <div>
+                            <h4 class="card-title card-title-dash">
+                                Requests Summary
+                            </h4>
+                            <p class="card-subtitle card-subtitle-dash">
+                                You have {{request_length}} new requests
+                            </p>
+                        </div>
+                        <div>
+                            <button
+                                class="btn btn-primary btn-lg text-white mb-0 me-0"
+                                type="button"
+                                onclick="window.location.href='{{url_for('create_requisition')}}'"
+                            >
+                                <i class="mdi mdi-account-plus"></i>
+                                Create Request
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive mt-1">
+                        <table class="table select-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center px-3">S/N</th>
+                                    <th class="text-center px-3">ReID</th>
+                                    <th class="text-center px-3">Date</th>
+                                    <th class="text-center px-3">Requestor</th>
+                                    <th class="text-center px-3">
+                                        Description
+                                    </th>
+                                    <th class="text-center px-3">Status</th>
+                                    <th class="text-center px-3">Progress</th>
+                                    <th class="text-center px-3">view Items</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in all_requests %}
+                                <tr>
+                                    <td class="text-center px-3">
+                                        <h6>{{ loop.index }}</h6>
+                                    </td>
+                                    <td class="text-center px-3">
+                                        <h6>{{ item.request_number}}</h6>
+                                    </td>
+                                    <td class="text-center px-3">
+                                        <h6>{{ item.timestamp.date() }}</h6>
+                                        <p>{{ item.timestamp.time() }}</p>
+                                    </td>
+                                    <td class="text-center px-3">
+                                        <h6>{{ item.requestor.staff_name }}</h6>
+                                        <p>{{ item.requestor.designation }}</p>
+                                        <p>{{ item.requestor.email }}</p>
+                                    </td>
+                                    <td class="text-center px-3">
+                                        <h6>{{ item.description }}</h6>
+                                    </td>
+
+                                    <td>
+                                        <div
+                                            class="badge badge-opacity-warning"
+                                        >
+                                            {{ item.status }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center px-3">
+                                        {% if item.status == "pending with Officer" %}
+                                        <div>
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
+                                            >
+                                                <p class="text-success">20%</p>
+                                                <p>1/5</p>
+                                            </div>
+                                            <div class="progress progress-md">
+                                                <div
+                                                    class="progress-bar bg-success"
+                                                    role="progressbar"
+                                                    style="width: 20%"
+                                                    aria-valuenow="1"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="5"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        {% elif item.status == "pending with Supervisor" %}
+                                        <div>
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
+                                            >
+                                                <p class="text-success">40%</p>
+                                                <p>2/5</p>
+                                            </div>
+                                            <div class="progress progress-md">
+                                                <div
+                                                    class="progress-bar bg-success"
+                                                    role="progressbar"
+                                                    style="width: 40%"
+                                                    aria-valuenow="2"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="5"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        {% elif item.status == "pending with MD/CEO" %}
+                                        <div>
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
+                                            >
+                                                <p class="text-success">60%</p>
+                                                <p>3/5</p>
+                                            </div>
+                                            <div class="progress progress-md">
+                                                <div
+                                                    class="progress-bar bg-success"
+                                                    role="progressbar"
+                                                    style="width: 60%"
+                                                    aria-valuenow="3"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="5"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        {% elif item.status == "pending with Storekeeper" %}
+                                        <div>
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
+                                            >
+                                                <p class="text-success">80%</p>
+                                                <p>4/5</p>
+                                            </div>
+                                            <div class="progress progress-md">
+                                                <div
+                                                    class="progress-bar bg-success"
+                                                    role="progressbar"
+                                                    style="width: 80%"
+                                                    aria-valuenow="4"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="5"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        {% elif item.status == "Approved" %}
+                                        <div>
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
+                                            >
+                                                <p class="text-success">100%</p>
+                                                <p>5/5</p>
+                                            </div>
+                                            <div class="progress progress-md">
+                                                <div
+                                                    class="progress-bar bg-success"
+                                                    role="progressbar"
+                                                    style="width: 100%"
+                                                    aria-valuenow="5"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="5"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        {% elif item.status == "Rejected" %}
+                                        <div>
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
+                                            >
+                                                <p class="text-danger">0%</p>
+                                                <p>0/5</p>
+                                            </div>
+                                            <div class="progress progress-md">
+                                                <div
+                                                    class="progress-bar bg-danger"
+                                                    role="progressbar"
+                                                    style="width: 0%"
+                                                    aria-valuenow="0"
+                                                    aria-valuemin="0"
+                                                    aria-valuemax="5"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="text-center px-3">
+                                        <!-- Anchor tag to trigger the modal -->
+                                        <button
+                                            onclick="openModal({{item.id}})"
+                                            class="btn btn-primary btn-sm"
+                                        >
+                                            View Items
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Comments Modal moved to requisition_details.html and included below -->
+                    {% include "requisition_details.html" %}
+
+                    <!-- Modal -->
+                    {% block modal %} {% include "preview.html" %} {% endblock
+                    %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-4 d-flex flex-column">
+    <!--  page body start  -->
+    {% include "todo.html" %}
+    <!--  page body end  -->
+</div>
+
+<script>
+    // ...existing code...
+</script>
+
+{% endblock %}

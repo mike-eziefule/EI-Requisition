@@ -38,39 +38,38 @@
                     <table class="table select-table">
                         <thead>
                             <tr>
-                                <th>S/N</th>
-                                <th>ReID</th>
-                                <th>Date created</th>
-                                <th>Requestor</th>
-                                <th>Description</th>
-                                <th>view items</th>
-                                <th>Progress</th>
-                                <th>Status</th>
-                                <th>action</th>
+                                <th class="text-center px-3">S/N</th>
+                                <th class="text-center px-3">ReID</th>
+                                <th class="text-center px-3">Date created</th>
+                                <th class="text-center px-3">Requestor</th>
+                                <th class="text-center px-3">Description</th>
+                                <th class="text-center px-3">view items</th>
+                                <th class="text-center px-3">Progress</th>
+                                <th class="text-center px-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in pending_requests %}
                             <tr>
-                                <td>
+                                <td class="text-center px-3">
                                     <h6>{{ loop.index }}</h6>
                                 </td>
-                                <td>
+                                <td class="text-center px-3">
                                     <h6>{{ item.request_number}}</h6>
                                 </td>
-                                <td>
+                                <td class="text-center px-3">
                                     <h6>{{ item.timestamp.date() }}</h6>
                                     <p>{{ item.timestamp.time() }}</p>
                                 </td>
-                                <td>
+                                <td class="text-center px-3">
                                     <h6>{{ item.requestor.staff_name }}</h6>
                                     <p>{{ item.requestor.designation }}</p>
                                     <p>{{ item.requestor.email }}</p>
                                 </td>
-                                <td>
+                                <td class="text-center px-3">
                                     <h6>{{ item.description }}</h6>
                                 </td>
-                                <td>
+                                <td class="text-center px-3">
                                     <!-- Anchor tag to trigger the modal -->
                                     <button
                                         onclick="openModal({{item.id}})"
@@ -81,9 +80,8 @@
 
                                     <!-- The Pop-up Modal -->
                                 </td>
-                                <td>
-                                    {% if item.status == "pending with Officer"
-                                    %}
+                                <td class="text-center px-3">
+                                    {% if item.status == "pending with Officer" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -102,8 +100,7 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif item.status == "pending with
-                                    Supervisor" %}
+                                    {% elif item.status == "pending with Supervisor" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -122,8 +119,7 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif item.status == "pending with
-                                    MD/CEO"%}
+                                    {% elif item.status == "pending with MD/CEO"%}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -142,8 +138,7 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif item.status == "pending with
-                                    Storekeeper" %}
+                                    {% elif item.status == "pending with Storekeeper" %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -202,12 +197,7 @@
                                     </div>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <div class="badge badge-opacity-warning">
-                                        {{ item.status }}
-                                    </div>
-                                </td>
-                                <td>
+                                <td class="text-center px-3">
                                     <div class="d-grid">
                                         <!-- Approve Button -->
                                         <button

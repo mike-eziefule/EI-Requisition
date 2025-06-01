@@ -87,8 +87,7 @@ def get_user_from_token(request: Request, db: Session):
             raise HTTPException(status_code=401, detail="Invalid token")
 
         # Query the user
-        user = db.query(model.Organization).filter(model.Organization.email == username).first() or \
-            db.query(model.User).filter(model.User.email == username).first()
+        user = db.query(model.Organization).filter(model.Organization.email == username).first()
 
         if user:
             return {"user": user, "role": role}

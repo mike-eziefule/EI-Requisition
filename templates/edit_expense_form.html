@@ -1,6 +1,7 @@
-<!-- filepath: c:\Users\SGA PROJECTS\Desktop\Requisition_app\templates\expense_form.html -->
-{% extends "dblayout.html" %} {% block title %} Create Expense {% endblock %} {%
-block child_content_1 %}
+{% extends "dblayout.html" %}
+{% block title %} Edit Expense {% endblock %}
+
+{% block child_content_1 %}
 <div class="row flex-grow">
     <div class="col-12 grid-margin stretch-card">
         <div class="card card-rounded">
@@ -18,104 +19,111 @@ block child_content_1 %}
                             <input
                                 type="text"
                                 class="form-control"
-                                value="{{exid}}"
+                                value="{{expense.expense_number }}"
                                 id="expense_number"
                                 name="expense_number"
-                                required
+                                readonly
                             />
                         </div>
-
                         <div class="form-group">
-                            <label for="description"
-                                >Description for Expense</label
-                            >
+                            <label for="description">Reason for Expense</label>
                             <textarea
                                 class="form-control"
                                 id="description"
                                 name="description"
                                 rows="3"
                                 required
-                            ></textarea>
+                            >{{ expense.description }}</textarea>
                         </div>
-
                         <h4>Line Items</h4>
-                        <div
-                            id="expense-line-items"
-                            class="table-responsive mt-1"
-                        >
+                        <div id="line-items">
+                            {% for item in expense.line_items %}
                             <div class="line-item row mb-3">
+                                <input type="hidden" name="line_items[{{ loop.index0 }}][id]" value="{{ item.id }}" />
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Item Name</label>
+                                        <label for="item_name">Item Name</label>
                                         <input
                                             type="text"
                                             class="form-control"
-                                            name="line_items[0][item_name]"
+                                            name="line_items[{{ loop.index0 }}][item_name]"
+                                            value="{{ item.item_name }}"
                                             required
                                         />
                                     </div>
                                 </div>
-
+                                <div class="col-md-2">
+                                    <div class="form-group amount-input">
+                                        <label for="quantity">Quantity</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            name="line_items[{{ loop.index0 }}][quantity]"
+                                            value="{{ item.quantity }}"
+                                            required
+                                        />
+                                    </div>
+                                </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>Category</label>
+                                        <label for="category">Category</label>
                                         <select
                                             class="form-control"
-                                            name="line_items[0][category]"
+                                            name="line_items[{{ loop.index0 }}][category]"
                                             required
                                         >
-                                            <option value="">
-                                                Select Category
-                                            </option>
-                                            <option value="office_supplies">
+                                            <option value="">Select Category</option>
+                                            <option
+                                                value="office_supplies"
+                                                {% if item.category == "office_supplies" %}selected{% endif %}
+                                            >
                                                 Office Supplies
                                             </option>
-                                            <option value="electronics">
+                                            <option
+                                                value="electronics"
+                                                {% if item.category == "electronics" %}selected{% endif %}
+                                            >
                                                 Electronics
                                             </option>
-                                            <option value="furniture">
+                                            <option
+                                                value="furniture"
+                                                {% if item.category == "furniture" %}selected{% endif %}
+                                            >
                                                 Furniture
                                             </option>
-                                            <option value="software">
+                                            <option
+                                                value="software"
+                                                {% if item.category == "software" %}selected{% endif %}
+                                            >
                                                 Software
                                             </option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Quantity</label>
-                                        <input
-                                            type="number"
-                                            class="form-control amount-input"
-                                            name="line_items[0][quantity]"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Price</label>
+                                        <label for="price">Price</label>
                                         <input
                                             type="number"
                                             class="form-control price-input"
-                                            name="line_items[0][price]"
+                                            name="line_items[{{ loop.index0 }}][price]"
+                                            value="{{ item.price }}"
                                             required
                                         />
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Amount</label>
+                                        <label for="amount">Amount</label>
                                         <input
                                             type="number"
                                             class="form-control total-input"
-                                            name="line_items[0][amount]"
-                                            readonly
+                                            name="line_items[{{ loop.index0 }}][amount]"
+                                            value="{{ item.amount }}"
+                                            required
                                         />
                                     </div>
                                 </div>
-
                                 <div class="col-md-1 d-flex align-items-end">
                                     <button
                                         type="button"
@@ -125,24 +133,16 @@ block child_content_1 %}
                                     </button>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
 
-                        <button
-                            type="button"
-                            id="add-expense-item"
-                            class="btn btn-success"
-                        >
+                        <button type="button" id="add-expense-item" class="btn btn-success">
                             Add Item
                         </button>
                         <br /><br />
-                        <div class="mt-3 fw-bold" id="grand-total">
-                            <span class="text-primary"></span>
-                        </div>
-                        <br /><br />
+
                         <div class="form-group">
-                            <label for="attachment"
-                                >Attach File (Optional)</label
-                            >
+                            <label for="attachment">Attach File (Optional)</label>
                             <input
                                 type="file"
                                 class="form-control"
@@ -150,12 +150,9 @@ block child_content_1 %}
                                 name="attachment"
                             />
                         </div>
-                        <button
-                            type="button"
-                            id="submit-expense-form"
-                            class="btn btn-primary"
-                        >
-                            Submit Expense
+
+                        <button type="button" id="submit-expense-form" class="btn btn-secondary">
+                            Submit Changes
                         </button>
                     </form>
                 </div>

@@ -51,7 +51,7 @@ document.getElementById("add-expense-item").addEventListener("click", function (
 
 // Remove a line item
 document.addEventListener("click", function (e) {
-    if (e.target && e.target.classList.contains("remove-item")) {
+    if (e.target && e.target.classList.contains("remove-expense-item")) {
         e.target.closest(".line-item").remove();
         updateGrandTotal();
     }
@@ -156,20 +156,20 @@ document.getElementById("submit-expense-form").addEventListener("click", async f
     }
 });
 
-// Fetch and display pending expenses for the user
-async function loadPendingExpenses() {
-    try {
-        const response = await fetch("/requisition/pending_expense");
-        if (!response.ok) {
-            throw new Error("Failed to fetch pending expenses");
-        }
-        const html = await response.text();
-        document.getElementById("pending-expenses-container").innerHTML = html;
-    } catch (error) {
-        console.error("Error loading pending expenses:", error);
-        document.getElementById("pending-expenses-container").innerHTML = "<p class='text-danger'>Failed to load pending expenses.</p>";
-    }
-}
+// // Fetch and display pending expenses for the user
+// async function loadPendingExpenses() {
+//     try {
+//         const response = await fetch("/expense/pending");
+//         if (!response.ok) {
+//             throw new Error("Failed to fetch pending expenses");
+//         }
+//         const html = await response.text();
+//         document.getElementById("pending-expenses-container").innerHTML = html;
+//     } catch (error) {
+//         console.error("Error loading pending expenses:", error);
+//         document.getElementById("pending-expenses-container").innerHTML = "<p class='text-danger'>Failed to load pending expenses.</p>";
+//     }
+// }
 
 // Function to open the expense preview modal and display items
 function openExpenseModal(expenseId) {
@@ -260,6 +260,70 @@ window.onclick = function (event) {
     }
 };
 
+// Populate the reject modal with the expense ID
+function populateExpenseRejectModal(expenseId) {
+    try {
+        console.log("populateRejectModal called with expenseId:", expenseId); // Debugging log
+
+        // Ensure the modal exists in the DOM
+        const rejectExpenseModal = document.getElementById("rejectExpenseModal");
+        if (!rejectExpenseModal) {
+            console.error("Error: Reject modal not found in the DOM.");
+            return;
+        }
+
+        // Ensure the input field exists in the modal
+        const expenseIdInput = document.getElementById("expense-id");
+        if (expenseIdInput) {
+            expenseIdInput.value = expenseId; // Set the expense ID
+            console.log("Expense ID set in the modal:", expenseId); // Debugging log
+        } else {
+            console.error("Error: Expense ID input field not found in the Expense reject modal.");
+        }
+    } catch (error) {
+        console.error("An unexpected error occurred while populating the reject modal:", error);
+    }
+}
+
+// Function to approve a requisition
+function approveExpense(id) {
+    $.post("/expense/approve_expense", { id: id })
+        .done(function (response) {
+            if (response.status === "success") {
+                alert(response.message);
+                $("#status-" + id).text("Approved");
+                window.location.href = "/expense/pending"; // Refresh page
+            } else {
+                alert(response.message);
+            }
+        })
+        .fail(function () {
+            alert("An error occurred while approving the expense.");
+        });
+}
+
+
+// Function to reject a requisition
+function rejectRequisition(id) {
+    if (confirm("Are you sure you want to reject this requisition?")) {
+        $.post("/requisition/reject_requisition", { id: id })
+            .done(function (response) {
+                if (response.status === "success") {
+                    alert(response.message);
+                    $("#status-" + id).text("Rejected");
+                    window.location.href = "/requisition/pending_request"; // Refresh page
+                } else {
+                    alert(response.message);
+                }
+            })
+            .fail(function () {
+                alert("An error occurred while rejecting the requisition.");
+                window.location.href = "/requisition/pending_request"; // Redirect to another page (dashboard or relevant page)
+            });
+    }
+}
+
+
 
 // Function to open the expense approval modal
 function openExpenseApprovalModal(expenseId) {
@@ -275,5 +339,152 @@ function openExpenseApprovalModal(expenseId) {
         })
         .catch(err => {
             alert("Failed to load expense approval.");
+        });
+}
+
+
+// Function to reject a requisition
+function rejectExpense(id) {
+    if (confirm("Are you sure you want to reject this expense?")) {
+        $.post("/expense/reject_expense", { id: id })
+            .done(function (response) {
+                if (response.status === "success") {
+                    alert(response.message);
+                    $("#status-" + id).text("Rejected");
+                    window.location.href = "/expense/pending"; // Refresh page
+                } else {
+                    alert(response.message);
+                }
+            })
+            .fail(function () {
+                alert("An error occurred while rejecting the Expense.");
+                window.location.href = "/expense/pending"; // Redirect to another page (dashboard or relevant page)
+            });
+    }
+}
+
+
+// JavaScript function to handle delete requisition
+function deleteExpense(id) {
+    if (confirm("Are you sure you want to delete this expense?")) {
+        fetch(`/expense/delete_requisition`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `id=${id}`,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+                if (data.status === "success") {
+                    location.reload();
+                }
+            })
+            .catch((error) => console.error("Error:", error));
+    }
+}
+
+// Call this function from the HTML using onclick="rejectButton()"
+function rejectExpenseButton() {
+    // Debugging log
+    console.log("Reject button clicked");
+
+    const expenseIdInput = document.getElementById("expense-id");
+    const expenseCommentInput = document.getElementById("expense-comment");
+
+    if (!expenseIdInput || !expenseCommentInput) {
+        console.error("Error: Modal elements not found in the DOM.");
+        return;
+    }
+
+    const expenseId = expenseIdInput.value;
+    const expenseComment = expenseCommentInput.value;
+
+    if (!expenseComment.trim()) {
+        alert("Comment is required.");
+        return;
+    }
+
+    fetch("/expense/reject_expense", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `id=${expenseId}&comment=${encodeURIComponent(expenseComment)}`,
+    })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to reject Expenses");
+            }
+        })
+        .then((data) => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred while rejecting the Expense request.");
+        });
+}
+
+
+// View comments for a rejected expense
+function viewExpenseComments(expenseId) {
+    fetch(`/expense/expense_details/${expenseId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const expenseModalBody = document.getElementById("expenseCommentsModalBody");
+            if (!expenseModalBody) {
+                alert("Comments modal body not found in DOM.");
+                return;
+            }
+            // Log the data for debugging
+            console.log("Comments API response:", data);
+
+            if (
+                data.status === "success" &&
+                data.expense &&
+                Array.isArray(data.expense.comments) &&
+                data.expense.comments.length > 0
+            ) {
+                modalBody.innerHTML = data.expense.comments.map(comment =>
+                    `<div class="mb-3 border-bottom pb-2">
+                        <strong>${comment.created_by || "Unknown"}</strong>
+                        <span class="text-muted float-end">${comment.created_at ? new Date(comment.created_at).toLocaleString() : ""}</span>
+                        <p class="mb-1">${comment.comment || ""}</p>
+                    </div>`
+                ).join("");
+            } else if (data.status === "success") {
+                modalBody.innerHTML = "<p class='text-muted'>No comments available for this requisition.</p>";
+            } else {
+                modalBody.innerHTML = `<p class='text-danger'>${data.message || "Failed to load comments."}</p>`;
+            }
+            const commentsModalElem = document.getElementById('expenseCommentsModal');
+            if (commentsModalElem) {
+                const expenseCommentsModal = new bootstrap.Modal(commentsModalElem);
+                expenseCommentsModal.show();
+            } else {
+                alert("Comments modal not found in DOM.");
+            }
+        })
+        .catch(err => {
+            console.error("Error loading comments:", err);
+            const modalBody = document.getElementById("expenseCommentsModalBody");
+            if (modalBody) {
+                modalBody.innerHTML = "<p class='text-danger'>Failed to load comments.</p>";
+            }
+            const commentsModalElem = document.getElementById('expenseCommentsModal');
+            if (commentsModalElem) {
+                const expenseCommentsModal = new bootstrap.Modal(commentsModalElem);
+                expenseCommentsModal.show();
+            }
         });
 }

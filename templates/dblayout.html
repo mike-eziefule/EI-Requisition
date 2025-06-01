@@ -1,4 +1,6 @@
 {% extends "layout2.html" %} {% block title %} Dashboard layout {% endblock %}
+
+
 {% block content %}
 
 <div class="container-fluid page-body-wrapper">
@@ -55,6 +57,42 @@
                 <a
                     class="nav-link"
                     data-bs-toggle="collapse"
+                    href="#ui-basic"
+                    aria-expanded="false"
+                    aria-controls="ui-basic"
+                >
+                    <i class="menu-icon mdi mdi-human-greeting-proximity"></i>
+                    <span class="menu-title">My Team</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="collapse" id="ui-basic">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{url_for('admin_view_all')}}"
+                                >View Staff</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('addmember')}}"
+                                >Add Staff</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="pages/ui-features/typography.html"
+                                >Delete Staff</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a
+                    class="nav-link"
+                    data-bs-toggle="collapse"
                     href="#form-elements"
                     aria-expanded="false"
                     aria-controls="form-elements"
@@ -65,6 +103,13 @@
                 </a>
                 <div class="collapse" id="form-elements">
                     <ul class="nav flex-column sub-menu">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{{url_for('request_dash')}}"
+                                >My Requests</a
+                            >
+                        </li>
                         <li class="nav-item">
                             <a
                                 class="nav-link"
@@ -137,42 +182,7 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item">
-                <a
-                    class="nav-link"
-                    data-bs-toggle="collapse"
-                    href="#ui-basic"
-                    aria-expanded="false"
-                    aria-controls="ui-basic"
-                >
-                    <i class="menu-icon mdi mdi-human-greeting-proximity"></i>
-                    <span class="menu-title">My Team</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="ui-basic">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="{{url_for('admin_view_all')}}"
-                                >View Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{url_for('addmember')}}"
-                                >Add Staff</a
-                            >
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="pages/ui-features/typography.html"
-                                >Delete Staff</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </li>
+
             <li class="nav-item">
                 <a
                     class="nav-link"

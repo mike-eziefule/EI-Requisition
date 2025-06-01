@@ -15,6 +15,19 @@ class RequisitionInput(BaseModel):
     description: str
     line_items: List[LineItemInput]  # List of line items
 
+class ExpenseLineItemInput(BaseModel):
+    id: Optional[int]  # Optional ID for existing line items
+    item_name: str
+    quantity: int
+    category: str
+    price: str
+    amount: str
+
+class ExpenseInput(BaseModel):
+    expense_number: str
+    description: str
+    line_items: List[ExpenseLineItemInput]  # List of line items
+
 # Pydantic model for updating requisition status
 class StatusUpdate(BaseModel):
     requisition_id: int
