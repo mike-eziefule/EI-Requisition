@@ -280,7 +280,6 @@ async def edit_requisition(
 async def edit_requisition(
     request: Request,
     requisition_input: str = Form(...),
-    attachment: UploadFile = File(None),
     db: Session = Depends(script.get_db)
 ):
     try:

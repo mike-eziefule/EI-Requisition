@@ -1,7 +1,6 @@
 """ carry functions that makes code look bulky"""
 from fastapi import Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from jose import jwt, JWTError
 from config import get_settings
 from datetime import timedelta, datetime

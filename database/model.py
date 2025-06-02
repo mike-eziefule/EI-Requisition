@@ -16,6 +16,7 @@ class Organization(Base):
     email = Column(String, nullable= False, unique=True)
     password = Column(String, nullable= False)
     product = Column(String, nullable= False)
+    profile_picture_url = Column(String, nullable=True)
     
     staff = relationship("User", back_populates="organization")
 
@@ -31,6 +32,7 @@ class User(Base):
     email = Column(String, nullable= False, unique=True)
     password = Column(String, nullable= False)
     date = Column(Date, nullable= False)
+    profile_picture_url = Column(String, nullable= True)
     organization_id = Column(String(36), ForeignKey("organization.id"))
 
     # Relationships

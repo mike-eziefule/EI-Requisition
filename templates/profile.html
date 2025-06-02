@@ -1,0 +1,127 @@
+<!-- filepath: c:\Users\SGA PROJECTS\Desktop\Requisition_app\templates\profile.html -->
+{% extends "dblayout.html" %} {% block title %} My Profile {% endblock %} 
+
+
+{% block child_content_1 %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-rounded shadow-sm">
+            <div class="card-body">
+                <h3 class="mb-4 text-primary fw-bold">Profile Information</h3>
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3 text-center">
+                        <div class="position-relative d-inline-block">
+                            <img
+                                src="{{user.profile_picture_url or url_for('static', path='/uploads/profile_pictures/default.png')}}"
+                                alt="Profile Picture"
+                                class="rounded-circle border border-2"
+                                style="
+                                    width: 120px;
+                                    height: 120px;
+                                    object-fit: cover;
+                                "
+                            />
+                            {% if user.profile_picture_url %}
+                            <form
+                                method="post"
+                                action="{{ url_for('profile_delete_picture') }}"
+                            >
+                                <button
+                                    type="submit"
+                                    class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                                    title="Delete Picture"
+                                >
+                                    <i class="mdi mdi-delete"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        <form
+                            method="post"
+                            action="{{ url_for('profile_upload_picture') }}"
+                            enctype="multipart/form-data"
+                            class="mt-2"
+                        >
+                            <input
+                                type="file"
+                                name="profile_picture"
+                                accept="image/*"
+                                class="form-control form-control-sm mb-2"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-primary w-100"
+                            >
+                                Upload New
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th class="text-primary">Name:</th>
+                                <td>
+                                    {{ user.staff_name or user.admin_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Email:</th>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Designation:</th>
+                                <td>
+                                    {{ user.designation or "Administrator" }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Organization:</th>
+                                <td>{{ user.organization_name }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <hr />
+                <h4 class="mb-3 text-primary">Change Password</h4>
+                <form
+                    method="post"
+                    action="{{ url_for('profile_change_password') }}"
+                >
+                    <div class="mb-3">
+                        <label class="form-label">Current Password</label>
+                        <input
+                            type="password"
+                            name="current_password"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input
+                            type="password"
+                            name="new_password"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password</label>
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        Change Password
+                    </button>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
