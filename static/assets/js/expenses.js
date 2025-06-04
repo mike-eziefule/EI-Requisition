@@ -42,7 +42,7 @@ document.getElementById("add-expense-item").addEventListener("click", function (
             </div>
         </div>
         <div class="col-md-1 d-flex align-items-end">
-            <button type="button" class="btn btn-danger remove-item">Remove</button>
+            <button type="button" class="btn btn-danger remove-expense-item">Remove</button>
         </div>
     `;
     lineItemsContainer.appendChild(newItem);
@@ -70,7 +70,13 @@ function updateGrandTotal() {
         grandTotalElem = document.createElement("div");
         grandTotalElem.id = "grand-total";
         grandTotalElem.className = "mt-3 fw-bold";
-        document.getElementById("expense-form").appendChild(grandTotalElem);
+        const expenseForm = document.getElementById("expense-form");
+        const editExpenseForm = document.getElementById("edit-expense-form");
+        if (expenseForm) {
+            expenseForm.appendChild(grandTotalElem);
+        } else if (editExpenseForm) {
+            editExpenseForm.appendChild(grandTotalElem);
+        }
     }
     grandTotalElem.innerHTML = "Grand Total: <span class='text-primary'>" + grandTotal.toLocaleString() + "</span>";
 }
@@ -89,6 +95,100 @@ document.addEventListener("input", function (e) {
         updateGrandTotal();
     }
 });
+
+
+// Handle form submission for editing requisitions
+const submitexpenseChangesButton = document.getElementById("submit-expense-changes");
+if (submitexpenseChangesButton) {
+    submitexpenseChangesButton.addEventListener("click", async function () {
+        console.log("Submit Expense Edit Form button clicked");
+
+        const form = document.getElementById("edit-expense-form");
+        if (!form) {
+            console.error("Edit Expense form not found in the DOM.");
+            alert("Form not found. Please refresh the page.");
+            return;
+        }
+
+        const formData = new FormData(form);
+
+        // Prepare expense data to match Pydantic model in schematic.py
+        const expenseData = {
+            expense_number: formData.get("expense_number"),
+            description: formData.get("description"),
+            line_items: [],
+        };
+
+        // Collect line items data
+        const lineItems = document.querySelectorAll("#expense-line-items .line-item");
+        lineItems.forEach((item, index) => {
+            const idInput = item.querySelector(`[name="line_items[${index}][id]"]`);
+            const item_nameInput = item.querySelector(`[name="line_items[${index}][item_name]"]`);
+            const categoryInput = item.querySelector(`[name="line_items[${index}][category]"]`);
+            const quantityInput = item.querySelector(`[name="line_items[${index}][quantity]"]`);
+            const priceInput = item.querySelector(`[name="line_items[${index}][price]"]`);
+            const amountInput = item.querySelector(`[name="line_items[${index}][amount]"]`);
+
+            // Defensive: skip if any required field is missing
+            if (!item_nameInput || !categoryInput || !quantityInput || !priceInput || !amountInput) {
+                console.warn("Skipping a line item due to missing fields.");
+                return;
+            }
+
+            const lineItemData = {
+                id: idInput ? (idInput.value ? parseInt(idInput.value) : null) : null,
+                item_name: item_nameInput.value,
+                category: categoryInput.value,
+                quantity: parseFloat(quantityInput.value) || 0,
+                price: parseFloat(priceInput.value) || 0,
+                amount: parseFloat(amountInput.value) || 0,
+            };
+
+            expenseData.line_items.push(lineItemData);
+        });
+
+        // Calculate grand total
+        let grandTotal = 0;
+        expenseData.line_items.forEach(item => {
+            grandTotal += item.amount;
+        });
+        expenseData.total = grandTotal;
+
+        const expenseFormData = new FormData();
+        expenseFormData.append(
+            "expense_input",
+            JSON.stringify(expenseData)
+        );
+
+        console.log("Request Payload:", JSON.stringify(expenseData)); // Debugging log
+
+        try {
+            const response = await fetch(`/expense/edit_expense`, {
+                method: "POST",
+                body: expenseFormData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Server Response:", data);
+                alert("Expense updated successfully");
+                window.location.href = "/expense/dash";
+            } else {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.message || "An error occurred"}`);
+                console.error("Error Data:", errorData);
+            }
+        } catch (error) {
+            alert("An error occurred while submitting the form.");
+            console.error("Error:", error);
+        }
+    });
+} else {
+    console.warn("Submit changes button not found in the DOM.");
+}
+
+
+
 
 // Handle form submission
 document.getElementById("submit-expense-form").addEventListener("click", async function () {
@@ -171,7 +271,7 @@ document.getElementById("submit-expense-form").addEventListener("click", async f
 //     }
 // }
 
-// Function to open the expense preview modal and display items
+// <!-- Function to open the expense preview modal and display items -->
 function openExpenseModal(expenseId) {
     fetch(`/expense/${expenseId}/preview`)
         .then(response => response.json())
@@ -260,7 +360,7 @@ window.onclick = function (event) {
     }
 };
 
-// Populate the reject modal with the expense ID
+// <!-- Populate the reject modal with the expense ID -->
 function populateExpenseRejectModal(expenseId) {
     try {
         console.log("populateRejectModal called with expenseId:", expenseId); // Debugging log
@@ -303,29 +403,8 @@ function approveExpense(id) {
 }
 
 
-// Function to reject a requisition
-function rejectRequisition(id) {
-    if (confirm("Are you sure you want to reject this requisition?")) {
-        $.post("/requisition/reject_requisition", { id: id })
-            .done(function (response) {
-                if (response.status === "success") {
-                    alert(response.message);
-                    $("#status-" + id).text("Rejected");
-                    window.location.href = "/requisition/pending_request"; // Refresh page
-                } else {
-                    alert(response.message);
-                }
-            })
-            .fail(function () {
-                alert("An error occurred while rejecting the requisition.");
-                window.location.href = "/requisition/pending_request"; // Redirect to another page (dashboard or relevant page)
-            });
-    }
-}
 
-
-
-// Function to open the expense approval modal
+// <!-- Function to open the expense approval modal -->
 function openExpenseApprovalModal(expenseId) {
     fetch(`/expense/${expenseId}/approve`)
         .then(response => response.text())
@@ -342,8 +421,7 @@ function openExpenseApprovalModal(expenseId) {
         });
 }
 
-
-// Function to reject a requisition
+// <!-- Function to reject an Expense -->
 function rejectExpense(id) {
     if (confirm("Are you sure you want to reject this expense?")) {
         $.post("/expense/reject_expense", { id: id })
@@ -364,7 +442,7 @@ function rejectExpense(id) {
 }
 
 
-// JavaScript function to handle delete requisition
+// JavaScript function to handle delete expense
 function deleteExpense(id) {
     if (confirm("Are you sure you want to delete this expense?")) {
         fetch(`/expense/delete_expense`, {

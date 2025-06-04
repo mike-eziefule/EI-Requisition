@@ -62,8 +62,9 @@
                                     <h6>{{ expense.total }}</h6>
                                 </td>
                                 <td class="text-center px-3">
-                                    {% if expense.status == "pending with
-                                    Officer" %}
+                                    {% 
+                                        if expense.status == "pending with Officer" 
+                                    %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -82,8 +83,9 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with
-                                    Supervisor" %}
+                                    {% elif 
+                                        expense.status == "pending with Supervisor" 
+                                    %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -102,8 +104,9 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with
-                                    MD/CEO" %}
+                                    {% elif 
+                                        expense.status == "pending with MD/CEO" 
+                                    %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -122,8 +125,9 @@
                                             ></div>
                                         </div>
                                     </div>
-                                    {% elif expense.status == "pending with
-                                    Storekeeper" %}
+                                    {% elif 
+                                        expense.status == "pending with Storekeeper" 
+                                    %}
                                     <div>
                                         <div
                                             class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -220,6 +224,13 @@
                                         >
                                             Delete
                                         </button>
+                                        {% else %}
+                                            <!--view comments-->
+                                            <button 
+                                                class="btn btn-info btn-sm mt-1"
+                                            >
+                                                NONE
+                                            </button>
                                         {% endif %}
                                     </div>
                                 </td>

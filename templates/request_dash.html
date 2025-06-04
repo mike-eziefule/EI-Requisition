@@ -76,8 +76,9 @@ endblock %} {% block child_content_1 %}
                                         </div>
                                     </td>
                                     <td class="text-center px-3">
-                                        {% if item.status == "pending with
-                                        Officer" %}
+                                        {% if 
+                                            item.status == "pending with Officer" 
+                                        %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -96,8 +97,9 @@ endblock %} {% block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "pending with
-                                        Supervisor" %}
+                                        {% elif 
+                                            item.status == "pending with Supervisor" 
+                                        %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -116,8 +118,9 @@ endblock %} {% block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "pending with
-                                        MD/CEO" %}
+                                        {% elif 
+                                            item.status == "pending with MD/CEO" 
+                                        %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -136,8 +139,9 @@ endblock %} {% block child_content_1 %}
                                                 ></div>
                                             </div>
                                         </div>
-                                        {% elif item.status == "pending with
-                                        Storekeeper" %}
+                                        {% elif 
+                                            item.status=="pending with Storekeeper" 
+                                        %}
                                         <div>
                                             <div
                                                 class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap"
@@ -230,6 +234,13 @@ endblock %} {% block child_content_1 %}
                                                 onclick="deleteRequisition({{ item.id }})"
                                             >
                                                 Delete
+                                            </button>
+                                            {% else %}
+                                            <!--view comments-->
+                                            <button 
+                                                class="btn btn-info btn-sm mt-1"
+                                            >
+                                                NONE
                                             </button>
                                             {% endif %}
                                         </div>

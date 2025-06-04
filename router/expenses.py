@@ -10,6 +10,7 @@ import json
 from pydantic import ValidationError
 import os
 from schema import schematic
+from schema.schematic import ExpenseInput
 
 router = APIRouter(prefix="/expense", tags=["expense"])
 
@@ -68,6 +69,18 @@ async def create_expense(
     attachment: UploadFile = File(None),
     db: Session = Depends(script.get_db)
 ):
+    """
+    Create a new expense.
+
+    Parameters:
+    - request (Request): The HTTP request object.
+    - expense_input (str): JSON string containing expense details.
+    - attachment (UploadFile, optional): An optional file upload. If None, no attachment will be saved.
+    - db (Session): Database session dependency.
+
+    Returns:
+    - JSONResponse: Success or error message.
+    """
     try:
         expense_data = json.loads(expense_input)
     except (json.JSONDecodeError, ValidationError) as e:
@@ -205,6 +218,10 @@ async def approve_expense(request: Request, id: int = Form(...), db: Session = D
         if user.designation == "Storekeeper":
             expense.status = "Approved"
         else:
+            if not user.line_manager or not isinstance(user.line_manager, str):
+                return JSONResponse(content={"status": "error", "message": "Invalid or missing line manager!"}, status_code=400)
+            if not user.line_manager or not isinstance(user.line_manager, str):
+                return JSONResponse(content={"status": "error", "message": "Invalid or missing line manager!"}, status_code=400)
             expense.status = f"pending with {user.line_manager}"
         db.commit()
         return JSONResponse(content={"status": "success", "message": "Expense has been approved!"})
@@ -290,7 +307,7 @@ async def edit_expense(
     )
 
 # Route to edit a rejected requisition
-@router.post("/edit-expense", response_class=JSONResponse)
+@router.post("/edit_expense", response_class=JSONResponse)
 async def edit_expense(
     request: Request,
     expense_input: str = Form(...),
@@ -298,8 +315,8 @@ async def edit_expense(
     db: Session = Depends(script.get_db)
 ):
     try:
-        expense_data = json.loads(expense_input)
-        updated_expense = schematic.ExpenseInput(**expense_data)
+        # Validate and parse the input using the Pydantic model
+        expense_data = ExpenseInput.parse_raw(expense_input)
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
@@ -309,49 +326,52 @@ async def edit_expense(
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
     expense = db.query(model.Expense).filter(
-        model.Expense.expense_number == updated_expense.expense_number,
+        model.Expense.expense_number == expense_data.expense_number,
         model.Expense.status == "Rejected"
     ).first()
 
     if not expense:
-        return JSONResponse(content={"status": "error", "message": "expense not found or not editable!"}, status_code=404)
+        return JSONResponse(content={"status": "error", "message": "Expense not found!"}, status_code=404)
+    if expense.status != "Rejected":
+        return JSONResponse(content={"status": "error", "message": "Expense is not editable!"}, status_code=400)
 
     try:
-        expense.description = updated_expense.description
+        expense.description = expense_data.description
+        expense.total = expense_data.total
 
-        for updated_item in updated_expense.line_items:
-            if updated_item.id:
-                line_item = db.query(model.ExpenseLineItem).filter(
-                    model.ExpenseLineItem.id == updated_item.id,
-                    model.ExpenseLineItem.expense_id == expense.id
-                ).first()
-                if line_item:
-                    line_item.item_name = updated_item.item_name
-                    line_item.quantity = updated_item.quantity
-                    line_item.category = updated_item.category
-                    line_item.price = updated_item.price
-                    line_item.amount = updated_item.amount
-            else:
-                new_line_item = model.ExpenseLineItem(
-                    expense_id=expense.id,
-                    item_name=updated_item.item_name,
-                    quantity=updated_item.quantity,
-                    category=updated_item.category,
-                    price=updated_item.price,
-                    amount=updated_item.amount
-                )
-                db.add(new_line_item)
-
+        db.query(model.ExpenseLineItem).filter(
+            model.ExpenseLineItem.expense_id == expense.id).delete(synchronize_session=False)
+        
+        new_line_items = []
+        for updated_item in expense_data.line_items:
+            # updated_item is already a validated ExpenseLineItemInput object
+            new_line_item = model.ExpenseLineItem(
+                item_name=updated_item.item_name,
+                quantity=updated_item.quantity,
+                category=updated_item.category,
+                price=updated_item.price,
+                amount=updated_item.amount,
+                expense_id=expense.id,
+            )
+            new_line_items.append(new_line_item)
+        
+        try:
+            for item in new_line_items:
+                db.add(item)
+                try:
+                    db.flush()  # Validate and check constraints for each item
+                except Exception as e:
+                    return JSONResponse(content={"status": "error", "message": f"Error saving line item: {e}"}, status_code=400)
+        except Exception as e:
+            return JSONResponse(content={"status": "error", "message": f"Error saving line items: {e}"}, status_code=500)
 
         expense.status = f"pending with {user.line_manager}"
         db.commit()
-        return JSONResponse(content={"status": "success", "message": "Expense updated successfully!"})
+        
     except Exception as e:
         return JSONResponse(content={"status": "error", "message": f"Error updating Expenses: {e}"}, status_code=500)
 
-
-
-# Route to delete a rejected requisition
+# Route to delete a rejected expense
 @router.post("/delete_expense", response_class=JSONResponse)
 async def delete_expense(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
     user = utility.get_staff_from_token(request, db)
@@ -361,15 +381,26 @@ async def delete_expense(request: Request, id: int = Form(...), db: Session = De
 
     expense = db.query(model.Expense).filter(
         model.Expense.id == id,
-        model.Requisition.status == "Rejected"
+        model.Expense.status == "Rejected"
     ).first()
 
     if not expense:
         return JSONResponse(content={"status": "error", "message": "Requisition not found or not deletable!"}, status_code=404)
 
     try:
+        expense_comments = db.query(model.ExpenseComment).filter(model.ExpenseComment.expense_id == id).all()
+        for comment in expense_comments:
+            db.delete(comment)
+            db.commit()
+            
+        db.query(model.ExpenseLineItem).filter(model.ExpenseLineItem.expense_id == id).delete(synchronize_session=False)
+        db.commit()
+            
+            
         db.delete(expense)
         db.commit()
+        
+        
         return JSONResponse(content={"status": "success", "message": "Requisition deleted successfully!"})
     except Exception as e:
         return JSONResponse(content={"status": "error", "message": f"Error deleting requisition: {e}"}, status_code=500)

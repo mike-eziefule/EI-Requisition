@@ -84,6 +84,11 @@ def create_expense(
     total: float
 ):
     try:
+        # Check for duplicate expense_number before creating
+        existing = db.query(Expense).filter(Expense.expense_number == expense_number).first()
+        if existing:
+            raise Exception("Expense number already exists. Please use a unique expense number.")
+
         expense = Expense(
             expense_number=expense_number,
             description=description,

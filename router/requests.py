@@ -286,7 +286,7 @@ async def edit_requisition(
         requisition_data = json.loads(requisition_input)
         updated_requisition = schematic.RequisitionInput(**requisition_data)
     except (json.JSONDecodeError, ValidationError) as e:
-        return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
+        return JSONResponse(content={"message": f"{e}"}, status_code=400)
 
     user = utility.get_staff_from_token(request, db)
 
