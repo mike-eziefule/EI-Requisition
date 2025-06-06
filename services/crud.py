@@ -16,6 +16,11 @@ def create_requisition(
         status = "Approved"
         
     try:
+        # Check for duplicate request_number before creating
+        existing = db.query(Requisition).filter(Requisition.request_number == request_number).first()
+        if existing:
+            raise Exception("Request number already exists. Please use a unique request number.")
+
         # Create the Requisition record
         requisition = Requisition(
             request_number = request_number, 
@@ -31,11 +36,17 @@ def create_requisition(
 
         # Create line items
         for line_item in line_items_data:
+            # Accept both dicts and Pydantic objects
+            if hasattr(line_item, "dict"):
+                line_item_data = line_item.dict()
+            else:
+                line_item_data = dict(line_item)  # Ensure it's a dict
+
             item = LineItem(
-                item_name=line_item["item_name"],
-                quantity=line_item["quantity"],
-                category=line_item["category"],
-                item_reason=line_item["item_reason"],
+                item_name=line_item_data.get("item_name"),
+                quantity=line_item_data.get("quantity"),
+                category=line_item_data.get("category"),
+                item_reason=line_item_data.get("item_reason"),
                 requisition_id=requisition.id
             )
             db.add(item)

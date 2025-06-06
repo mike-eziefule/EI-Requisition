@@ -101,7 +101,6 @@ document.addEventListener("input", function (e) {
 const submitexpenseChangesButton = document.getElementById("submit-expense-changes");
 if (submitexpenseChangesButton) {
     submitexpenseChangesButton.addEventListener("click", async function () {
-        console.log("Submit Expense Edit Form button clicked");
 
         const form = document.getElementById("edit-expense-form");
         if (!form) {
@@ -119,15 +118,15 @@ if (submitexpenseChangesButton) {
             line_items: [],
         };
 
-        // Collect line items data
+        // Collect line items data (use attribute selectors to match any index)
         const lineItems = document.querySelectorAll("#expense-line-items .line-item");
-        lineItems.forEach((item, index) => {
-            const idInput = item.querySelector(`[name="line_items[${index}][id]"]`);
-            const item_nameInput = item.querySelector(`[name="line_items[${index}][item_name]"]`);
-            const categoryInput = item.querySelector(`[name="line_items[${index}][category]"]`);
-            const quantityInput = item.querySelector(`[name="line_items[${index}][quantity]"]`);
-            const priceInput = item.querySelector(`[name="line_items[${index}][price]"]`);
-            const amountInput = item.querySelector(`[name="line_items[${index}][amount]"]`);
+        lineItems.forEach((item) => {
+            const idInput = item.querySelector('input[name^="line_items["][name$="[id]"]');
+            const item_nameInput = item.querySelector('input[name^="line_items["][name$="[item_name]"]');
+            const categoryInput = item.querySelector('select[name^="line_items["][name$="[category]"]');
+            const quantityInput = item.querySelector('input[name^="line_items["][name$="[quantity]"]');
+            const priceInput = item.querySelector('input[name^="line_items["][name$="[price]"]');
+            const amountInput = item.querySelector('input[name^="line_items["][name$="[amount]"]');
 
             // Defensive: skip if any required field is missing
             if (!item_nameInput || !categoryInput || !quantityInput || !priceInput || !amountInput) {
@@ -136,7 +135,7 @@ if (submitexpenseChangesButton) {
             }
 
             const lineItemData = {
-                id: idInput ? (idInput.value ? parseInt(idInput.value) : null) : null,
+                id: idInput && idInput.value ? parseInt(idInput.value) : null,
                 item_name: item_nameInput.value,
                 category: categoryInput.value,
                 quantity: parseFloat(quantityInput.value) || 0,
@@ -186,8 +185,6 @@ if (submitexpenseChangesButton) {
 } else {
     console.warn("Submit changes button not found in the DOM.");
 }
-
-
 
 
 // Handle form submission
@@ -441,7 +438,6 @@ function rejectExpense(id) {
     }
 }
 
-
 // JavaScript function to handle delete expense
 function deleteExpense(id) {
     if (confirm("Are you sure you want to delete this expense?")) {
@@ -507,7 +503,6 @@ function rejectExpenseButton() {
             alert("An error occurred while rejecting the Expense request.");
         });
 }
-
 
 // View comments for a rejected expense
 function viewExpenseComments(expenseId) {

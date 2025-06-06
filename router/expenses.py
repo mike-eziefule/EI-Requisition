@@ -9,7 +9,6 @@ from datetime import datetime
 import json
 from pydantic import ValidationError
 import os
-from schema import schematic
 from schema.schematic import ExpenseInput
 
 router = APIRouter(prefix="/expense", tags=["expense"])
@@ -82,7 +81,8 @@ async def create_expense(
     - JSONResponse: Success or error message.
     """
     try:
-        expense_data = json.loads(expense_input)
+        # Validate and parse the input using the Pydantic model
+        expense_data = ExpenseInput.parse_raw(expense_input)
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
@@ -95,13 +95,13 @@ async def create_expense(
     try:
         crud.create_expense(
             db=db,
-            expense_number=expense_data["expense_number"],
-            description=expense_data["description"],
+            expense_number=expense_data.expense_number,
+            description=expense_data.description,
             status=f"pending with {requestor.line_manager}",
             requestor_id=requestor.id,
             attachment_path=attachment_path,
-            line_items_data=expense_data["line_items"],
-            total=expense_data["total"]
+            line_items_data=expense_data.line_items,
+            total=expense_data.total
         )
         return JSONResponse(content={"message": "Expense created successfully!"}, status_code=200)
     except Exception as e:

@@ -13,7 +13,7 @@ from datetime import datetime
 import json
 from pydantic import ValidationError
 import os
-from schema import schematic
+from schema.schematic import RequisitionInput
 
 router = APIRouter(prefix="/requisition", tags=["requisition"])
 
@@ -122,14 +122,14 @@ async def create_requisition(
     requisition_input: str = Form(...),
     db: Session = Depends(script.get_db)
 ):  
+    # Debug: print the raw input received from JS
+    print("Raw requisition_input received:", requisition_input)
     try:
-        requisition_data = json.loads(requisition_input)
-        # Remove 'id' from line_items if present and None or empty (for new items)
-        # for item in requisition_data.get("line_items", []):
-        #     if "id" in item and (item["id"] is None or item["id"] == "" or str(item["id"]).lower() == "null"):
-        #         item.pop("id")
-        # requisition_input_obj = schematic.RequisitionInput(**requisition_data)
+        requisition_obj = RequisitionInput.parse_raw(requisition_input)
+        # Debug: print the parsed object
+        print("Parsed requisition_obj:", requisition_obj)
     except (json.JSONDecodeError, ValidationError) as e:
+        print("Validation error:", e)
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
     requestor = utility.get_staff_from_token(request, db)
@@ -137,19 +137,18 @@ async def create_requisition(
     if not requestor:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
-    # line_items_data = requisition_data["line_items"]
-    # [item.dict() for item in requisition_input_obj.line_items]
     try:
         requisition = crud.create_requisition(
             db=db,
-            request_number=requisition_data["request_number"],
-            description=requisition_data["description"],
-            requestor_id=requestor.id,
+            request_number=requisition_obj.request_number,
+            description=requisition_obj.description,
             status=f"pending with {requestor.line_manager}",
-            line_items_data=requisition_data["line_items"],
+            requestor_id=requestor.id,
+            line_items_data=requisition_obj.line_items,
         )
         return JSONResponse(content={"message": "Requisition created successfully!"}, status_code=200)
     except Exception as e:
+        print("Server error:", e)
         return JSONResponse(content={"message": f"Error creating requisition: {e}"}, status_code=500)
 
 # Route to fetch all pending requisitions
@@ -283,10 +282,13 @@ async def edit_requisition(
     db: Session = Depends(script.get_db)
 ):
     try:
-        requisition_data = json.loads(requisition_input)
-        updated_requisition = schematic.RequisitionInput(**requisition_data)
+        # Validate and parse the input using the Pydantic model
+        requisition_data = RequisitionInput.parse_raw(requisition_input)
+        
+        print (requisition_data)
+        
     except (json.JSONDecodeError, ValidationError) as e:
-        return JSONResponse(content={"message": f"{e}"}, status_code=400)
+        return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
     user = utility.get_staff_from_token(request, db)
 
@@ -294,43 +296,48 @@ async def edit_requisition(
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
     requisition = db.query(model.Requisition).filter(
-        model.Requisition.request_number == updated_requisition.request_number,
+        model.Requisition.request_number == requisition_data.request_number,
         model.Requisition.status == "Rejected"
     ).first()
 
     if not requisition:
         return JSONResponse(content={"status": "error", "message": "Requisition not found or not editable!"}, status_code=404)
+    if requisition.status != "Rejected":
+        return JSONResponse(content={"status": "error", "message": "requisition not found or not editable!"}, status_code=400)
 
     try:
-        requisition.description = updated_requisition.description
+        requisition.description = requisition_data.description
 
-        for updated_item in updated_requisition.line_items:
-            if updated_item.id:
-                line_item = db.query(model.LineItem).filter(
-                    model.LineItem.id == updated_item.id,
-                    model.LineItem.requisition_id == requisition.id
-                ).first()
-                if line_item:
-                    line_item.item_name = updated_item.item_name
-                    line_item.quantity = updated_item.quantity
-                    line_item.category = updated_item.category
-                    line_item.item_reason = updated_item.item_reason
-            else:
-                new_line_item = model.LineItem(
-                    requisition_id=requisition.id,
-                    item_name=updated_item.item_name,
-                    quantity=updated_item.quantity,
-                    category=updated_item.category,
-                    item_reason=updated_item.item_reason
-                )
-                db.add(new_line_item)
-
+        db.query(model.LineItem).filter(
+            model.LineItem.requisition_id == requisition.id).delete(synchronize_session=False)
+        
+        new_line_items = []
+        
+        for updated_item in requisition_data.line_items:
+            new_line_item = model.LineItem(
+                item_name=updated_item.item_name,
+                quantity=updated_item.quantity,
+                category=updated_item.category,
+                item_reason=updated_item.item_reason,
+                requisition_id=requisition.id
+            )
+            new_line_items.append(new_line_item)
+            
+        try:
+            for item in new_line_items:
+                db.add(item)
+                try:
+                    db.flush()  #Validate and check constraints for each item
+                except Exception as e:
+                    return JSONResponse(content={"status": "error", "message": f"Error saving line item: {e}"}, status_code=400)
+        except Exception as e:
+            return JSONResponse(content={"status": "error", "message": f"Error saving line items: {e}"}, status_code=500)
 
         requisition.status = f"pending with {user.line_manager}"
         db.commit()
-        return JSONResponse(content={"status": "success", "message": "Requisition updated successfully!"})
+                
     except Exception as e:
-        return JSONResponse(content={"status": "error", "message": f"Error updating requisition: {e}"}, status_code=500)
+        return JSONResponse(content={"message": f"Error creating requisition: {e}"}, status_code=500)
 
 # Route to delete a rejected requisition
 @router.post("/delete_requisition")

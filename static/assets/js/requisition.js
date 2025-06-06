@@ -54,7 +54,6 @@ document.addEventListener("click", function (e) {
 const submitChangesButton = document.getElementById("submit-changes");
 if (submitChangesButton) {
     submitChangesButton.addEventListener("click", async function () {
-        console.log("Submit Edit Form button clicked");
 
         const form = document.getElementById("edit-requisition-form");
         if (!form) {
@@ -74,22 +73,36 @@ if (submitChangesButton) {
 
         // Collect line items data
         const lineItems = document.querySelectorAll("#line-items .line-item");
-        lineItems.forEach((item, index) => {
-            const lineItemData = {
-                id: item.querySelector(`[name="line_items[${index}][id]"]`)?.value || null,
-                item_name: item.querySelector(`[name="line_items[${index}][item_name]"]`).value,
-                quantity: parseInt(item.querySelector(`[name="line_items[${index}][quantity]"]`).value),
-                category: item.querySelector(`[name="line_items[${index}][category]"]`).value,
-                item_reason: item.querySelector(`[name="line_items[${index}][item_reason]"]`).value,
-            };
+        lineItems.forEach((item) => {
+            // Use attribute selectors to match any index for new/existing items
+            const idInput = item.querySelector('input[name^="line_items["][name$="[id]"]');
+            const item_nameInput = item.querySelector('input[name^="line_items["][name$="[item_name]"]');
+            const quantityInput = item.querySelector('input[name^="line_items["][name$="[quantity]"]');
+            const categoryInput = item.querySelector('select[name^="line_items["][name$="[category]"]');
+            const item_reasonInput = item.querySelector('input[name^="line_items["][name$="[item_reason]"]');
 
-            // Convert empty or invalid `id` to `null`
-            if (!lineItemData.id || isNaN(lineItemData.id)) {
-                lineItemData.id = null;
+            // Defensive: skip if any required field is missing
+            if (!item_nameInput || !quantityInput || !categoryInput || !item_reasonInput) {
+                console.warn("Skipping a line item due to missing fields.");
+                return;
             }
+
+            const lineItemData = {
+                id: idInput && idInput.value ? parseInt(idInput.value) : null,
+                item_name: item_nameInput.value,
+                quantity: parseFloat(quantityInput.value) || 0,
+                category: categoryInput.value,
+                item_reason: item_reasonInput.value,
+            };
 
             requisitionData.line_items.push(lineItemData);
         });
+
+        // Validation: Ensure at least one line item is present
+        if (requisitionData.line_items.length === 0) {
+            alert("Please add at least one line item.");
+            return;
+        }
 
         console.log("Collected Requisition Data:", requisitionData);
 
@@ -142,13 +155,31 @@ document
         };
 
         // Collect line items data
-        for (let i = 0; formData.has(`line_items[${i}][item_name]`); i++) {
+        const lineItems = document.querySelectorAll("#line-items .line-item");
+        lineItems.forEach((item, index) => {
+            const item_name = item.querySelector(`[name="line_items[${index}][item_name]"]`);
+            const quantity = item.querySelector(`[name="line_items[${index}][quantity]"]`);
+            const category = item.querySelector(`[name="line_items[${index}][category]"]`);
+            const item_reason = item.querySelector(`[name="line_items[${index}][item_reason]"]`);
+
+            // Defensive: skip if any required field is missing
+            if (!item_name || !quantity || !category || !item_reason) {
+                console.warn("Skipping a line item due to missing fields.");
+                return;
+            }
+
             requisitionData.line_items.push({
-                item_name: formData.get(`line_items[${i}][item_name]`),
-                quantity: parseInt(formData.get(`line_items[${i}][quantity]`)),
-                category: formData.get(`line_items[${i}][category]`),
-                item_reason: formData.get(`line_items[${i}][item_reason]`),
+                item_name: item_name.value,
+                quantity: parseFloat(quantity.value) || 0,
+                category: category.value,
+                item_reason: item_reason.value,
             });
+        });
+
+        // Validation: Ensure at least one line item is present
+        if (requisitionData.line_items.length === 0) {
+            alert("Please add at least one line item.");
+            return;
         }
 
         // Create the request body as FormData and append the JSON part manually

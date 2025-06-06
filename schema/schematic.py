@@ -1,14 +1,25 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, Field
 from typing import List, Optional, Union
 
 
 # Pydantic model to handle the input form data
 class LineItemInput(BaseModel):
-    id: Optional[int]  # Optional ID for existing line items
+    id: Optional[int] = None  # Make id optional and default to None
     item_name: str
-    quantity: int
+    quantity: Union[int, float]
     category: str
     item_reason: str
+    
+    @validator("quantity", pre=True)
+    def parse_numeric(cls, v):
+        if isinstance(v, str):
+            try:
+                if "." in v:
+                    return float(v)
+                return int(v)
+            except Exception:
+                raise ValueError("Must be a number")
+        return v
 
 class RequisitionInput(BaseModel):
     request_number: str
@@ -51,7 +62,7 @@ class ExpenseInput(BaseModel):
                 raise ValueError("Total must be a number")
         return v
 
-# Pydantic model for updating requisition status
+# Pydantic model for updating expense status
 class StatusUpdate(BaseModel):
     requisition_id: int
     status: str  # "approved" or "denied"
