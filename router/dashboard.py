@@ -19,8 +19,8 @@ async def dashboard(
     
     msg = []
     
-    admin_data = utility.get_user_from_token(request, db)    #return a dictionary
-    staff_data =  utility.get_staff_from_token(request, db)       #return user object
+    admin_data = utility.get_user_from_token(request, db)    #return a dictionary       : mike.eziefule@gmail.com 
+    staff_data = utility.get_staff_from_token(request, db)       #return user object    : mike.eziefule@gmail.com ifeanyi@gmail.com, 
     
     if not staff_data and not admin_data:
         msg.append("Session expired, LOGIN required")
@@ -29,6 +29,23 @@ async def dashboard(
         "request": request,
         "msg": msg,
         })
+        
+    if staff_data:
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == staff_data.id).all() # Fetch all requisition unique to user
+        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == staff_data.id).all()
+        request_length = len(all_requests)    
+        expense_length = len(expenses)    
+    
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "request": request,
+            "user": staff_data,
+            "role": staff_data.designation,
+            "all_requests": all_requests,
+            "request_length": request_length,
+            "expenses": expenses,
+            "expense_length": expense_length,
+            })
     
     if admin_data:
         all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == "not allowed").all() # Fetch all requisition unique to user
@@ -41,23 +58,6 @@ async def dashboard(
             "request": request,
             "user": admin_data.get("user"),
             "role": admin_data.get("role"),
-            "all_requests": all_requests,
-            "request_length": request_length,
-            "expenses": expenses,
-            "expense_length": expense_length,
-            })
-    
-    if staff_data:
-        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == staff_data.id).all() # Fetch all requisition unique to user
-        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == staff_data.id).all()
-        request_length = len(all_requests)    
-        expense_length = len(expenses)    
-    
-        return templates.TemplateResponse(
-            "dashboard.html",{
-            "request": request,
-            "user": staff_data,
-            "role": staff_data.designation,
             "all_requests": all_requests,
             "request_length": request_length,
             "expenses": expenses,

@@ -202,25 +202,41 @@ document.getElementById("submit-expense-form").addEventListener("click", async f
     // Collect line items data
     const lineItems = document.querySelectorAll("#expense-line-items .line-item");
     let grandTotal = 0;
-    lineItems.forEach((item, index) => {
-        const quantity = parseFloat(item.querySelector(`[name="line_items[${index}][quantity]"]`).value) || 0;
-        const price = parseFloat(item.querySelector(`[name="line_items[${index}][price]"]`).value) || 0;
-        const amount = quantity * price;
-        grandTotal += amount;
-        expenseData.line_items.push({
-            item_name: item.querySelector(`[name="line_items[${index}][item_name]"]`).value,
-            category: item.querySelector(`[name="line_items[${index}][category]"]`).value,
-            quantity: quantity,
-            price: price,
-            amount: amount,
-        });
+
+    lineItems.forEach((item) => {
+        // Use attribute selectors to match any index for new/existing items
+        const idInput = item.querySelector('input[name^="line_items["][name$="[id]"]');
+        const item_nameInput = item.querySelector('input[name^="line_items["][name$="[item_name]"]');
+        const categoryInput = item.querySelector('select[name^="line_items["][name$="[category]"]');
+        const quantityInput = item.querySelector('input[name^="line_items["][name$="[quantity]"]');
+        const priceInput = item.querySelector('input[name^="line_items["][name$="[price]"]');
+        const amountInput = item.querySelector('input[name^="line_items["][name$="[amount]"]');
+
+        // Defensive: skip if any required field is missing
+        if (!item_nameInput || !categoryInput || !quantityInput || !priceInput || !amountInput) {
+            console.warn("Skipping a line item due to missing fields.");
+            return;
+        }
+
+        const lineItemData = {
+            // Always include id (even if undefined) to satisfy Pydantic
+            id: idInput && idInput.value !== undefined && idInput.value !== "" ? parseInt(idInput.value) : null,
+            item_name: item_nameInput.value,
+            category: categoryInput.value,
+            quantity: parseFloat(quantityInput.value) || 0,
+            price: parseFloat(priceInput.value) || 0,
+            amount: parseFloat(amountInput.value) || 0,
+        };
+
+        grandTotal += lineItemData.amount;
+        expenseData.line_items.push(lineItemData);
     });
 
     // Optionally, you can add grandTotal to the payload if needed
     expenseData.total = grandTotal;
 
     // Add file attachment if present
-    const attachment = document.getElementById("attachment").files[0];
+    const attachment = document.getElementById("attachment")?.files[0];
     if (attachment) {
         expenseData.attachment = attachment;
     }
@@ -253,20 +269,6 @@ document.getElementById("submit-expense-form").addEventListener("click", async f
     }
 });
 
-// // Fetch and display pending expenses for the user
-// async function loadPendingExpenses() {
-//     try {
-//         const response = await fetch("/expense/pending");
-//         if (!response.ok) {
-//             throw new Error("Failed to fetch pending expenses");
-//         }
-//         const html = await response.text();
-//         document.getElementById("pending-expenses-container").innerHTML = html;
-//     } catch (error) {
-//         console.error("Error loading pending expenses:", error);
-//         document.getElementById("pending-expenses-container").innerHTML = "<p class='text-danger'>Failed to load pending expenses.</p>";
-//     }
-// }
 
 // <!-- Function to open the expense preview modal and display items -->
 function openExpenseModal(expenseId) {

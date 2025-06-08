@@ -3,7 +3,6 @@
 from fastapi import APIRouter, Depends, Request, Form, status, HTTPException, File, UploadFile
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from database import model, script
 from services.utility import get_staff_from_token
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -72,6 +71,58 @@ async def request_dash(
             "expense_length": expense_length,
             })
 
+#dashboard page route
+@router.get("/request_history", response_class=HTMLResponse)
+async def request_history(
+    request: Request,
+    db:Session=Depends(script.get_db)
+    ):
+    
+    msg = []
+    
+    admin_data = utility.get_user_from_token(request, db)    #return a dictionary
+    user_data =  utility.get_staff_from_token(request, db)       #return user object
+    
+    if not user_data and not admin_data:
+        msg.append("Session expired, LOGIN required")
+        return templates.TemplateResponse(
+        "login.html",{
+        "request": request,
+        "msg": msg,
+        })
+    
+    if user_data:
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data.id, model.Requisition.status == "Approved" ).all() # Fetch all requisition unique to user
+        request_length = len(all_requests)
+        
+        return templates.TemplateResponse(
+            "request_dash.html",{
+            "request": request,
+            "user": user_data,
+            "role": user_data.designation,
+            "all_requests": all_requests,
+            "request_length": request_length,
+            })
+    
+    if admin_data:        
+        
+        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == "not allowed").all() # Fetch all requisition unique to user
+        request_length = len(all_requests)    
+        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == "not allowed").all()
+        expense_length = len(expenses)    
+        
+        return templates.TemplateResponse(
+            "dashboard.html",{
+            "msg": msg,
+            "request": request,
+            "user": admin_data.get("user"),
+            "role": admin_data.get("role"),
+            "all_requests": all_requests,
+            "request_length": request_length,
+            "expenses": expenses,
+            "expense_length": expense_length,
+            })
 
 # Route to create a new requisition (GET)
 @router.get("/create-requisition", response_class=HTMLResponse)
@@ -122,8 +173,6 @@ async def create_requisition(
     requisition_input: str = Form(...),
     db: Session = Depends(script.get_db)
 ):  
-    # Debug: print the raw input received from JS
-    print("Raw requisition_input received:", requisition_input)
     try:
         requisition_obj = RequisitionInput.parse_raw(requisition_input)
         # Debug: print the parsed object
@@ -206,7 +255,7 @@ async def approve_requisition(request: Request, id: int = Form(...), db: Session
         return JSONResponse(content={"status": "error", "message": "Requisition not found!"}, status_code=404)
 
     try:
-        if user.designation == "Storekeeper":
+        if user.line_manager == "NULL":
             requisition.status = "Approved"
         else:
             requisition.status = f"pending with {user.line_manager}"
@@ -284,9 +333,7 @@ async def edit_requisition(
     try:
         # Validate and parse the input using the Pydantic model
         requisition_data = RequisitionInput.parse_raw(requisition_input)
-        
-        print (requisition_data)
-        
+                
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 

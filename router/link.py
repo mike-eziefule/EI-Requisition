@@ -47,8 +47,9 @@ async def admin_view_all(
     msg = []
     
     user_data = utility.get_user_from_token(request, db)
+    staff = utility.get_staff_from_token(request, db)
     
-    if not user_data:
+    if not user_data and not staff:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
         "login.html",{
@@ -56,27 +57,21 @@ async def admin_view_all(
         "msg": msg,
         })
         
-    if user_data["role"] != "administrator":
         
-        msg.append("Contact your administrator")
-        return templates.TemplateResponse(
-        "dashboard.html",{
-        "request": request,
-        "msg": msg,
-        "user": user_data["user"],
-        "role": user_data["role"]
-        })
-        
-    all_users = db.query(model.User).filter(model.User.organization_id == user_data["user"].id ).all()
-    staff_number = len(all_users)
-    
+    if user_data: 
+        all_users = db.query(model.User).filter(model.User.organization_id == user_data["user"].id).all()
+        staff_number = len(all_users)
+    else:
+        print(staff.organization_id)
+        all_users = db.query(model.User).filter(model.User.organization_name == staff.organization_name).all()
+        staff_number = len(all_users)
     
     return templates.TemplateResponse(
         "viewstaff.html",{
         "request": request,
         "msg":msg,
-        "user": user_data.get("user"),
-        "role": user_data.get("role"),
+        "user": user_data.get("user") if user_data else staff,
+        "role": user_data.get("role") if user_data else staff.designation,
         "all_users": all_users,
         "staff_number": staff_number
         })

@@ -83,6 +83,8 @@ async def create_expense(
     try:
         # Validate and parse the input using the Pydantic model
         expense_data = ExpenseInput.parse_raw(expense_input)
+        print("Parsed expense_obj:", expense_data)
+
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
@@ -215,7 +217,7 @@ async def approve_expense(request: Request, id: int = Form(...), db: Session = D
         return JSONResponse(content={"status": "error", "message": "Requisition not found!"}, status_code=404)
 
     try:
-        if user.designation == "Storekeeper":
+        if user.line_manager == "NULL":
             expense.status = "Approved"
         else:
             if not user.line_manager or not isinstance(user.line_manager, str):

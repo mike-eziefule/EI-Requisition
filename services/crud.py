@@ -12,7 +12,7 @@ def create_requisition(
     line_items_data: list
     ):
     
-    if status == "pending with Procurement":
+    if status == "NULL":
         status = "Approved"
         
     try:
@@ -94,6 +94,10 @@ def create_expense(
     line_items_data: list,
     total: float
 ):
+    
+    if status == "NULL":
+        status = "Approved"
+        
     try:
         # Check for duplicate expense_number before creating
         existing = db.query(Expense).filter(Expense.expense_number == expense_number).first()
@@ -114,12 +118,18 @@ def create_expense(
         db.refresh(expense)
 
         for line_item in line_items_data:
+            # Accept both dicts and Pydantic objects
+            if hasattr(line_item, "dict"):
+                line_item_data = line_item.dict()
+            else:
+                line_item_data = dict(line_item)  # Ensure it's a dict
+
             item = ExpenseLineItem(
-                item_name=line_item["item_name"],
-                quantity=line_item["quantity"],
-                category=line_item["category"],
-                price=line_item["price"],
-                amount=line_item["amount"],
+                item_name=line_item_data.get("item_name"),
+                quantity=line_item_data.get("quantity"),
+                category=line_item_data.get("category"),
+                price=line_item_data.get("price"),
+                amount=line_item_data.get("amount"),
                 expense_id=expense.id
             )
             db.add(item)

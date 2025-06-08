@@ -34,20 +34,7 @@
                                 class="nav-link"
                                 href="{{ url_for('profile_page') }}"
                             >
-                                View profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('profile_page') }}">
-                                Edit Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                href="{{ url_for('profile_page') }}"
-                            >
-                                Reset Password
+                                My profile
                             </a>
                         </li>
                     </ul>
@@ -62,7 +49,7 @@
                     aria-controls="ui-basic"
                 >
                     <i class="menu-icon mdi mdi-human-greeting-proximity"></i>
-                    <span class="menu-title">My Team</span>
+                    <span class="menu-title">Team</span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="ui-basic">
@@ -71,19 +58,19 @@
                             <a
                                 class="nav-link"
                                 href="{{url_for('admin_view_all')}}"
-                                >View Staff</a
+                                >My Colleagues</a
                             >
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{url_for('addmember')}}"
-                                >Add Staff</a
+                                >Staff Registration</a
                             >
                         </li>
                         <li class="nav-item">
                             <a
                                 class="nav-link"
                                 href="pages/ui-features/typography.html"
-                                >Delete Staff</a
+                                >Remove Someone</a
                             >
                         </li>
                     </ul>
@@ -107,27 +94,27 @@
                             <a
                                 class="nav-link"
                                 href="{{url_for('request_dash')}}"
-                                >My Requests</a
-                            >
+                                >Requisition
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a
                                 class="nav-link"
                                 href="{{url_for('create_requisition')}}"
-                                >New Request</a
+                                >Create a Request</a
                             >
                         </li>
                         <li class="nav-item">
                             <a
                                 class="nav-link"
                                 href="{{url_for('pending_request')}}"
-                                >Pending Request</a
+                                >Pending Action </a
                             >
                         </li>
                         <li class="nav-item">
                             <a
                                 class="nav-link"
-                                href="pages/forms/basic_elements.html"
+                                href= "{{url_for('request_history')}}"
                                 >Request History</a
                             >
                         </li>
@@ -231,9 +218,9 @@
                                         >
                                     </h3>
                                     <h5 class="welcome-sub-text">
-                                        {{user.designation or role}}:
+                                        {{role}} </br>
                                         <span
-                                            class="text-black fw-bold float-end"
+                                            class="text-black fw-bold float-start"
                                             >{{user.email}}</span
                                         >
                                     </h5>
