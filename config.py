@@ -8,7 +8,7 @@ class Settings():
     db_url: str = "sqlite:///./requisition.sqlite"
 
     # default to SQLite
-    app_server: str = "local" #change to 'development' when hosting
+    app_server: str = "deployment" #change to 'development' when hosting
     
     #openai tags
     tags = [
@@ -41,5 +41,5 @@ def get_settings() -> Settings:
     
     settings = Settings()
     if settings.app_server == "deployment":
-        settings.db_url = "postgresql://jghaalsi:D7eoK_Id1-gKTZ3aAsz-uWHtJYrzSTSd@lallah.db.elephantsql.com/jghaalsi"
+        settings.db_url = "postgresql://postgres.vlrlqacbfwqxklrzkdpm:cUJJYfSpScBCN9Yu@aws-0-eu-north-1.pooler.supabase.com:5432/postgres"
     return settings
