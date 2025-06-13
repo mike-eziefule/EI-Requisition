@@ -48,9 +48,9 @@ async def dashboard(
             })
     
     if admin_data:
-        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == admin_data["user"].id).all() # Fetch all requisition unique to user
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == 0).all() # Fetch all requisition unique to user
         request_length = len(all_requests)    
-        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == admin_data["user"].id).all()
+        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == 0).all()
         expense_length = len(expenses)    
         
         return templates.TemplateResponse(
