@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from database import model, script
-from services.utility import get_staff_from_token, get_user_from_token
+from services.utility import get_user_from_token
 import os
 import shutil
 
@@ -26,32 +26,25 @@ def get_profile_pic_url(user):
 
 @router.get("/", response_class=HTMLResponse)
 async def profile_page(request: Request, db: Session = Depends(script.get_db)):
-    user = get_staff_from_token(request, db)
-    admin = get_user_from_token(request, db)
+    user_data = get_user_from_token(request, db)
     msg = []
-    if user:
-        user.profile_picture_url = get_profile_pic_url(user)
+    if user_data:
+        user_data.profile_picture_url = get_profile_pic_url(user_data)
         msg.append("Welcome to your profile page!")
-        return templates.TemplateResponse("profile.html", {"request": request, "user": user, "msg": msg})
-    elif admin:
-        msg.append("Welcome to the admin profile page!")
-        admin_user = admin["user"]
-        admin_user.profile_picture_url = get_profile_pic_url(admin_user)
-        return templates.TemplateResponse("profile.html", {"request": request, "user": admin_user, "msg": msg})
+        return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
     else:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
-        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+        return templates.TemplateResponse("signin.html", {"request": request, "msg": msg})
 
 @router.post("/upload-picture")
 async def profile_upload_picture(request: Request, profile_picture: UploadFile = File(...), db: Session = Depends(script.get_db)):
-    user = get_staff_from_token(request, db)
-    admin = get_user_from_token(request, db)
+    user_data = get_user_from_token(request, db)
     msg = []
     # Check if user or admin is logged in   
-    if not user and not admin:
+    if not user_data:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
-        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
-    target_user = user if user else admin["user"]
+        return templates.TemplateResponse("signin.html", {"request": request, "msg": msg})
+    target_user = user_data
     # Delete previous picture if exists
     old_path = getattr(target_user, "profile_picture_url", None)
     if old_path and old_path.startswith("static/") and os.path.exists(old_path.replace("/", os.sep)):
@@ -60,10 +53,8 @@ async def profile_upload_picture(request: Request, profile_picture: UploadFile =
         except Exception:
             pass
     # Save new picture
-    if user:
-        filename = f"user_{user.id}_{profile_picture.filename}"
-    else:
-        filename = f"admin_{admin['user'].admin_name}_{profile_picture.filename}"
+    if user_data:
+        filename = f"user_{user_data.id}_{profile_picture.filename}"
     file_path = os.path.join(PROFILE_PIC_DIR, filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(profile_picture.file, buffer)
@@ -75,13 +66,12 @@ async def profile_upload_picture(request: Request, profile_picture: UploadFile =
 
 @router.post("/delete-picture")
 async def profile_delete_picture(request: Request, db: Session = Depends(script.get_db)):
-    user = get_staff_from_token(request, db)
-    admin = get_user_from_token(request, db)
+    user_data = get_user_from_token(request, db)
     msg = []
     # Check if user or admin is still logged in
-    if not user and not admin:
+    if not user_data:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
-    target_user = user if user else admin["user"]
+    target_user = user_data
     if not getattr(target_user, "profile_picture_url", None):
         msg.append("No profile picture to delete.")
         return templates.TemplateResponse("profile.html", {"request": request, "user": target_user, "msg": msg})
@@ -107,10 +97,9 @@ async def profile_change_password(
     from passlib.context import CryptContext
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     
-    user = get_staff_from_token(request, db)
-    admin = get_user_from_token(request, db)
+    user_data = get_user_from_token(request, db)
     
-    target_user = user if user else (admin["user"] if admin else None)
+    target_user = user_data if user_data else None
     if not target_user:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
         return templates.TemplateResponse("profile.html", {"request": request, "user": None, "msg": msg})
@@ -125,4 +114,4 @@ async def profile_change_password(
     db.commit()
     msg.append("Password changed successfully. Please log in again.")
     # Do NOT call request.session.clear() unless SessionMiddleware is installed.
-    return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+    return templates.TemplateResponse("signin.html", {"request": request, "msg": msg})

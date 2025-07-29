@@ -26,6 +26,14 @@ endblock %} {% block child_content_1 %}
                                 <i class="mdi mdi-account-plus"></i>
                                 Create Request
                             </button>
+                            <button
+                                class="btn btn-secondary btn-lg text-white mb-0 ms-2"
+                                type="button"
+                                onclick="window.location.href='{{ url_for('settings_page') }}'"
+                            >
+                                <i class="mdi mdi-cog"></i>
+                                Settings
+                            </button>
                         </div>
                     </div>
                     <div class="table-responsive mt-1">

@@ -47,33 +47,65 @@ async def admin_view_all(
     msg = []
     
     user_data = utility.get_user_from_token(request, db)
-    staff = utility.get_staff_from_token(request, db)
     
-    if not user_data and not staff:
+    if not user_data:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
-        "login.html",{
+        "signin.html",{
         "request": request,
         "msg": msg,
         })
         
-        
     if user_data: 
-        all_users = db.query(model.User).filter(model.User.organization_id == user_data["user"].id).all()
+        all_users = db.query(model.User).filter(model.User.organization_id == user_data.organization_id).all()
         staff_number = len(all_users)
-    else:
-        print(staff.organization_id)
-        all_users = db.query(model.User).filter(model.User.organization_name == staff.organization_name).all()
-        staff_number = len(all_users)
-    
-    return templates.TemplateResponse(
-        "viewstaff.html",{
-        "request": request,
-        "msg":msg,
-        "user": user_data.get("user") if user_data else staff,
-        "role": user_data.get("role") if user_data else staff.designation,
-        "all_users": all_users,
-        "staff_number": staff_number
+
+        # Determine line manager for each user
+        user_line_managers = {}
+        
+        for staff in all_users:
+            try:
+                staff_cmd_level = int(staff.cmd_level)
+            except Exception:
+                staff_cmd_level = None
+                
+            # Try to find a line manager in the same department, one level lower at a time
+
+            if staff_cmd_level and staff_cmd_level > 1:
+                # First, try to find in same department
+                for i in range(staff_cmd_level - 1, 0, -1):
+                    lm = db.query(model.User).filter(
+                        model.User.organization_id == staff.organization_id,
+                        model.User.department == staff.department,
+                        model.User.cmd_level == str(i).zfill(3)
+                    ).first()
+                    if lm:
+                        user_line_managers[staff.id] = lm
+                        break
+                    
+                    # If not found, try any department in the org
+                    if not lm:
+                        for i in range(staff_cmd_level - 1, 0, -1):
+                            
+                            lm = db.query(model.User).filter(
+                                model.User.organization_id == staff.organization_id,
+                                model.User.cmd_level == str(i).zfill(3)
+                                ).first()
+                            if lm:
+                                user_line_managers[staff.id] = lm
+                                break
+            else:
+                user_line_managers[staff.id] = None
+
+        return templates.TemplateResponse(
+            "viewstaff.html",{
+            "request": request,
+            "msg":msg,
+            "user": user_data,
+            "role": user_data.designation,
+            "all_users": all_users,
+            "staff_number": staff_number,
+            "user_line_managers": user_line_managers,
         })
 
 

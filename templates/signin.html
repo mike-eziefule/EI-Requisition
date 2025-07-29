@@ -1,0 +1,197 @@
+{% include 'layout.html' %} {% block title %}
+<title>Sign In</title>
+{% endblock %}
+
+<!-- Page Header Start -->
+<div class="section container-fluid dark-background mb-5">
+    <div
+        class="d-flex flex-column align-items-center justify-content-center"
+        style="min-height: 300px"
+    >
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">Sign in</h1>
+        <div class="d-inline-flex">
+            <p class="m-0"><a href="{{url_for('index')}}">Home</a></p>
+            <p class="m-0 px-2">-</p>
+            <p class="m-0">Login here</p>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+{% block content %}
+<div class="container-fluid" style="min-height: 80vh">
+    {%for errors in msg%} {% if errors == 'Logout successful' or errors ==
+    'Registration successful'%}
+    <div class="alert alert-success" role="alert">{{ errors }}</div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">{{ errors }}</div>
+    {% endif %} {% endfor %}
+    <div
+        class="row justify-content-center align-items-center"
+        style="min-height: 80vh"
+    >
+        <!-- Left Side: Card Selection -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body d-flex align-items-center">
+                    <input
+                        type="radio"
+                        id="adminRadio"
+                        name="signType"
+                        class="form-check-input me-2"
+                        checked
+                    />
+                    <label for="adminRadio" class="form-check-label fw-bold"
+                        >Sign in as Administrator</label
+                    >
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body d-flex align-items-center">
+                    <input
+                        type="radio"
+                        id="staffRadio"
+                        name="signType"
+                        class="form-check-input me-2"
+                    />
+                    <label for="staffRadio" class="form-check-label fw-bold"
+                        >Sign in as Staff</label
+                    >
+                </div>
+            </div>
+            <div class="">
+                <div class="btn btn-primary w-100 mt-3">
+                    <a href="{{url_for('register')}}"> Register?</a>
+                </div>
+            </div>
+        </div>
+        <!-- Right Side: Forms -->
+        <div class="col-md-6 g-5">
+            <!-- Admin Form -->
+            <form
+                id="adminForm"
+                method="POST"
+                action="{{url_for('postlogin')}}"
+            >
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-4">Administrator Login</h4>
+
+                        <div class="d-none">
+                            <label>Role</label>
+                            <input
+                                type="text"
+                                class="form-select"
+                                name="role"
+                                value="administrator"
+                                required
+                            >
+                            </input>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="admin_email" class="form-label"
+                                >Email</label
+                            >
+                            <input
+                                type="email"
+                                class="form-control"
+                                name="email"
+                                placeholder="Enter your email address"
+                                value="{{email}}"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label"
+                                >Password</label
+                            >
+                            <input
+                                id="myInput"
+                                type="password"
+                                class="form-control"
+                                id="admin_password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                            />
+                            <input
+                                type="checkbox"
+                                onclick="myFunction()"
+                                class="mt-3"
+                            />
+                            Show Password
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Sign In as Administrator
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Staff Form -->
+            <form
+                id="staffForm"
+                method="POST"
+                action="{{url_for('postlogin')}}"
+                style="display: none"
+            >
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="mb-4">Staff Login</h4>
+                        <div class="d-none">
+                            <label>Role</label>
+                            <input
+                                type="text"
+                                class="form-select"
+                                name="role"
+                                value="staff"
+                                required
+                            >
+                            </input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="staff_email" class="form-label"
+                                >Email</label
+                            >
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                placeholder="Enter your email address"
+                                value="{{email}}"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="staff_password" class="form-label"
+                                >Password</label
+                            >
+                            <input
+                                id="myInput"
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                            />
+                            <input
+                                type="checkbox"
+                                onclick="myFunction()"
+                                class="mt-3"
+                            />
+                            Show Password
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Sign In as Staff
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %} {% endblock %}

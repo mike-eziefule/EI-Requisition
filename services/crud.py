@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from database.model import Requisition, LineItem, Expense, ExpenseLineItem
 from datetime import datetime
+from database import model
+from services.utility import bcrpyt_context
 
 
 def create_requisition(
@@ -94,7 +96,6 @@ def create_expense(
     line_items_data: list,
     total: float
 ):
-    
     if status == "NULL":
         status = "Approved"
         
@@ -107,11 +108,11 @@ def create_expense(
         expense = Expense(
             expense_number=expense_number,
             description=description,
-            attachment_path=attachment_path,
             status=status,
-            total=total,
             timestamp=datetime.now(),
-            requestor_id=requestor_id
+            requestor_id=requestor_id,
+            attachment_path=attachment_path,
+            total=total,
         )
         db.add(expense)
         db.commit()
@@ -141,3 +142,34 @@ def create_expense(
     except Exception as e:
         db.rollback()
         raise Exception(f"Error in create_expense: {str(e)}")
+
+
+def create_organization(db, organization_name, rc_number, address, product):
+    new_org = model.Organization(
+        organization_name=organization_name,
+        rc_number=rc_number,
+        address=address,
+        product=product,
+    )
+    db.add(new_org)
+    db.commit()
+    db.refresh(new_org)
+    return new_org
+
+def create_owner_user(db, organization_name, staff_name, designation, email, password, role, organization_id):
+    new_owner = model.User(
+        organization_name=organization_name,
+        staff_name=staff_name,
+        designation=designation,
+        email=email,
+        password=bcrpyt_context.hash(password),
+        role=role,
+        date=datetime.now().date(),
+        organization_id=organization_id,
+        cmd_level="001",
+        department="management"
+    )
+    db.add(new_owner)
+    db.commit()
+    db.refresh(new_owner)
+    return new_owner

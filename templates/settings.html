@@ -1,0 +1,132 @@
+{% extends "dblayout.html" %} {% block title %} Settings {% endblock %} 
+
+{% block child_content_1 %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-rounded">
+                <div class="card-body">
+                    <h3 class="mb-4">Organization Settings</h3>
+                    {% if msg %}
+                        <div class="alert alert-warning">{{ msg }}</div>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('save_settings') }}">
+                        <div class="mb-4">
+                            <label for="company_type" class="form-label fw-bold"
+                                >Company Type</label
+                            >
+                            <select
+                                class="form-select"
+                                id="company_type"
+                                name="company_type"
+                                required
+                            >
+                                <option value="">Select Company Type</option>
+                                <option value="retail">
+                                    Retail Business (0 - 5 employees)
+                                </option>
+                                <option value="private">
+                                    Private Company (5 - 20 employees)
+                                </option>
+                                <option value="public">
+                                    Public Liability Company (20 and above)
+                                </option>
+                            </select>
+                        </div>
+                        <!-- Number of Levels Selector -->
+                        <div class="mb-4">
+                            <label for="num_levels" class="form-label fw-bold">Number of Approval Levels</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="num_levels"
+                                name="num_levels"
+                                min="1"
+                                max="6"
+                                value="1"
+                                required
+                            />
+                            <small class="text-muted">Select between 1 and 6 levels</small>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold"
+                                >Approval Hierarchy</label
+                            >
+                            <div id="hierarchy-list">
+                                <!-- Level rows will be generated here -->
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Save Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// filepath: c:\Users\SGA PROJECTS\Desktop\Requisition_app\templates\settings.html
+function createLevelRow(level, designationList) {
+    let options = '<option value="">Select Designation</option>';
+    for (let i = 0; i < designationList.length; i++) {
+        options += `<option value="${designationList[i]}">${designationList[i]}</option>`;
+    }
+    return `
+        <div class="row mb-2 hierarchy-row" data-level="${level}">
+            <div class="col-8">
+                <select class="form-select" name="positions[]" required>
+                    ${options}
+                </select>
+            </div>
+            <div class="col-3">
+                <input
+                    type="number"
+                    class="form-control"
+                    name="levels[]"
+                    min="1"
+                    max="6"
+                    value="${level}"
+                    readonly
+                    required
+                />
+            </div>
+            <div class="col-1 d-flex align-items-center">
+                <button
+                    type="button"
+                    class="btn btn-danger btn-sm remove-hierarchy"
+                    style="display: none"
+                    disabled
+                >
+                    &times;
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderHierarchyRows(num, designationList) {
+    const list = document.getElementById("hierarchy-list");
+    list.innerHTML = "";
+    num = Math.max(1, Math.min(6, parseInt(num) || 1));
+    for (let i = 1; i <= num; i++) {
+        list.innerHTML += createLevelRow(i, designationList);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const numLevelsInput = document.getElementById("num_levels");
+    // Pass designation_list from Jinja to JS
+    const designationList = {{ designation_list|tojson }};
+    renderHierarchyRows(numLevelsInput.value, designationList);
+
+    numLevelsInput.addEventListener("input", function () {
+        let val = parseInt(this.value) || 1;
+        if (val < 1) val = 1;
+        if (val > 6) val = 6;
+        this.value = val;
+        renderHierarchyRows(val, designationList);
+    });
+});
+</script>
+{% include "footer.html" %} {% endblock %}

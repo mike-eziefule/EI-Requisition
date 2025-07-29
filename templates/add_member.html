@@ -4,19 +4,69 @@
 <!--  page body start  -->
 {% block child_content_1 %}
 <div class="row flex-grow">
-    <div class="col-12 grid-margin stretch-card">
-        <div class="card card-rounded">
-            <div class="card-body">
-                <div
-                    div
-                    class="d-sm-flex justify-content-between align-items-start"
-                >
-                    <div>
-                        <h4 class="card-title card-title-dash">Team Members</h4>
-                        <p class="card-subtitle card-subtitle-dash">
-                            You have {{staff_number}} members
-                        </p>
-                    </div>
+    <!-- Organogram Illustration -->
+    <div class="col-12">
+        <div class="organogram-container text-center">
+            <div class="organogram-level organogram-level-1 mb-2">
+                <span class="badge bg-primary">Level 1</span>
+            </div>
+            <div class="organogram-level organogram-level-2 mb-2">
+                <span class="badge bg-success">Level 2</span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span class="badge bg-info">Level 2</span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span class="badge bg-danger">Level 2</span>
+                <span ></span>
+                <span ></span>
+                <span ></span>
+                <span class="badge bg-secondary">Level 2</span>
+            </div>
+            <div class="organogram-level organogram-level-3 mb-2">
+                <span class="badge bg-success">Level 3</span>
+                <span class="badge bg-success">Level 3</span>
+                <span class="badge bg-info">Level 3</span>
+                <span class="badge bg-info">Level 3</span>
+                <span ></span>
+                <span class="badge bg-danger">Level 3</span>
+                <span class="badge bg-danger">Level 3</span>
+                <span class="badge bg-secondary">Level 3</span>
+                <span class="badge bg-secondary">Level 3</span>
+            </div>
+            <div class="mt-2">
+                <small class="text-muted">Level 1 is the highest, Level 6 is the lowest</small>
+            </div>
+        </div>
+    </div>
+    <style>
+        .organogram-container .organogram-level {
+        display: flex;
+        justify-content: center;
+        gap: 15px;}
+    </style>
+    <!-- End Organogram Illustration -->
+</div>
+
+<div class="col-12 grid-margin stretch-card">
+    <div class="card card-rounded">
+        <div class="card-body">
+            <div
+                div
+                class="d-sm-flex justify-content-between align-items-start"
+            >
+                <div>
+                    <h4 class="card-title card-title-dash">Team Members</h4>
+                    <p class="card-subtitle card-subtitle-dash">
+                        You have {{staff_number}} members
+                    </p>
+                </div>
                     <div>
                         <button
                             class="btn btn-primary btn-lg text-white mb-0 me-0"
@@ -26,14 +76,14 @@
                             <i class="mdi mdi-account-plus"></i>Add new member
                         </button>
                     </div>
-                </div>
+            </div>
                 <div class="align-items-center">
                     <div class="card-body mt-1">
-                        <form method="POST" , action="{{url_for('addmember')}}">
+                        <form method="POST" action="{{url_for('addmember')}}">
                             <div class="form-row">
                                 <div class="border rounded mt-5 p-3">
                                     <div class="form-group m-3">
-                                        <label>Name </label>
+                                        <label>Staff Name</label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -45,71 +95,14 @@
                                     </div>
                                     <div class="form-group m-3">
                                         <label>Designation</label>
-                                        <select
-                                            class="form-select"
+                                        <input
+                                            type="text"
+                                            class="form-control"
                                             name="designation"
+                                            placeholder="Enter Designation"
                                             value="{{designation}}"
-                                            aria-label="Default select example"
-                                        >
-                                            <option selected value ="">
-                                                Select Staff's Designation
-                                            </option>
-                                            <option value="Officer">
-                                                Staff
-                                            </option>
-                                            <option value="Supervisor">
-                                                Supervisors
-                                            </option>
-                                            <option value="Storekeeper">
-                                                Store Manager
-                                            </option>
-                                            <option value="Procurement">
-                                                Procurement Mgr
-                                            </option>
-                                            <option value="Finance">
-                                                Finance Mgr
-                                            </option>
-                                            <option value="MD/CEO">
-                                                MD/CEO
-                                            </option>
-                                            <option value="NULL">
-                                                Executives Board
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group m-3">
-                                        <label>Line Manager</label>
-                                        <select
-                                            class="form-select"
-                                            name="line_manager"
-                                            value="{{line_manager}}"
-                                            aria-label="Default select example"
-                                        >
-                                            <option selected value="">
-                                                Select staff's Line Manager
-                                            </option>
-                                            <option value="Supervisor">
-                                                Supervisor
-                                            </option>
-                                            <option value="Officer">
-                                                Staff
-                                            </option>
-                                            <option value="Storekeeper">
-                                                Store Manager
-                                            </option>
-                                            <option value="Procurement">
-                                                Procurement Mgr
-                                            </option>
-                                            <option value="Finance">
-                                                Finance Mgr
-                                            </option>
-                                            <option value="MD/CEO">
-                                                MD/CEO
-                                            </option>
-                                            <option value="NULL">
-                                                Executive Board
-                                            </option>
-                                        </select>
+                                            required
+                                        />
                                     </div>
                                     <div class="form-group m-3">
                                         <label>Email</label>
@@ -144,6 +137,48 @@
                                             required
                                         />
                                     </div>
+                                    <div class="form-group m-3">
+                                        <label>User Role</label>
+                                        <select
+                                            class="form-select"
+                                            name="role"
+                                            value="{{role}}"
+                                            aria-label="Default select example"
+                                            required
+                                        >
+                                            <option value="user" {% if role == "staff" %}selected{% endif %}>User</option>
+                                            <option value="administrator" {% if role == "administrator" %}selected{% endif %}>Admin</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group m-3">
+                                        <label>Command Level</label>
+                                        <select
+                                            class="form-select"
+                                            name="cmd_level"
+                                            value="{{cmd_level}}"
+                                            aria-label="Default select example"
+                                            required
+                                        >
+                                            <option value="">Select Command Level</option>
+                                            <option value="001" {% if cmd_level == "001" %}selected{% endif %}>Level-1</option>
+                                            <option value="002" {% if cmd_level == "002" %}selected{% endif %}>Level-2</option>
+                                            <option value="003" {% if cmd_level == "003" %}selected{% endif %}>Level-3</option>
+                                            <option value="004" {% if cmd_level == "004" %}selected{% endif %}>Level-4</option>
+                                            <option value="005" {% if cmd_level == "005" %}selected{% endif %}>Level-5</option>
+                                            <option value="006" {% if cmd_level == "006" %}selected{% endif %}>Level-6</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group m-3">
+                                        <label>Department</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="department"
+                                            placeholder="Enter Department"
+                                            value="{{department}}"
+                                            required
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary m-3">
@@ -152,9 +187,9 @@
                         </form>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
 <!--  page body end  -->

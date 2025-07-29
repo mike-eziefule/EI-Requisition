@@ -11,7 +11,7 @@
       var saleGradientBg2 = graphGradient2.createLinearGradient(100, 0, 50, 150);
       saleGradientBg2.addColorStop(0, 'rgba(0, 208, 255, 0.19)');
       saleGradientBg2.addColorStop(1, 'rgba(0, 208, 255, 0.03)');
-
+      
       new Chart(ctx, {
         type: 'line',
         data: {

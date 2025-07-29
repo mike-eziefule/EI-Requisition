@@ -242,17 +242,17 @@ document.getElementById("submit-expense-form").addEventListener("click", async f
     }
 
     // Create the request body as FormData and append the JSON part manually
-    const requestFormData = new FormData();
-    requestFormData.append("expense_input", JSON.stringify(expenseData));
+    const expenseFormData = new FormData();
+    expenseFormData.append("expense_input", JSON.stringify(expenseData));
     if (attachment) {
-        requestFormData.append("attachment", attachment);
+        expenseFormData.append("attachment", attachment);
     }
 
     // Submit data to the server
     try {
         const response = await fetch("/expense/create", {
             method: "POST",
-            body: requestFormData,
+            body: expenseFormData,
         });
 
         if (response.ok) {

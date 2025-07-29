@@ -27,7 +27,7 @@ async def login_for_access_token(
     db:db_session
     ):
     
-    token = utility.authenticate_user(form_data.username, form_data.password, form_data.role, timedelta(minutes=60), db)
+    token = utility.authenticate_user(form_data.username, form_data.password, timedelta(minutes=60), db)
     
     if token == False:
         return False
@@ -42,7 +42,7 @@ async def login_for_access_token(
 @router.get("/login", response_class=HTMLResponse)
 async def login(request: Request):
     
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse("signin.html", {"request": request})
 
 #login post page route
 @router.post("/login", response_class=HTMLResponse)
@@ -63,18 +63,17 @@ async def postlogin(
         validate_user_cookie = await login_for_access_token(response=response, form_data=form, db=db)
         
         if not validate_user_cookie:
-            msg.append("Incorrect role or Login credentials")
-            return templates.TemplateResponse("login.html", {
+            msg.append("Incorrect Login credentials")
+            return templates.TemplateResponse("signin.html", {
                 "request": request, 
                 "msg": msg, 
                 "email": form.username,
-                "role": form.role
             })
         
         return response
     except HTTPException:
         msg.append("Unknown error")
-        return templates.TemplateResponse("login.html", {
+        return templates.TemplateResponse("signin.html", {
             "request": request, 
             "msg": msg,
             "email": form.username
@@ -88,6 +87,6 @@ async def logout(request: Request):
     msg = []
     
     msg.append("Logout successful")
-    response = templates.TemplateResponse("index.html", {"request": request, "msg": msg})
+    response = templates.TemplateResponse("signin.html", {"request": request, "msg": msg})
     response.delete_cookie(key="access_token")
     return response

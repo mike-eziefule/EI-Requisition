@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, Request, Form, status, HTTPException, Fi
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from database import model, script
-from services.utility import get_staff_from_token
 from fastapi.responses import HTMLResponse, JSONResponse
 from config import get_settings
 from services import keygen, utility, crud
@@ -13,6 +12,18 @@ import json
 from pydantic import ValidationError
 import os
 from schema.schematic import RequisitionInput
+from services.responses import (
+    signin_failed_response,
+    request_dash_response,
+    request_history_response,
+    pending_request_response,
+    create_requisition_success_response,
+    create_requisition_failed_response,
+    edit_requisition_failed_response,
+    edit_requisition_success_response,
+    delete_requisition_success_response,
+    delete_requisition_failed_response,
+)
 
 router = APIRouter(prefix="/requisition", tags=["requisition"])
 
@@ -24,52 +35,22 @@ async def request_dash(
     request: Request,
     db:Session=Depends(script.get_db)
     ):
-    
     msg = []
+    user_data = utility.get_user_from_token(request, db)
     
-    admin_data = utility.get_user_from_token(request, db)    #return a dictionary
-    user_data =  utility.get_staff_from_token(request, db)       #return user object
-    
-    if not user_data and not admin_data:
+    if not user_data:
         msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse(
-        "login.html",{
-        "request": request,
-        "msg": msg,
-        })
+        return signin_failed_response(request, msg)
     
     if user_data:
-        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data.id).all() # Fetch all requisition unique to user
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data.id).all()
         request_length = len(all_requests)
         
-        return templates.TemplateResponse(
-            "request_dash.html",{
-            "request": request,
-            "user": user_data,
-            "role": user_data.designation,
-            "all_requests": all_requests,
-            "request_length": request_length,
-            })
+        all_users = db.query(model.User).filter(model.User.organization_id == user_data.organization_id).all()
+        return request_dash_response(
+            request, user_data, all_requests, request_length, all_users
+        )
     
-    if admin_data:        
-        
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
-        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == "not allowed").all() # Fetch all requisition unique to user
-        request_length = len(all_requests)    
-        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == "not allowed").all()
-        expense_length = len(expenses)    
-        
-        return templates.TemplateResponse(
-            "dashboard.html",{
-            "msg": msg,
-            "request": request,
-            "user": admin_data.get("user"),
-            "role": admin_data.get("role"),
-            "all_requests": all_requests,
-            "request_length": request_length,
-            "expenses": expenses,
-            "expense_length": expense_length,
-            })
 
 #dashboard page route
 @router.get("/request_history", response_class=HTMLResponse)
@@ -77,52 +58,18 @@ async def request_history(
     request: Request,
     db:Session=Depends(script.get_db)
     ):
-    
     msg = []
-    
-    admin_data = utility.get_user_from_token(request, db)    #return a dictionary
-    user_data =  utility.get_staff_from_token(request, db)       #return user object
-    
-    if not user_data and not admin_data:
+    user_data = utility.get_user_from_token(request, db)
+    if not user_data:
         msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse(
-        "login.html",{
-        "request": request,
-        "msg": msg,
-        })
-    
+        return signin_failed_response(request, msg)
     if user_data:
-        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data.id, model.Requisition.status == "Approved" ).all() # Fetch all requisition unique to user
+        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == user_data.id, model.Requisition.status == "Approved" ).all()
         request_length = len(all_requests)
-        
-        return templates.TemplateResponse(
-            "request_dash.html",{
-            "request": request,
-            "user": user_data,
-            "role": user_data.designation,
-            "all_requests": all_requests,
-            "request_length": request_length,
-            })
+        return request_history_response(
+            request, user_data, all_requests, request_length
+        )
     
-    if admin_data:        
-        
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
-        all_requests = db.query(model.Requisition).filter(model.Requisition.requestor_id == "not allowed").all() # Fetch all requisition unique to user
-        request_length = len(all_requests)    
-        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == "not allowed").all()
-        expense_length = len(expenses)    
-        
-        return templates.TemplateResponse(
-            "dashboard.html",{
-            "msg": msg,
-            "request": request,
-            "user": admin_data.get("user"),
-            "role": admin_data.get("role"),
-            "all_requests": all_requests,
-            "request_length": request_length,
-            "expenses": expenses,
-            "expense_length": expense_length,
-            })
 
 # Route to create a new requisition (GET)
 @router.get("/create-requisition", response_class=HTMLResponse)
@@ -130,18 +77,17 @@ async def create_requisition(request: Request, db: Session = Depends(script.get_
     
     msg = []
     
-    user = utility.get_staff_from_token(request, db)
-    admin = utility.get_user_from_token(request, db)
+    user_data = utility.get_user_from_token(request, db)
 
-    if not user and not admin:
+    if not user_data:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
-        "login.html",{
+        "signin.html",{
         "request": request,
         "msg": msg,
         })
         
-    if user:
+    if user_data:
         # Generate a unique request number
         reid = str('ReID' + keygen.create_unique_random_key(db))
         
@@ -149,20 +95,9 @@ async def create_requisition(request: Request, db: Session = Depends(script.get_
             "request": request,
             "msg": msg,
             "reid": reid,
-            "user": user,
-            "role": user.designation}
+            "user": user_data,
+            "role": user_data.designation}
         )
-    else:
-        
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
-        
-        return templates.TemplateResponse(
-            "dashboard.html",{
-            "request": request,
-            "user": admin.get("user"),
-            "role": admin.get("role"),
-            "msg": msg,
-            })
 
 
 
@@ -175,90 +110,97 @@ async def create_requisition(
 ):  
     try:
         requisition_obj = RequisitionInput.parse_raw(requisition_input)
-        # Debug: print the parsed object
-        print("Parsed requisition_obj:", requisition_obj)
     except (json.JSONDecodeError, ValidationError) as e:
         print("Validation error:", e)
-        return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
+        return create_requisition_failed_response(e)
 
-    requestor = utility.get_staff_from_token(request, db)
-
+    requestor = utility.get_user_from_token(request, db)
     if not requestor:
-        return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
+        return create_requisition_failed_response("Session expired, LOGIN required", status_code=401)
+    
+    line_manager = utility.get_line_manager(db, requestor)
 
     try:
         requisition = crud.create_requisition(
             db=db,
             request_number=requisition_obj.request_number,
             description=requisition_obj.description,
-            status=f"pending with {requestor.line_manager}",
+            status=f"pending with {line_manager.designation}" if line_manager else "pending with MD/CEO",
             requestor_id=requestor.id,
             line_items_data=requisition_obj.line_items,
         )
-        return JSONResponse(content={"message": "Requisition created successfully!"}, status_code=200)
+        return create_requisition_success_response()
     except Exception as e:
-        print("Server error:", e)
-        return JSONResponse(content={"message": f"Error creating requisition: {e}"}, status_code=500)
+        return create_requisition_failed_response(e)
 
 # Route to fetch all pending requisitions
 @router.get("/pending_request", response_class=HTMLResponse)
 async def pending_request(request: Request, db: Session = Depends(script.get_db)):
-    
     msg = []
     
-    user = utility.get_staff_from_token(request, db)
-    admin = utility.get_user_from_token(request, db)
-
-
-    if not user and not admin:
-        msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse(
-        "login.html",{
-        "request": request,
-        "msg": msg,
-        })
-        
-    if user:
+    # Fetch user data from the token
+    user_data = utility.get_user_from_token(request, db)
     
-        pending_requests = db.query(model.Requisition).filter(model.Requisition.status == f"pending with {user.designation}").all()
-        length_hint = len(pending_requests)
-        return templates.TemplateResponse("pending_request.html",{
-            "request": request,
-            "msg": msg,
-            "user": user,
-            "role": user.designation,
-            "pending_requests": pending_requests,
-            "length_hint": length_hint,
-        })
-    else:
+    # If user data is not found, return a message
+    if not user_data:
+        msg.append("Session expired, LOGIN required")
+        return signin_failed_response(request, msg)
+    
+    # Fetch all pending requisitions for the user
+    if user_data:
+        # pending_requests = db.query(model.Requisition).filter(model.Requisition.status == f"pending with {user_data.designation}", model.Requisition.requestor['organization_id'] == user_data.organization_id).all()
+        pending_requests = (db.query(model.Requisition).
+            join(model.Requisition.requestor).filter(
+            model.Requisition.status == f"pending with {user_data.designation}",
+            model.User.organization_id == user_data.organization_id).all()
+        )
         
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to create a requisition")
-        return templates.TemplateResponse(
-            "dashboard.html",{
-            "request": request,
-            "user": admin.get("user"),
-            "role": admin.get("role"),
-            "msg": msg,
-            })
+        length_hint = len(pending_requests)
+        all_users = db.query(model.User).filter(model.User.organization_name == user_data.organization_name).all()
+        
+        # Return the pending requests response
+        return pending_request_response(
+            request, user_data, pending_requests, length_hint, all_users, msg
+        )
+    
 
 # Route to approve a requisition
 @router.post("/approve_requisition")
 async def approve_requisition(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
-    user = utility.get_staff_from_token(request, db)
-
-    if not user:
+    user_data = utility.get_user_from_token(request, db)
+    if not user_data:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
-    requisition = db.query(model.Requisition).filter(model.Requisition.id == id).first()
+    user_cmd_level = int(user_data.cmd_level)
+    line_manager = None
 
+    # Try to find a line manager in the same department, one level lower at a time
+    for level in range(user_cmd_level - 1, 0, -1):
+        line_manager = db.query(model.User).filter(
+            model.User.department == user_data.department,
+            model.User.cmd_level == str(level).zfill(3)
+        ).first()
+        if line_manager:
+            break
+
+    # Fallback: search for any user with the required command level
+    if not line_manager:
+        for level in range(user_cmd_level - 1, 0, -1):
+            line_manager = db.query(model.User).filter(
+                model.User.cmd_level == str(level).zfill(3)
+            ).first()
+            if line_manager:
+                break
+
+    requisition = db.query(model.Requisition).filter(model.Requisition.id == id).first()
     if not requisition:
         return JSONResponse(content={"status": "error", "message": "Requisition not found!"}, status_code=404)
 
     try:
-        if user.line_manager == "NULL":
+        if user_data.cmd_level == "001":
             requisition.status = "Approved"
         else:
-            requisition.status = f"pending with {user.line_manager}"
+            requisition.status = f"pending with {line_manager.designation}" if line_manager else "pending with MD/CEO"
         db.commit()
         return JSONResponse(content={"status": "success", "message": "Requisition approved!"})
     except Exception as e:
@@ -272,9 +214,9 @@ async def reject_requisition(
     comment: str = Form(...),
     db: Session = Depends(script.get_db)
 ):
-    user = utility.get_staff_from_token(request, db)
+    user_data = utility.get_user_from_token(request, db)
 
-    if not user:
+    if not user_data:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
     requisition = db.query(model.Requisition).filter(model.Requisition.id == id).first()
@@ -287,7 +229,7 @@ async def reject_requisition(
         new_comment = model.RequisitionComment(
             requisition_id=requisition.id,
             comment=comment,
-            created_by=user.email
+            created_by=user_data.email
         )
         db.add(new_comment)
         db.commit()
@@ -304,9 +246,9 @@ async def edit_requisition(
     request: Request,
     db: Session = Depends(script.get_db)
 ):
-    user = utility.get_staff_from_token(request, db)
+    user_data = utility.get_user_from_token(request, db)
 
-    if not user:
+    if not user_data:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
 
     requisition = db.query(model.Requisition).filter(model.Requisition.id == id).first()
@@ -319,7 +261,7 @@ async def edit_requisition(
             "request": request,
             "requisition": requisition,
             "msg": [],
-            "user": user,
+            "user": user_data,
         },
     )
 
@@ -331,27 +273,22 @@ async def edit_requisition(
     db: Session = Depends(script.get_db)
 ):
     try:
-        # Validate and parse the input using the Pydantic model
         requisition_data = RequisitionInput.parse_raw(requisition_input)
-                
     except (json.JSONDecodeError, ValidationError) as e:
-        return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
+        return edit_requisition_failed_response(e)
 
-    user = utility.get_staff_from_token(request, db)
+    user_data = utility.get_user_from_token(request, db)
 
-    if not user:
-        return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
+    if not user_data:
+        return edit_requisition_failed_response("Session expired, LOGIN required", status_code=401)
 
     requisition = db.query(model.Requisition).filter(
         model.Requisition.request_number == requisition_data.request_number,
         model.Requisition.status == "Rejected"
     ).first()
 
-    if not requisition:
-        return JSONResponse(content={"status": "error", "message": "Requisition not found or not editable!"}, status_code=404)
-    if requisition.status != "Rejected":
-        return JSONResponse(content={"status": "error", "message": "requisition not found or not editable!"}, status_code=400)
-
+    if not requisition or requisition.status != "Rejected":
+        return edit_requisition_failed_response("Requisition not found or not editable!", status_code=404)
     try:
         requisition.description = requisition_data.description
 
@@ -380,19 +317,30 @@ async def edit_requisition(
         except Exception as e:
             return JSONResponse(content={"status": "error", "message": f"Error saving line items: {e}"}, status_code=500)
 
-        requisition.status = f"pending with {user.line_manager}"
+
+        line_manager = db.query(model.User).filter(
+        model.User.department == user_data.department,
+        model.User.cmd_level == (int(user_data.cmd_level) - 1)
+        ).first()
+    
+        if not line_manager:
+            line_manager = db.query(model.User).filter(model.User.cmd_level == (str(user_data.cmd_level) - 1))  # If no line manager found, set to None
+    
+
+
+        requisition.status = f"pending with {line_manager.designation}"
         db.commit()
                 
     except Exception as e:
-        return JSONResponse(content={"message": f"Error creating requisition: {e}"}, status_code=500)
+        return edit_requisition_failed_response(e)
 
 # Route to delete a rejected requisition
 @router.post("/delete_requisition")
 async def delete_requisition(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
-    user = utility.get_staff_from_token(request, db)
+    user_data = utility.get_user_from_token(request, db)
 
-    if not user:
-        return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
+    if not user_data:
+        return delete_requisition_failed_response("Session expired, LOGIN required", status_code=401)
 
     requisition = db.query(model.Requisition).filter(
         model.Requisition.id == id,
@@ -400,14 +348,14 @@ async def delete_requisition(request: Request, id: int = Form(...), db: Session 
     ).first()
 
     if not requisition:
-        return JSONResponse(content={"status": "error", "message": "Requisition not found or not deletable!"}, status_code=404)
+        return delete_requisition_failed_response("Requisition not found or not deletable!", status_code=404)
 
     try:
         db.delete(requisition)
         db.commit()
-        return JSONResponse(content={"status": "success", "message": "Requisition deleted successfully!"})
+        return delete_requisition_success_response()
     except Exception as e:
-        return JSONResponse(content={"status": "error", "message": f"Error deleting requisition: {e}"}, status_code=500)
+        return delete_requisition_failed_response(e)
 
 # Route to fetch requisition details with comments
 @router.get("/requisition_details/{id}", response_class=JSONResponse)

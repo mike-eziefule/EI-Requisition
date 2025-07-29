@@ -12,14 +12,9 @@ class Organization(Base):
     organization_name = Column(String, nullable= False)
     address = Column(String, nullable= True)
     rc_number = Column(String, nullable= True)
-    admin_name = Column(String, nullable= False, default="IT manager")
-    email = Column(String, nullable= False, unique=True)
-    password = Column(String, nullable= False)
     product = Column(String, nullable= False)
-    profile_picture_url = Column(String, nullable=True)
     
     staff = relationship("User", back_populates="organization")
-
 
 class User(Base):
     __tablename__ = 'users'
@@ -28,12 +23,14 @@ class User(Base):
     organization_name = Column(String, nullable=False)
     staff_name = Column(String, nullable=False)
     designation = Column(String, nullable=False)
-    line_manager = Column(String, nullable=True)
     email = Column(String, nullable= False, unique=True)
     password = Column(String, nullable= False)
+    role = Column(String, nullable= False, default="staff")  # Default role is 'staff'
     date = Column(Date, nullable= False)
     profile_picture_url = Column(String, nullable= True)
     organization_id = Column(String(36), ForeignKey("organization.id"))
+    cmd_level = Column(String, nullable=False, default="005")  # Command chain for approval hierarchy
+    department = Column(String, nullable=False)
 
     # Relationships
     organization = relationship("Organization", back_populates="staff")
@@ -121,4 +118,3 @@ class ExpenseComment(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     expense = relationship("Expense", back_populates="expense_comments")
-

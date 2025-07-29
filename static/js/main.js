@@ -281,3 +281,27 @@ function myFunction() {
         x.type = "password";
     }
 }
+
+//Toggle between admin and staff forms
+document.addEventListener("DOMContentLoaded", function () {
+    const adminRadio = document.getElementById("adminRadio");
+    const staffRadio = document.getElementById("staffRadio");
+    const adminForm = document.getElementById("adminForm");
+    const staffForm = document.getElementById("staffForm");
+
+    function toggleForms() {
+        if (adminRadio.checked) {
+            adminForm.style.display = "block";
+            staffForm.style.display = "none";
+        } else {
+            adminForm.style.display = "none";
+            staffForm.style.display = "block";
+        }
+    }
+
+    adminRadio.addEventListener("change", toggleForms);
+    staffRadio.addEventListener("change", toggleForms);
+
+    // Initialize on page load
+    toggleForms();
+});

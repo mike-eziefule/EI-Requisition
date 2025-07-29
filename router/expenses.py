@@ -2,14 +2,20 @@ from fastapi import APIRouter, Depends, Request, Form, status, HTTPException, Fi
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from database import model, script
-from services.utility import get_staff_from_token
 from fastapi.responses import HTMLResponse, JSONResponse
-from services import keygen, utility, crud
+from services import keygen, crud, utility
 from datetime import datetime
 import json
 from pydantic import ValidationError
 import os
 from schema.schematic import ExpenseInput
+from services.responses import (
+    signin_failed_response,
+    expense_dash_response,
+    pending_expense_response,
+    create_expense_success_response,
+    create_expense_failed_response,
+)
 
 router = APIRouter(prefix="/expense", tags=["expense"])
 
@@ -32,34 +38,24 @@ async def save_attachment(attachment: UploadFile) -> str:
 @router.get("/create", response_class=HTMLResponse)
 async def create_expense(request: Request, db: Session = Depends(script.get_db)):
     msg = []
-    user = utility.get_staff_from_token(request, db)
-    admin = utility.get_user_from_token(request, db)
+    user = utility.get_user_from_token(request, db)
+    admin = None  # Only use get_user_from_token for authentication
 
-    if not user and not admin:
+    if not user:
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
-            "login.html", {
+            "signin.html", {
                 "request": request,
                 "msg": msg,
             })
-    if user:
-        exid = str('ExID' + keygen.create_unique_random_key(db))
-        return templates.TemplateResponse("expense_form.html", {
-            "request": request,
-            "msg": msg,
-            "exid": exid,
-            "user": user,
-            "role": user.designation
-        })
-    else:
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to create an expense")
-        return templates.TemplateResponse(
-            "dashboard.html", {
-                "request": request,
-                "user": admin.get("user"),
-                "role": admin.get("role"),
-                "msg": msg,
-            })
+    exid = str('ExID' + keygen.create_unique_random_key(db))
+    return templates.TemplateResponse("expense_form.html", {
+        "request": request,
+        "msg": msg,
+        "exid": exid,
+        "user": user,
+        "role": user.designation
+    })
 
 @router.post("/create", response_class=JSONResponse)
 async def create_expense(
@@ -68,6 +64,7 @@ async def create_expense(
     attachment: UploadFile = File(None),
     db: Session = Depends(script.get_db)
 ):
+    
     """
     Create a new expense.
 
@@ -78,102 +75,79 @@ async def create_expense(
     - db (Session): Database session dependency.
 
     Returns:
-    - JSONResponse: Success or error message.
+    - JSONResponse: A response indicating success or failure of the expense creation.
     """
+    
     try:
-        # Validate and parse the input using the Pydantic model
-        expense_data = ExpenseInput.parse_raw(expense_input)
-        print("Parsed expense_obj:", expense_data)
-
+        #Validate and parse the input using the Pydantic model
+        expense_obj = ExpenseInput.parse_raw(expense_input)
     except (json.JSONDecodeError, ValidationError) as e:
-        return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
+        return create_expense_failed_response(e)
+
+    requestor = utility.get_user_from_token(request, db)
+    
+    if not requestor:
+        return create_expense_failed_response("Session expired, LOGIN required", status_code=401)
 
     attachment_path = await save_attachment(attachment) if attachment else None
-    requestor = utility.get_staff_from_token(request, db)
-
-    if not requestor:
-        return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
+    line_manager = utility.get_line_manager(db, requestor)
 
     try:
-        crud.create_expense(
+        expense = crud.create_expense(
             db=db,
-            expense_number=expense_data.expense_number,
-            description=expense_data.description,
-            status=f"pending with {requestor.line_manager}",
+            expense_number=expense_obj.expense_number,
+            description=expense_obj.description,
+            status=f"pending with {line_manager.designation}" if line_manager else "pending with MD/CEO",
             requestor_id=requestor.id,
             attachment_path=attachment_path,
-            line_items_data=expense_data.line_items,
-            total=expense_data.total
+            line_items_data=expense_obj.line_items if expense_obj.line_items else None,
+            total=expense_obj.total,
         )
-        return JSONResponse(content={"message": "Expense created successfully!"}, status_code=200)
+        return create_expense_success_response()
     except Exception as e:
-        return JSONResponse(content={"message": f"Error creating expense: {e}"}, status_code=500)
+        return create_expense_failed_response(e)
 
 @router.get("/pending", response_class=HTMLResponse)
 async def pending_expense(request: Request, db: Session = Depends(script.get_db)):
+    
     msg = []
-    user = utility.get_staff_from_token(request, db)
-    admin = utility.get_user_from_token(request, db)
-
-    if not user and not admin:
+    
+    user_data = utility.get_user_from_token(request, db)
+    
+    if not user_data:
         msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse(
-            "login.html", {
-                "request": request,
-                "msg": msg,
-            })
-    if user:
-        pending_expenses = db.query(model.Expense).filter(model.Expense.status == f"pending with {user.designation}").all()
+        return signin_failed_response(request, msg)
+    
+    if user_data:
+        # pending_expenses = db.query(model.Expense).filter(model.Expense.status == f"pending with {user_data.designation}").all()
+        pending_expenses = db.query(model.Expense).join(model.Expense.requestor).filter(
+        model.Expense.status == f"pending with {user_data.designation}",
+        model.User.organization_id == user_data.organization_id
+        ).all()
+        
         length_hint = len(pending_expenses)
-        return templates.TemplateResponse("pending_expense.html", {
-            "request": request,
-            "msg": msg,
-            "user": user,
-            "role": user.designation,
-            "pending_expenses": pending_expenses,
-            "length_hint": length_hint,
-        })
-    else:
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to view expenses")
-        return templates.TemplateResponse(
-            "dashboard.html", {
-                "request": request,
-                "user": admin.get("user"),
-                "role": admin.get("role"),
-                "msg": msg,
-            })
+        all_users = db.query(model.User).filter(model.User.organization_id == user_data.organization_id).all()
+        return pending_expense_response(
+            request, user_data, pending_expenses, length_hint, all_users, msg
+        )
 
 @router.get("/dash", response_class=HTMLResponse)
 async def expense_dash(request: Request, db: Session = Depends(script.get_db)):
     msg = []
-    user = utility.get_staff_from_token(request, db)
-    admin = utility.get_user_from_token(request, db)
-
-    if not user and not admin:
+    user_data = utility.get_user_from_token(request, db)
+    
+    if not user_data:
         msg.append("Session expired, LOGIN required")
-        return templates.TemplateResponse(
-            "login.html", {
-                "request": request,
-                "msg": msg,
-            })
-    if user:
-        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == user.id).all()
-        return templates.TemplateResponse("expense_dash.html", {
-            "request": request,
-            "msg": msg,
-            "user": user,
-            "role": user.designation,
-            "expenses": expenses
-        })
-    else:
-        msg.append("UNAUTHORIZED!, Sign in as a Staff to view expenses")
-        return templates.TemplateResponse(
-            "dashboard.html", {
-                "request": request,
-                "user": admin.get("user"),
-                "role": admin.get("role"),
-                "msg": msg,
-            })
+        return signin_failed_response(request, msg)
+    
+    if user_data:
+        expenses = db.query(model.Expense).filter(model.Expense.requestor_id == user_data.id).all()
+        expense_length = len(expenses)
+        all_users = db.query(model.User).filter(model.User.organization_id == user_data.organization_id).all()
+        
+        return expense_dash_response(
+            request, user_data, expenses, expense_length, all_users
+        )
 
 @router.post("/dash", response_class=HTMLResponse)
 async def expense_dash_post(request: Request, db: Session = Depends(script.get_db)):
@@ -206,7 +180,7 @@ async def preview_expense_modal(expense_id: int, request: Request, db: Session =
 # Route to approve a requisition
 @router.post("/approve_expense", response_class=JSONResponse)
 async def approve_expense(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
-    user = utility.get_staff_from_token(request, db)
+    user = utility.get_user_from_token(request, db)
 
     if not user:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
@@ -214,17 +188,36 @@ async def approve_expense(request: Request, id: int = Form(...), db: Session = D
     expense = db.query(model.Expense).filter(model.Expense.id == id).first()
 
     if not expense:
-        return JSONResponse(content={"status": "error", "message": "Requisition not found!"}, status_code=404)
+        return JSONResponse(content={"status": "error", "message": "Expense not found!"}, status_code=404)
 
     try:
-        if user.line_manager == "NULL":
+        user_cmd_level = int(user.cmd_level)
+        line_manager = None
+
+        # Try to find a line manager in the same department, one level lower at a time
+        for level in range(user_cmd_level - 1, 0, -1):
+            line_manager = db.query(model.User).filter(
+                model.User.organization_id == user.organization_id,
+                model.User.department == user.department,
+                model.User.cmd_level == str(level).zfill(3)
+            ).first()
+            if line_manager:
+                break
+
+        # Fallback: search for any user with the required command level in the organization
+        if not line_manager:
+            for level in range(user_cmd_level - 1, 0, -1):
+                line_manager = db.query(model.User).filter(
+                    model.User.organization_id == user.organization_id,
+                    model.User.cmd_level == str(level).zfill(3)
+                ).first()
+                if line_manager:
+                    break
+
+        if user.cmd_level == "001":
             expense.status = "Approved"
         else:
-            if not user.line_manager or not isinstance(user.line_manager, str):
-                return JSONResponse(content={"status": "error", "message": "Invalid or missing line manager!"}, status_code=400)
-            if not user.line_manager or not isinstance(user.line_manager, str):
-                return JSONResponse(content={"status": "error", "message": "Invalid or missing line manager!"}, status_code=400)
-            expense.status = f"pending with {user.line_manager}"
+            expense.status = f"pending with {line_manager.designation}" if line_manager else "pending with MD/CEO"
         db.commit()
         return JSONResponse(content={"status": "success", "message": "Expense has been approved!"})
     except Exception as e:
@@ -239,7 +232,7 @@ async def reject_expense(
     comment: str = Form(...),
     db: Session = Depends(script.get_db)
 ):
-    user = utility.get_staff_from_token(request, db)
+    user = utility.get_user_from_token(request, db)
 
     if not user:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
@@ -273,13 +266,13 @@ async def edit_expense(
 ):
     msg = []
     
-    user = utility.get_staff_from_token(request, db)
+    user = utility.get_user_from_token(request, db)
 
     if not user:
         # return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
         msg.append("Session expired, LOGIN required")
         return templates.TemplateResponse(
-            "login.html", {
+            "signin.html", {
                 "request": request,
                 "msg": msg,
             })
@@ -322,7 +315,7 @@ async def edit_expense(
     except (json.JSONDecodeError, ValidationError) as e:
         return JSONResponse(content={"message": f"Invalid input: {e}"}, status_code=400)
 
-    user = utility.get_staff_from_token(request, db)
+    user = utility.get_user_from_token(request, db)
 
     if not user:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)
@@ -376,7 +369,7 @@ async def edit_expense(
 # Route to delete a rejected expense
 @router.post("/delete_expense", response_class=JSONResponse)
 async def delete_expense(request: Request, id: int = Form(...), db: Session = Depends(script.get_db)):
-    user = utility.get_staff_from_token(request, db)
+    user = utility.get_user_from_token(request, db)
 
     if not user:
         return JSONResponse(content={"message": "Session expired, LOGIN required"}, status_code=401)

@@ -25,10 +25,8 @@ class LoginForm:
         self.request: Request = request
         self.username: Optional[str] = None
         self.password: Optional[str] = None
-        self.role: Optional[str] = None
         
     async def create_auth_form(self):
         form = await self.request.form()
         self.username = form.get("email")
         self.password = form.get("password")
-        self.role = form.get("role")
