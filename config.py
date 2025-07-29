@@ -41,5 +41,5 @@ def get_settings() -> Settings:
     
     settings = Settings()
     if settings.app_server == "deployment":
-        settings.db_url = "postgresql://postgres.vlrlqacbfwqxklrzkdpm:cUJJYfSpScBCN9Yu@aws-0-eu-north-1.pooler.supabase.com:5432/postgres"
+        settings.db_url = "postgresql://postgres.ouzidikxbirjywcqcbfm:6yc5eYpzydHvFlEY@aws-0-eu-north-1.pooler.supabase.com:5432/postgres"
     return settings
