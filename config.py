@@ -8,7 +8,7 @@ class Settings():
     db_url: str = "sqlite:///./requisition.sqlite"
 
     # default to SQLite
-    app_server: str = "development" #change to 'development' when hosting
+    app_server: str = "deployment" #change to 'deployment' when hosting
     
     #openai tags
     tags = [
