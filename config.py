@@ -1,5 +1,11 @@
 """Default configuration settings."""
+import os
 from functools import lru_cache
+
+from dotenv import load_dotenv
+
+# Load env vars from .env (only used in local/dev environments)
+load_dotenv()
 
 class Settings():
     """Default BaseSettings."""
@@ -26,8 +32,10 @@ class Settings():
         }
     ]
     
-    SECRET_KEY = "ezzyrequi08bdbc97f82bfe593d1e45cec19ad2591af315096665512564df9af"
-    ALGORITHM = "HS256"
+    # Secrets (loaded from environment)
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    ALGORITHM: str = os.getenv("ALGORITHM", "HS256")  # Fallback to HS256 if not provided
+
     
     class Config:
         """Load env variables from .env file."""
@@ -41,5 +49,5 @@ def get_settings() -> Settings:
     
     settings = Settings()
     if settings.app_server == "deployment":
-        settings.db_url = "postgresql://postgres.ouzidikxbirjywcqcbfm:6yc5eYpzydHvFlEY@aws-0-eu-north-1.pooler.supabase.com:5432/postgres"
+        settings.db_url = os.getenv("DATABASE_URL")
     return settings
