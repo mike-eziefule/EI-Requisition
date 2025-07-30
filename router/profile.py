@@ -6,6 +6,7 @@ from database import script
 from services.utility import get_user_from_token
 import os
 from supabase_client import supabase
+from io import BytesIO
 import tempfile
 from pathlib import Path
 
@@ -107,6 +108,42 @@ async def profile_upload_picture(
         Path(tmp_file_path).unlink(missing_ok=True)
 
     return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
+
+
+@router.post("/delete-picture")
+async def profile_delete_picture(request: Request, db: Session = Depends(script.get_db)):
+    user_data = get_user_from_token(request, db)
+    msg = []
+    # Check if user or admin is still logged in
+    if not user_data:
+        msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
+        
+    target_user = user_data
+    
+    file_url = getattr(target_user, "profile_picture_url", None)
+
+    if not file_url:
+        msg.append("No profile picture to delete.")
+        return templates.TemplateResponse("profile.html", {"request": request, "user": target_user, "msg": msg})
+
+    try:
+        # Extract the filename from the public URL
+        filename = file_url.split("/")[-1]
+        bucket_name = "profile-pictures"
+
+        # Delete from Supabase bucket
+        supabase.storage.from_(bucket_name).remove([filename])
+
+        # Clear from database
+        target_user.profile_picture_url = None
+        db.commit()
+
+        msg.append("Profile picture deleted successfully.")
+    except Exception as e:
+        msg.append(f"Failed to delete profile picture: {str(e)}")
+
+    return templates.TemplateResponse("profile.html", {"request": request, "user": target_user, "msg": msg})
+
 
 @router.post("/change-password")
 async def profile_change_password(
