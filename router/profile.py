@@ -2,67 +2,96 @@ from fastapi import APIRouter, Request, Depends, UploadFile, File, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
-from database import model, script
+from database import script
 from services.utility import get_user_from_token
 import os
-import shutil
+from supabase_client import supabase
+from io import BytesIO
+
 
 router = APIRouter(prefix="/profile", tags=["profile"])
+
 templates = Jinja2Templates(directory="templates")
 
 PROFILE_PIC_DIR = "static/uploads/profile_pictures"
 os.makedirs(PROFILE_PIC_DIR, exist_ok=True)
 
+
 def get_profile_pic_url(user):
-    # Return a relative URL for use in templates
     if hasattr(user, "profile_picture_url") and user.profile_picture_url:
-        # If already a relative/static path, just return it
         if user.profile_picture_url.startswith("static/"):
+            # Local/static file (legacy or fallback)
             return "/" + user.profile_picture_url.replace("\\", "/")
-        # If it's an absolute path, get only the filename
-        filename = os.path.basename(user.profile_picture_url)
-        return filename
+        else:
+            # Hosted on Supabase – assume the filename is stored
+            bucket_name = "profile-pictures"
+            public_url = supabase.storage.from_(bucket_name).get_public_url(user.profile_picture_url)
+            return public_url
     return None
 
 @router.get("/", response_class=HTMLResponse)
 async def profile_page(request: Request, db: Session = Depends(script.get_db)):
     user_data = get_user_from_token(request, db)
     msg = []
+
     if user_data:
+        # Fetch the profile picture URL (Supabase public URL or static)
         user_data.profile_picture_url = get_profile_pic_url(user_data)
+
         msg.append("Welcome to your profile page!")
-        return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
+        return templates.TemplateResponse("profile.html", {
+            "request": request,
+            "user": user_data,
+            "msg": msg
+        })
     else:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
-        return templates.TemplateResponse("signin.html", {"request": request, "msg": msg})
-
+        return templates.TemplateResponse("signin.html", {
+            "request": request,
+            "msg": msg
+        })
+        
+        
 @router.post("/upload-picture")
-async def profile_upload_picture(request: Request, profile_picture: UploadFile = File(...), db: Session = Depends(script.get_db)):
+async def profile_upload_picture(
+    request: Request, 
+    profile_picture: UploadFile = File(...), 
+    db: Session = Depends(script.get_db)
+):
+    
     user_data = get_user_from_token(request, db)
     msg = []
+    
     # Check if user or admin is logged in   
     if not user_data:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
         return templates.TemplateResponse("signin.html", {"request": request, "msg": msg})
-    target_user = user_data
-    # Delete previous picture if exists
-    old_path = getattr(target_user, "profile_picture_url", None)
-    if old_path and old_path.startswith("static/") and os.path.exists(old_path.replace("/", os.sep)):
-        try:
-            os.remove(old_path.replace("/", os.sep))
-        except Exception:
-            pass
-    # Save new picture
-    if user_data:
-        filename = f"user_{user_data.id}_{profile_picture.filename}"
-    file_path = os.path.join(PROFILE_PIC_DIR, filename)
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(profile_picture.file, buffer)
-    target_user.profile_picture_url = f"static/uploads/profile_pictures/{filename}"
+    
+    
+    # Upload to Supabase bucket
+    bucket_name = "profile-pictures"
+    filename = f"user_{user_data.id}_{profile_picture.filename}"
+    file_bytes = await profile_picture.read()
+
+    try:
+        supabase.storage.from_(bucket_name).upload(
+            path=filename,
+            file=BytesIO(file_bytes),
+            file_options={"content-type": profile_picture.content_type},
+            upsert=True
+        )
+        public_url = supabase.storage.from_(bucket_name).get_public_url(filename)
+    except Exception as e:
+        msg.append(f"Upload failed: {str(e)}")
+        return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
+
+    # Update user in DB
+    user_data.profile_picture_url = public_url
     db.commit()
-    target_user.profile_picture_url = get_profile_pic_url(target_user)
+    user_data.profile_picture_url = public_url
     msg.append("Profile picture updated successfully.")
-    return templates.TemplateResponse("profile.html", {"request": request, "user": target_user, "msg": msg})
+    return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
+
 
 @router.post("/delete-picture")
 async def profile_delete_picture(request: Request, db: Session = Depends(script.get_db)):
@@ -71,19 +100,33 @@ async def profile_delete_picture(request: Request, db: Session = Depends(script.
     # Check if user or admin is still logged in
     if not user_data:
         msg.append("SESSION EXPIRED, LOGIN AGAIN!.")
+        
     target_user = user_data
-    if not getattr(target_user, "profile_picture_url", None):
+    
+    file_url = getattr(target_user, "profile_picture_url", None)
+
+    if not file_url:
         msg.append("No profile picture to delete.")
         return templates.TemplateResponse("profile.html", {"request": request, "user": target_user, "msg": msg})
-    file_path = target_user.profile_picture_url
-    if file_path.startswith("static/"):
-        file_path = file_path.replace("/", os.sep)
-    if os.path.exists(file_path):
-        os.remove(file_path)
-    target_user.profile_picture_url = None
-    db.commit()
-    msg.append("Profile picture deleted successfully.")
+
+    try:
+        # Extract the filename from the public URL
+        filename = file_url.split("/")[-1]
+        bucket_name = "profile-pictures"
+
+        # Delete from Supabase bucket
+        supabase.storage.from_(bucket_name).remove([filename])
+
+        # Clear from database
+        target_user.profile_picture_url = None
+        db.commit()
+
+        msg.append("Profile picture deleted successfully.")
+    except Exception as e:
+        msg.append(f"Failed to delete profile picture: {str(e)}")
+
     return templates.TemplateResponse("profile.html", {"request": request, "user": target_user, "msg": msg})
+
 
 @router.post("/change-password")
 async def profile_change_password(
