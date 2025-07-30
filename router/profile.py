@@ -71,16 +71,24 @@ async def profile_upload_picture(
     # Upload to Supabase bucket
     bucket_name = "profile-pictures"
     filename = f"user_{user_data.id}_{profile_picture.filename}"
+    bucket_path = f"profile_pictures/{filename}"
     file_bytes = await profile_picture.read()
 
+    # Optional: Delete old picture (if exists)
     try:
+        supabase.storage.from_(bucket_name).remove([bucket_path])
+    except Exception:
+        pass  # it's okay if file doesn't exist
+    
+    try:
+        # Upload the file to Supabase storage
         supabase.storage.from_(bucket_name).upload(
-            path=filename,
+            path=bucket_path,
             file=BytesIO(file_bytes),
-            file_options={"content-type": profile_picture.content_type},
-            upsert=True
         )
-        public_url = supabase.storage.from_(bucket_name).get_public_url(filename)
+        
+        public_url = supabase.storage.from_(bucket_name).get_public_url(bucket_path)
+        
     except Exception as e:
         msg.append(f"Upload failed: {str(e)}")
         return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
@@ -88,7 +96,7 @@ async def profile_upload_picture(
     # Update user in DB
     user_data.profile_picture_url = public_url
     db.commit()
-    user_data.profile_picture_url = public_url
+    
     msg.append("Profile picture updated successfully.")
     return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "msg": msg})
 
